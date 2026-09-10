@@ -1,0 +1,55 @@
+---
+description: Search, download, organize, and implement local tourism images without rewriting the app.
+alwaysApply: true
+---
+
+# Tourism Is Life — image implementation
+
+Image requests are **implementation tasks**, not URL lookups. Workflow: **SEARCH → EVALUATE → DOWNLOAD → ORGANIZE → IMPLEMENT → VERIFY**. Do not stop at a remote URL. Do not ask permission for each download when the instruction is clear.
+
+## Preserve the app
+
+Inspect structure, framework, asset conventions, and the target component first. Smallest reliable change. Do not delete components, rewrite routing, replace the framework, or redesign layout because an image has a different aspect ratio. Use existing `object-cover` / card crops.
+
+## Current project convention
+
+- Catalog photos live in `src/data/catalog.ts` (`IMG.*`, `image`, `gallery`, `IMG_HERO`, etc.) and are currently **remote Unsplash URLs** (editorial stand-ins). See `IMAGE_MANIFEST.md`.
+- Prefer **local public assets**: `src="/images/..."`. Update catalog fields and exports; do not introduce a new image-loading architecture.
+- Reuse an existing local file if it already fits. Do not duplicate the same photograph.
+
+## Directories
+
+If no local photos exist yet, create under `public/images/` as needed: `destinations/`, `attractions/`, `hotels/`, `restaurants/`, `culture/`, `beaches/`, `landscapes/`, `people/`, `activities/`, `events/`, `hero/`, `thumbnails/`, `misc/`. Do not invent a parallel tree.
+
+## Search & authenticity
+
+Prefer official tourism / government / attraction sites, Wikimedia Commons, Unsplash, Pexels. Skip watermarks, scrapes, placeholders, broken URLs, inappropriate content.
+
+Geographic accuracy is required: Freetown ≠ generic African city; Lumley Beach ≠ generic tropical beach. If authenticity cannot be established, **flag uncertainty** before using the file.
+
+## Files
+
+- Names: lowercase, hyphenated, descriptive (`lumley-beach-sunset.jpg`, `freetown-01.jpg`).
+- Formats: WebP when practical, JPEG for photos, PNG for transparency. Do not convert if quality or alpha would suffer.
+- Optimize for web (~1–3 MB typical); keep sharpness. Heroes: wide 16:9 / 21:9 / 3:2 with overlay room. Cards: subject-clear, consistent crop.
+- Record sources in `public/images/image-sources.json` (and keep `IMAGE_MANIFEST.md` in sync). Never invent author/license/URL. If unknown, say so.
+
+## Commands
+
+- `/find-image …` — search, download, save, implement if location is implied.
+- `/use-image [subject] [location]` — only that location (inspect the real nth card / hero).
+- `/replace-image [current] with [description]` — same slot, similar aspect.
+- `/images …` — batch: map Section → File → Component, then implement.
+
+Meaningful `alt` text (place + what is shown). Hero/LCP: do not lazy-load. Below-fold: `loading="lazy"` if the existing pattern allows.
+
+## Verify
+
+File exists and opens; path matches code; no broken imports. Run `npm run build` (and lint if appropriate) for changes you made. Report:
+
+```
+IMAGE TASK COMPLETE
+Found / Downloaded / Source / Implemented in / Changes / Verification
+```
+
+If download is technically impossible: say what failed, share sources found, **do not claim the asset exists**.
