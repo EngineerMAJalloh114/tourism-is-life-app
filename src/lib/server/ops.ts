@@ -7,7 +7,7 @@ import { optionalAuthMiddleware } from "@/lib/server/optional-auth";
 import { parseStatus } from "@/lib/server/booking-state";
 import { getPaymentMode } from "@/lib/server/payments";
 import { atLeast, isStaff, parseRole, type Role } from "@/lib/roles";
-import { notifyBookingConfirmed, notifyEnquiryReceived } from "@/services/notify";
+import { isValidEmail, notifyBookingConfirmed, notifyEnquiryReceived, notifyEnquiryTeam } from "@/services/notify";
 import { activePaymentProvider } from "@/services/payments";
 import { bootstrapEmailAllowed, demoPaymentsAllowed, isDeployedRuntime } from "@/lib/server/config";
 import { publicId } from "@/lib/server/crypto";
@@ -27,7 +27,9 @@ import {
 
 const enquirySchema = z.object({
   type: z.enum(["B2C", "B2B", "CRUISE", "MICE"]),
-  payload: z.record(z.string(), z.string()),
+  payload: z.record(z.string().max(60), z.string().max(4000)).refine((p) => Object.keys(p).length <= 20, {
+    message: "Too many fields.",
+  }),
 });
 
 export type { BookingRow };
@@ -37,10 +39,12 @@ export const submitEnquiry = createServerFn({ method: "POST" })
   .validator((d) => enquirySchema.parse(d))
   .handler(async ({ data, context }) => {
     await guardPublicMutation("enquiry", 8, 60 * 60 * 1000);
-    const payload = data.payload;
+    const payload = Object.fromEntries(
+      Object.entries(data.payload).map(([k, v]) => [k, v.trim()]),
+    );
     const email = (payload.email || context.email || "").trim().toLowerCase();
     const name = (payload.contact || payload.name || "").trim();
-    if (!email || !email.includes("@")) {
+    if (!email || !isValidEmail(email)) {
       throw new Error("A valid email is required so the desk can reply.");
     }
     const sql = await getSql();
@@ -57,6 +61,7 @@ export const submitEnquiry = createServerFn({ method: "POST" })
         ${name || null}
       )
     `;
+    void notifyEnquiryTeam({ ref: id, type: data.type, email, phone: payload.phone, payload }).catch(() => undefined);
     void notifyEnquiryReceived({ email, name, ref: id, type: data.type }).catch(() => undefined);
     log.info("enquiry.submitted", { id, type: data.type });
     return { id, status: "open" as const };
