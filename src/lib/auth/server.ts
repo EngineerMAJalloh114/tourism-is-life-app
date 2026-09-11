@@ -35,8 +35,9 @@ import { tanstackStartCookies } from "better-auth/tanstack-start";
 import { getCookie } from "@tanstack/react-start/server";
 import { randomBytes } from "node:crypto";
 import { Pool } from "pg";
-import { isWorkspacePreview } from "../env.server";
+import { isWorkspacePreview, vercelEnv } from "../env.server";
 import { ensureDbReady, getPglite } from "../db";
+import { log } from "../server/logger";
 import { emailAndPasswordEnabled } from "./email-password";
 import { GATE_PROVIDER_ID, gateIdentitySessions } from "./gate-session.server";
 import { GROK_PROVIDERS } from "./providers";
@@ -99,6 +100,20 @@ const grokOAuthActive =
   !authDisabled &&
   (isWorkspacePreview() ||
     Boolean(env("GROK_AUTH_CLIENT_ID") && env("GROK_AUTH_CLIENT_SECRET")));
+
+// One-time, secret-free diagnostic of the runtime-classification inputs —
+// exists to make this observable in `vercel logs` after a deploy, since a
+// wrong classification here silently re-exposes the broker OAuth plugin /
+// demo payments in production (see `isWorkspacePreview` for the incident
+// this documents). No values here are sensitive: presence booleans and
+// VERCEL_ENV's own three-value enum.
+log.info("auth.runtime_classification", {
+  grokProjectIdPresent: Boolean(env("GROK_PROJECT_ID")),
+  vercelEnv: vercelEnv() ?? null,
+  betterAuthUrlPresent: Boolean(env("BETTER_AUTH_URL")),
+  isWorkspacePreview: isWorkspacePreview(),
+  grokOAuthActive,
+});
 
 // This app's own Better Auth origin. When deployed the deployer injects the
 // public URL. In the sandbox live preview there's no fixed URL (each preview gets
