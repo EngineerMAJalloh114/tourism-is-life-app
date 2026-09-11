@@ -61,9 +61,19 @@ export const submitEnquiry = createServerFn({ method: "POST" })
         ${name || null}
       )
     `;
-    void notifyEnquiryTeam({ ref: id, type: data.type, email, phone: payload.phone, payload }).catch(() => undefined);
-    void notifyEnquiryReceived({ email, name, ref: id, type: data.type }).catch(() => undefined);
     log.info("enquiry.submitted", { id, type: data.type });
+    // The enquiry row above is the source of truth and is already committed —
+    // a Resend failure here must never lose it or be surfaced as a save
+    // failure. Awaited (not fire-and-forget): this Vercel/Nitro Node runtime
+    // does not expose a background-task API, and a serverless function may
+    // freeze immediately after the response is sent, so an un-awaited send
+    // can silently never complete. sendEmail() has its own timeout and never
+    // throws, so this can't hang the request or turn into an unhandled
+    // rejection.
+    await Promise.allSettled([
+      notifyEnquiryTeam({ ref: id, type: data.type, email, phone: payload.phone, payload }),
+      notifyEnquiryReceived({ email, name, ref: id, type: data.type }),
+    ]);
     return { id, status: "open" as const };
   });
 

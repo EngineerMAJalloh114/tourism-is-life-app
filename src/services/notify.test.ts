@@ -1,6 +1,18 @@
 import assert from "node:assert/strict";
-import { describe, it } from "node:test";
-import { buildEnquiryTeamEmail, isValidEmail, sanitizeHeaderValue } from "./notify.ts";
+import { afterEach, describe, it } from "node:test";
+import { buildEnquiryTeamEmail, isValidEmail, sanitizeHeaderValue, sendEmail } from "./notify.ts";
+
+const ORIGINAL_FETCH = globalThis.fetch;
+const ORIGINAL_KEY = process.env.RESEND_API_KEY;
+const ORIGINAL_FROM = process.env.RESEND_FROM;
+
+function restoreEnv() {
+  globalThis.fetch = ORIGINAL_FETCH;
+  if (ORIGINAL_KEY === undefined) delete process.env.RESEND_API_KEY;
+  else process.env.RESEND_API_KEY = ORIGINAL_KEY;
+  if (ORIGINAL_FROM === undefined) delete process.env.RESEND_FROM;
+  else process.env.RESEND_FROM = ORIGINAL_FROM;
+}
 
 describe("isValidEmail", () => {
   it("accepts a normal address", () => {
@@ -103,5 +115,70 @@ describe("buildEnquiryTeamEmail — Resend production integration", () => {
     });
     assert.match(text, /ENQ-ABC123/);
     assert.match(text, /2026-09-11 12:00:00 UTC/);
+  });
+});
+
+describe("sendEmail — production reliability", () => {
+  afterEach(restoreEnv);
+
+  it("never throws on a timeout — resolves with sent:false instead", async () => {
+    process.env.RESEND_API_KEY = "test-key";
+    globalThis.fetch = (async () => {
+      throw new DOMException("The operation was aborted.", "TimeoutError");
+    }) as typeof fetch;
+
+    const result = await sendEmail({ to: "info@tourismislife.com", subject: "x", html: "<p>x</p>" });
+    assert.deepEqual(result, { sent: false, channel: "email", reason: "Resend request timed out" });
+  });
+
+  it("never throws on a network error — resolves with sent:false instead", async () => {
+    process.env.RESEND_API_KEY = "test-key";
+    globalThis.fetch = (async () => {
+      throw new TypeError("fetch failed");
+    }) as typeof fetch;
+
+    const result = await sendEmail({ to: "info@tourismislife.com", subject: "x", html: "<p>x</p>" });
+    assert.deepEqual(result, { sent: false, channel: "email", reason: "Resend request failed" });
+  });
+
+  it("never surfaces the raw Resend response body on a non-ok status", async () => {
+    process.env.RESEND_API_KEY = "test-key";
+    globalThis.fetch = (async () =>
+      new Response(JSON.stringify({ message: "internal detail" }), { status: 422 })) as typeof fetch;
+
+    const result = await sendEmail({ to: "info@tourismislife.com", subject: "x", html: "<p>x</p>" });
+    assert.deepEqual(result, { sent: false, channel: "email", reason: "Resend 422" });
+  });
+
+  it("returns the Resend message id on success and sends the correct from/reply-to", async () => {
+    process.env.RESEND_API_KEY = "test-key";
+    process.env.RESEND_FROM = "Tourism Is Life <info@tourismislife.com>";
+    let capturedBody: Record<string, unknown> | undefined;
+    let capturedAuth: string | undefined;
+    globalThis.fetch = (async (_url, init) => {
+      capturedAuth = (init?.headers as Record<string, string>)?.Authorization;
+      capturedBody = JSON.parse(init?.body as string);
+      return new Response(JSON.stringify({ id: "re_abc123" }), { status: 200 });
+    }) as typeof fetch;
+
+    const result = await sendEmail({
+      to: "info@tourismislife.com",
+      subject: "New enquiry",
+      html: "<p>x</p>",
+      replyTo: "visitor@example.com",
+    });
+
+    assert.deepEqual(result, { sent: true, channel: "email", id: "re_abc123" });
+    assert.equal(capturedBody?.from, "Tourism Is Life <info@tourismislife.com>");
+    assert.deepEqual(capturedBody?.to, ["info@tourismislife.com"]);
+    assert.equal(capturedBody?.reply_to, "visitor@example.com");
+    // The API key must be sent as a bearer credential, never logged or returned.
+    assert.equal(capturedAuth, "Bearer test-key");
+  });
+
+  it("is a documented no-op — never throws — when RESEND_API_KEY is not configured", async () => {
+    delete process.env.RESEND_API_KEY;
+    const result = await sendEmail({ to: "info@tourismislife.com", subject: "x", html: "<p>x</p>" });
+    assert.deepEqual(result, { sent: false, channel: "email", reason: "RESEND_API_KEY not configured" });
   });
 });

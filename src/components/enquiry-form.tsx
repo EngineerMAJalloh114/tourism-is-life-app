@@ -19,7 +19,11 @@ export function EnquiryForm({
 
   async function onSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    const fd = new FormData(e.currentTarget);
+    // Capture the form element now — React nulls out a SyntheticEvent's
+    // currentTarget once the native event has finished dispatching, so
+    // reading e.currentTarget after the `await submitEnquiry` below throws.
+    const form = e.currentTarget;
+    const fd = new FormData(form);
     const payload: Record<string, string> = {};
     fd.forEach((v, k) => {
       payload[k] = String(v);
@@ -30,7 +34,7 @@ export function EnquiryForm({
     try {
       await submitEnquiry({ data: { type, payload } });
       setStatus("ok");
-      e.currentTarget.reset();
+      form.reset();
     } catch (err) {
       setStatus("err");
       setMessage(err instanceof Error ? err.message : "Could not send.");

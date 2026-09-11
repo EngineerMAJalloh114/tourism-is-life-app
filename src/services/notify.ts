@@ -29,6 +29,9 @@ export function isValidEmail(value: string): boolean {
   return EMAIL_RE.test(value.trim());
 }
 
+/** Resend must never hang a request indefinitely — the visitor's enquiry is already saved by the time this runs. */
+const RESEND_TIMEOUT_MS = 8000;
+
 export async function sendEmail(opts: {
   to: string;
   subject: string;
@@ -43,21 +46,28 @@ export async function sendEmail(opts: {
   const from = process.env.RESEND_FROM?.trim() || `Tourism Is Life <${SITE.email}>`;
   const replyTo =
     opts.replyTo && isValidEmail(opts.replyTo) ? sanitizeHeaderValue(opts.replyTo) : undefined;
-  const res = await fetch("https://api.resend.com/emails", {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${key}`,
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      from,
-      to: [opts.to],
-      subject: sanitizeHeaderValue(opts.subject).slice(0, 200),
-      html: opts.html,
-      text: opts.text,
-      ...(replyTo ? { reply_to: replyTo } : {}),
-    }),
-  });
+  let res: Response;
+  try {
+    res = await fetch("https://api.resend.com/emails", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${key}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        from,
+        to: [opts.to],
+        subject: sanitizeHeaderValue(opts.subject).slice(0, 200),
+        html: opts.html,
+        text: opts.text,
+        ...(replyTo ? { reply_to: replyTo } : {}),
+      }),
+      signal: AbortSignal.timeout(RESEND_TIMEOUT_MS),
+    });
+  } catch (err) {
+    const timedOut = err instanceof Error && err.name === "TimeoutError";
+    return { sent: false, channel: "email", reason: timedOut ? "Resend request timed out" : "Resend request failed" };
+  }
   if (!res.ok) {
     // Never surface the raw Resend response body — it can echo request details.
     return { sent: false, channel: "email", reason: `Resend ${res.status}` };
@@ -122,12 +132,16 @@ export async function notifyBookingConfirmed(opts: {
 }
 
 export async function notifyEnquiryReceived(opts: { email: string; name: string; ref: string; type: string }) {
-  return sendEmail({
+  const result = await sendEmail({
     to: opts.email,
     subject: `We received your ${opts.type} enquiry ${opts.ref}`,
     html: `<p>Dear ${escapeHtml(opts.name || "friend")},</p><p>Your ${escapeHtml(opts.type)} enquiry ${escapeHtml(opts.ref)} is with the Freetown desk.</p>`,
     text: `Enquiry ${opts.ref} received.`,
   });
+  if (!result.sent) {
+    log.warn("enquiry.receipt_failed", { ref: opts.ref, reason: result.reason });
+  }
+  return result;
 }
 
 const ENQUIRY_TYPE_LABELS: Record<string, string> = {
