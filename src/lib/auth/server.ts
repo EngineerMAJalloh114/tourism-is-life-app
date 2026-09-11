@@ -35,6 +35,7 @@ import { tanstackStartCookies } from "better-auth/tanstack-start";
 import { getCookie } from "@tanstack/react-start/server";
 import { randomBytes } from "node:crypto";
 import { Pool } from "pg";
+import { isWorkspacePreview } from "../env.server";
 import { ensureDbReady, getPglite } from "../db";
 import { emailAndPasswordEnabled } from "./email-password";
 import { GATE_PROVIDER_ID, gateIdentitySessions } from "./gate-session.server";
@@ -85,6 +86,20 @@ const grokClientSecret = env("GROK_AUTH_CLIENT_SECRET") ?? PREVIEW_CLIENT_SECRET
 export const authConfigured =
   !authDisabled && Boolean(grokClientId && grokClientSecret);
 
+/**
+ * Whether the Grok-broker OAuth plugin should actually be registered. The
+ * baked preview client (`./preview`) is a legitimate auth mechanism ONLY in
+ * the sandbox live preview — the broker accepts its callback exclusively on
+ * `*.grok-sandbox.com`. On a real deployment (Vercel, Grok deploy, …) it must
+ * never be the production authentication mechanism, so the plugin stays off
+ * there unless the deployer has injected a real per-app broker client via
+ * `GROK_AUTH_CLIENT_ID` / `GROK_AUTH_CLIENT_SECRET`.
+ */
+const grokOAuthActive =
+  !authDisabled &&
+  (isWorkspacePreview() ||
+    Boolean(env("GROK_AUTH_CLIENT_ID") && env("GROK_AUTH_CLIENT_SECRET")));
+
 // This app's own Better Auth origin. When deployed the deployer injects the
 // public URL. In the sandbox live preview there's no fixed URL (each preview gets
 // a dynamic `*.grok-sandbox.com` host), so we hand Better Auth a dynamic baseURL:
@@ -92,6 +107,13 @@ export const authConfigured =
 // preview allowlist, which makes the OAuth `redirect_uri` the concrete preview URL
 // the broker's preview client accepts.
 const explicitBaseURL = env("BETTER_AUTH_URL");
+if (!isWorkspacePreview() && !explicitBaseURL) {
+  throw new Error(
+    "BETTER_AUTH_URL is required on a real deployment — refusing the " +
+      "*.grok-sandbox.com/localhost dynamic baseURL fallback (which would " +
+      "reject the real origin and misdirect OAuth redirect_uri) in production.",
+  );
+}
 // Explicit `string[]` (not a readonly tuple) — Better Auth's DynamicBaseURLConfig
 // requires a mutable `allowedHosts: string[]`.
 const previewAllowedHosts: string[] = [...PREVIEW_ALLOWED_HOSTS];
@@ -150,7 +172,7 @@ export const SESSION_TOKEN_COOKIE = "__Host-grok-auth.session_token";
 
 // Built separately so the `betterAuth({...})` call stays easy to edit without
 // breaking brackets (models often trip on the conditional plugin spread).
-const grokOAuthPlugin = authConfigured
+const grokOAuthPlugin = authConfigured && grokOAuthActive
   ? genericOAuth({
       config: GROK_PROVIDERS.map(({ providerId, idp }) => ({
         providerId,
@@ -172,11 +194,31 @@ const grokOAuthPlugin = authConfigured
     })
   : null;
 
+/**
+ * Session-signing secret. A real deployment MUST supply `BETTER_AUTH_SECRET`
+ * — refusing (rather than silently minting an ephemeral per-process secret)
+ * is deliberate: an unstable secret signs sessions that a different
+ * serverless instance, or the same instance after a cold start, would then
+ * reject, which fails as confusing "random" sign-outs instead of a clear
+ * startup error.
+ */
+function resolveAuthSecret(): string {
+  const explicit = env("BETTER_AUTH_SECRET");
+  if (explicit) return explicit;
+  if (!isWorkspacePreview()) {
+    throw new Error(
+      "BETTER_AUTH_SECRET is required on a real deployment — refusing to " +
+        "sign sessions with an ephemeral per-process secret.",
+    );
+  }
+  return previewAuthSecret();
+}
+
 export const auth = betterAuth({
   baseURL,
   // Deployed apps inject BETTER_AUTH_SECRET. Preview: process-stable secret on
   // globalThis so HMR doesn't invalidate PGLite-backed sessions (see above).
-  secret: env("BETTER_AUTH_SECRET") ?? previewAuthSecret(),
+  secret: resolveAuthSecret(),
   database,
 
   // CSRF / origin check for credentialed auth POSTs (email sign-up/sign-in, …).

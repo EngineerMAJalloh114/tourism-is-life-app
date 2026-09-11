@@ -1,6 +1,6 @@
 import { useState, useSyncExternalStore, type ReactNode } from "react";
-import { Navigate } from "@tanstack/react-router";
-import { GROK_PROVIDERS, authEnabled, signIn, signOut } from "./client";
+import { Link, Navigate } from "@tanstack/react-router";
+import { GROK_PROVIDERS, SOCIAL_LOGIN_ENABLED, authEnabled, signIn, signOut } from "./client";
 import { hasGateSessionMarker } from "./gate-session-marker";
 import { resolveSignInGateState } from "./sign-in-gate";
 import { useCurrentUser, useCurrentUserState } from "./use-current-user";
@@ -64,6 +64,18 @@ export function SignInGate({
 }
 
 export function SignInButtons() {
+  if (!SOCIAL_LOGIN_ENABLED) {
+    // Social sign-in is off for the email/password-first rollout (see
+    // `providers.ts`) — never render a button for a flow that cannot work.
+    return (
+      <Link
+        to={SIGN_IN_PATH}
+        className="w-full max-w-sm cursor-pointer rounded-md border border-neutral-300 px-4 py-2 text-center hover:bg-neutral-100 dark:border-neutral-700 dark:hover:bg-neutral-900"
+      >
+        Sign in
+      </Link>
+    );
+  }
   return (
     <div className="flex w-full max-w-sm flex-col gap-2">
       {GROK_PROVIDERS.map((p) => (

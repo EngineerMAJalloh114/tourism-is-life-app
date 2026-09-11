@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState, type FormEvent } from "react";
-import { GROK_PROVIDERS, authClient, authEnabled, signIn } from "@/lib/auth/client";
+import { GROK_PROVIDERS, SOCIAL_LOGIN_ENABLED, authClient, authEnabled, signIn } from "@/lib/auth/client";
 import { Button } from "@/components/ui/button";
 import { Input, Label } from "@/components/ui/input";
 import { pageHead } from "@/lib/seo";
@@ -49,20 +49,24 @@ function Login() {
         </p>
         {authEnabled ? (
           <div className="mt-6 space-y-3">
-            {GROK_PROVIDERS.map((p) => (
-              <Button
-                key={p.providerId}
-                type="button"
-                variant="outline"
-                className="w-full"
-                onClick={() => signIn(p.providerId, { callbackURL: "/account" })}
-              >
-                Continue with {p.label}
-              </Button>
-            ))}
-            <div className="relative py-2 text-center text-xs uppercase tracking-[0.16em] text-muted">
-              or email
-            </div>
+            {SOCIAL_LOGIN_ENABLED ? (
+              <>
+                {GROK_PROVIDERS.map((p) => (
+                  <Button
+                    key={p.providerId}
+                    type="button"
+                    variant="outline"
+                    className="w-full"
+                    onClick={() => signIn(p.providerId, { callbackURL: "/account" })}
+                  >
+                    Continue with {p.label}
+                  </Button>
+                ))}
+                <div className="relative py-2 text-center text-xs uppercase tracking-[0.16em] text-muted">
+                  or email
+                </div>
+              </>
+            ) : null}
             <form onSubmit={onEmail} className="space-y-3">
               {mode === "up" ? (
                 <div>

@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState, type FormEvent } from "react";
-import { GROK_PROVIDERS, authClient, authEnabled, signIn } from "@/lib/auth/client";
+import { GROK_PROVIDERS, SOCIAL_LOGIN_ENABLED, authClient, authEnabled, signIn } from "@/lib/auth/client";
 import { Button } from "@/components/ui/button";
 import { Input, Label } from "@/components/ui/input";
 import { pageHead } from "@/lib/seo";
@@ -41,17 +41,19 @@ function Register() {
         </p>
         {authEnabled ? (
           <div className="mt-6 space-y-3">
-            {GROK_PROVIDERS.map((p) => (
-              <Button
-                key={p.providerId}
-                type="button"
-                variant="outline"
-                className="w-full"
-                onClick={() => signIn(p.providerId, { callbackURL: "/account" })}
-              >
-                Continue with {p.label}
-              </Button>
-            ))}
+            {SOCIAL_LOGIN_ENABLED
+              ? GROK_PROVIDERS.map((p) => (
+                  <Button
+                    key={p.providerId}
+                    type="button"
+                    variant="outline"
+                    className="w-full"
+                    onClick={() => signIn(p.providerId, { callbackURL: "/account" })}
+                  >
+                    Continue with {p.label}
+                  </Button>
+                ))
+              : null}
             <form onSubmit={onSubmit} className="space-y-3">
               <div>
                 <Label htmlFor="name">Name</Label>

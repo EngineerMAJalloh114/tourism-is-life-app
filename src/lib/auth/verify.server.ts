@@ -71,17 +71,18 @@ export async function getSessionUser(
 }
 
 /**
- * Resolve the current user id for a server function, or throw when unauthorized.
- * Prefer `authMiddleware` (`./middleware`), which calls this for you.
- * - Auth enabled -> the verified session user id; throws
+ * Resolve the current user id AND verified email for a server function, or
+ * throw when unauthorized. Prefer `authMiddleware` (`./middleware`), which
+ * calls this for you and puts both on `context`.
+ * - Auth enabled -> the verified session user (id + email); throws
  *   `UnauthorizedError` when signed out. Works in the sandbox preview too (real
  *   sign-in via the baked preview client).
  * - Auth disabled (`VITE_AUTH_ENABLED=false`) + `DATABASE_URL` set -> throw (fail
  *   closed): one shared dev user on a real database would let every visitor
  *   read/write everyone's rows.
- * - Auth disabled + no database -> the shared dev user id.
+ * - Auth disabled + no database -> the shared dev user (no email).
  */
-export async function requireUserId(bearerToken?: string): Promise<string> {
+export async function requireUser(bearerToken?: string): Promise<VerifiedUser> {
   if (!authConfigured && !gateIdentityEnabled()) {
     if (databaseConfigured) {
       throw new Error(
@@ -89,9 +90,14 @@ export async function requireUserId(bearerToken?: string): Promise<string> {
           "refusing to fall back to the shared dev user against a real database.",
       );
     }
-    return DEV_USER_ID;
+    return { id: DEV_USER_ID, email: null };
   }
   const user = await getSessionUser(bearerToken);
   if (!user) throw new UnauthorizedError();
-  return user.id;
+  return user;
+}
+
+/** Convenience wrapper over `requireUser` for callers that only need the id. */
+export async function requireUserId(bearerToken?: string): Promise<string> {
+  return (await requireUser(bearerToken)).id;
 }

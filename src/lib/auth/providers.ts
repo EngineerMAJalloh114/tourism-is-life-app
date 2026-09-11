@@ -29,3 +29,12 @@ export const GROK_PROVIDERS: readonly GrokProvider[] = [
   { providerId: "grok-google", idp: "google", label: "Google" },
   { providerId: "grok-x", idp: "twitter", label: "X" },
 ];
+
+/**
+ * Whether the UI should render social sign-in buttons. Off for the Option C
+ * (email/password-first) production rollout: the Grok broker is not the
+ * production auth mechanism (see `server.ts`), and direct Google/X OAuth is a
+ * separate follow-up task — so there is currently no working social sign-in
+ * to send visitors into. Flip to `true` once direct OAuth providers land.
+ */
+export const SOCIAL_LOGIN_ENABLED = false;

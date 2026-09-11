@@ -176,6 +176,17 @@ missing. Postgres and Better Auth are pre-wired in `src/lib`, **opt-in per app**
   `node --env-file=.env.local scripts/migrate.mjs`. On Vercel nothing changes —
   the platform still injects `DATABASE_URL` at build time. Never print, log, or
   commit the connection string.
+- **Production authentication requires `BETTER_AUTH_URL` and `BETTER_AUTH_SECRET`.**
+  `src/lib/auth/server.ts` now throws at startup on any real deployment
+  (`VERCEL` or `GROK_PROJECT_ID` set) if either is missing — this is
+  deliberate fail-closed behaviour, not a bug: it refuses to sign sessions
+  with an ephemeral per-process secret or accept the sandbox/localhost
+  origin fallback in production. Set both in the deployment's env vars
+  before deploying. `BOOTSTRAP_ADMIN_EMAIL` gates who may claim the
+  one-time SUPER_ADMIN bootstrap (`src/lib/server/ops.ts` `bootstrapStaff`)
+  — without it, bootstrap is locked on any real deployment. Demo payment
+  settlement is likewise disabled on any real deployment (`demoPaymentsAllowed`
+  in `src/lib/server/config.ts`).
 - **`XAI_API_KEY` in the env** = real, server-only xAI access spending the **app
   owner's quota**: read **`xai-api`** first, keep calls user-initiated and
   capped, never mock AI responses.

@@ -373,6 +373,20 @@ export const getMyRole = createServerFn({ method: "GET" })
     };
   });
 
+/**
+ * Claim the single-use SUPER_ADMIN bootstrap. `context.email` is the verified
+ * session email from `authMiddleware` (never client input); `bootstrapEmailAllowed`
+ * restricts the claim to `BOOTSTRAP_ADMIN_EMAIL` outside local/preview.
+ *
+ * KNOWN LIMITATION (documented, not silently assumed safe): this checks WHICH
+ * address is allowed to claim, not that the claiming account actually owns
+ * that address — email/password sign-up has no verification step yet (lands
+ * with the Resend / password-reset task). Whichever account first registers
+ * with `BOOTSTRAP_ADMIN_EMAIL` and calls this wins the claim, permanently, via
+ * the atomic `bootstrap_lock` row below. The approved owner MUST register and
+ * bootstrap immediately after `BOOTSTRAP_ADMIN_EMAIL` is configured, before
+ * the URL is shared with anyone else.
+ */
 export const bootstrapStaff = createServerFn({ method: "POST" })
   .middleware([authMiddleware])
   .handler(async ({ context }) => {
