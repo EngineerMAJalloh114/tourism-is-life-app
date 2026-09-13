@@ -63,7 +63,7 @@ export function EnquiryForm({
           <Field name="ship" label="Ship name" required />
           <Field name="arrival" label="Arrival date & time" required />
           <Field name="passengers" label="Passenger count" required />
-          <Field name="excursions" label="Excursion requirements" />
+          <Field name="excursions" label="Shore excursion requirements" />
           <Field name="logistics" label="Logistics notes" />
         </>
       ) : null}

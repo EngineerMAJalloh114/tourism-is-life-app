@@ -58,7 +58,7 @@ export function CruiseInquiryForm({
           <Field name="departureDate" label="Departure date" type="date" />
           <Field name="passengers" label="Number of passengers" type="number" required />
           <div className="sm:col-span-2">
-            <Label htmlFor="excursions">Preferred excursion</Label>
+            <Label htmlFor="excursions">Preferred shore excursion</Label>
             <select
               id="excursions"
               name="excursions"

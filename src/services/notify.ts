@@ -162,7 +162,7 @@ const FIELD_LABELS: Record<string, string> = {
   ship: "Ship name",
   arrival: "Arrival date & time",
   passengers: "Passenger count",
-  excursions: "Excursion requirements",
+  excursions: "Shore excursion requirements",
   logistics: "Logistics notes",
   eventType: "Event type",
   attendees: "Attendees",

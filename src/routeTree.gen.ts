@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AccountRouteImport } from './routes/account'
 import { Route as AdminRouteImport } from './routes/admin'
+import { Route as BrochureRouteImport } from './routes/brochure'
 import { Route as ComingSoonRouteImport } from './routes/coming-soon'
 import { Route as ContactRouteImport } from './routes/contact'
 import { Route as ForgotPasswordRouteImport } from './routes/forgot-password'
@@ -105,6 +106,11 @@ const AccountRoute = AccountRouteImport.update({
 const AdminRoute = AdminRouteImport.update({
   id: '/admin',
   path: '/admin',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BrochureRoute = BrochureRouteImport.update({
+  id: '/brochure',
+  path: '/brochure',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ComingSoonRoute = ComingSoonRouteImport.update({
@@ -512,6 +518,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/account': typeof AccountRouteWithChildren
   '/admin': typeof AdminRouteWithChildren
+  '/brochure': typeof BrochureRoute
   '/coming-soon': typeof ComingSoonRoute
   '/contact': typeof ContactRouteWithChildren
   '/forgot-password': typeof ForgotPasswordRoute
@@ -594,6 +601,7 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/brochure': typeof BrochureRoute
   '/coming-soon': typeof ComingSoonRoute
   '/forgot-password': typeof ForgotPasswordRoute
   '/login': typeof LoginRoute
@@ -674,6 +682,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/account': typeof AccountRouteWithChildren
   '/admin': typeof AdminRouteWithChildren
+  '/brochure': typeof BrochureRoute
   '/coming-soon': typeof ComingSoonRoute
   '/contact': typeof ContactRouteWithChildren
   '/forgot-password': typeof ForgotPasswordRoute
@@ -760,6 +769,7 @@ export interface FileRouteTypes {
     | '/'
     | '/account'
     | '/admin'
+    | '/brochure'
     | '/coming-soon'
     | '/contact'
     | '/forgot-password'
@@ -842,6 +852,7 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/brochure'
     | '/coming-soon'
     | '/forgot-password'
     | '/login'
@@ -921,6 +932,7 @@ export interface FileRouteTypes {
     | '/'
     | '/account'
     | '/admin'
+    | '/brochure'
     | '/coming-soon'
     | '/contact'
     | '/forgot-password'
@@ -1006,6 +1018,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AccountRoute: typeof AccountRouteWithChildren
   AdminRoute: typeof AdminRouteWithChildren
+  BrochureRoute: typeof BrochureRoute
   ComingSoonRoute: typeof ComingSoonRoute
   ContactRoute: typeof ContactRouteWithChildren
   ForgotPasswordRoute: typeof ForgotPasswordRoute
@@ -1071,6 +1084,13 @@ declare module '@tanstack/react-router' {
       path: '/admin'
       fullPath: '/admin'
       preLoaderRoute: typeof AdminRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/brochure': {
+      id: '/brochure'
+      path: '/brochure'
+      fullPath: '/brochure'
+      preLoaderRoute: typeof BrochureRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/coming-soon': {
@@ -1785,6 +1805,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AccountRoute: AccountRouteWithChildren,
   AdminRoute: AdminRouteWithChildren,
+  BrochureRoute: BrochureRoute,
   ComingSoonRoute: ComingSoonRoute,
   ContactRoute: ContactRouteWithChildren,
   ForgotPasswordRoute: ForgotPasswordRoute,

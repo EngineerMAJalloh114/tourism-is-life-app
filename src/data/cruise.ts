@@ -528,7 +528,7 @@ export function filterExcursions(
 export const SECTION_NAV = [
   { id: "overview", label: "Overview" },
   { id: "why", label: "Why Tourism Is Life" },
-  { id: "excursions", label: "Excursions" },
+  { id: "excursions", label: "Shore Excursions" },
   { id: "destinations", label: "Destinations" },
   { id: "port", label: "Port" },
   { id: "arrival", label: "Arrival info" },

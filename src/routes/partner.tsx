@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { PageHero } from "@/components/page-hero";
 import { EnquiryForm } from "@/components/enquiry-form";
 import { IMG_FOREST } from "@/data/catalog";
@@ -30,6 +30,12 @@ function Partner() {
             <li>Cruise and MICE desks</li>
             <li>Manifest and group logistics</li>
           </ul>
+          <p>
+            <Link to="/brochure" className="underline decoration-gold underline-offset-4">
+              Read the full DMC brochure
+            </Link>{" "}
+            for the complete circuit and shore excursion catalogue.
+          </p>
         </div>
         <EnquiryForm type="B2B" />
       </div>
