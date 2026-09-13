@@ -3,7 +3,7 @@ import { SECTION_NAV } from "@/data/cruise";
 import { cn } from "@/lib/utils";
 
 export function StickySectionNav() {
-  const [active, setActive] = useState(SECTION_NAV[0].id);
+  const [active, setActive] = useState<string>(SECTION_NAV[0].id);
 
   useEffect(() => {
     const nodes = SECTION_NAV.map((item) => document.getElementById(item.id)).filter(

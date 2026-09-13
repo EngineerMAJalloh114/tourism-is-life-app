@@ -4,8 +4,17 @@ import { PageHero } from "@/components/page-hero";
 import { EnquiryForm } from "@/components/enquiry-form";
 import { IMG_HERO } from "@/data/catalog";
 import { SITE } from "@/lib/site";
+import { pageHead } from "@/lib/seo";
 
-export const Route = createFileRoute("/contact/")({ component: Contact });
+export const Route = createFileRoute("/contact/")({
+  head: () =>
+    pageHead(
+      "Contact Tourism Is Life",
+      "Reach the Freetown desk by phone, WhatsApp, or email — Tourism Is Life replies to enquiries within 24 hours.",
+      "/contact",
+    ),
+  component: Contact,
+});
 
 function Contact() {
   return (

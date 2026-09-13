@@ -1,8 +1,17 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { PageHero } from "@/components/page-hero";
 import { IMG_FOREST, team } from "@/data/catalog";
+import { pageHead } from "@/lib/seo";
 
-export const Route = createFileRoute("/about/team")({ component: Team });
+export const Route = createFileRoute("/about/team")({
+  head: () =>
+    pageHead(
+      "Our Team",
+      "Meet the guides and staff behind Tourism Is Life Tours, Freetown's Sierra Leone destination management company.",
+      "/about/team",
+    ),
+  component: Team,
+});
 
 function Team() {
   return (

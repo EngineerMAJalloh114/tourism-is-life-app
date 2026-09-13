@@ -2,8 +2,17 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { PageHero } from "@/components/page-hero";
 import { IMG_FOREST } from "@/data/catalog";
 import { Button } from "@/components/ui/button";
+import { pageHead } from "@/lib/seo";
 
-export const Route = createFileRoute("/about/why-us")({ component: Page });
+export const Route = createFileRoute("/about/why-us")({
+  head: () =>
+    pageHead(
+      "Why Travel With Us",
+      "A Freetown-based, founder-led DMC with published circuits across Sierra Leone and dedicated cruise and group-handling desks.",
+      "/about/why-us",
+    ),
+  component: Page,
+});
 
 function Page() {
   return (

@@ -8,7 +8,7 @@ import { pageHead } from "@/lib/seo";
 import { Button } from "@/components/ui/button";
 
 export const Route = createFileRoute("/admin")({
-  head: () => pageHead("Operations", "Tourism Is Life operations desk.", "/admin"),
+  head: () => pageHead("Operations", "Tourism Is Life operations desk.", "/admin", "noindex,nofollow"),
   component: AdminLayout,
 });
 

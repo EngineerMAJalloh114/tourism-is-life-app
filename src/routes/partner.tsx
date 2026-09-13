@@ -2,8 +2,17 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { PageHero } from "@/components/page-hero";
 import { EnquiryForm } from "@/components/enquiry-form";
 import { IMG_FOREST } from "@/data/catalog";
+import { pageHead } from "@/lib/seo";
 
-export const Route = createFileRoute("/partner")({ component: Partner });
+export const Route = createFileRoute("/partner")({
+  head: () =>
+    pageHead(
+      "Become a Partner",
+      "Ground handling in Sierra Leone for tour operators — from Freetown day programmes to Mano River Triangle overlands.",
+      "/partner",
+    ),
+  component: Partner,
+});
 
 function Partner() {
   return (

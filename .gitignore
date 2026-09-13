@@ -55,3 +55,5 @@ attachments/
 .tanstack/
 candidates6.json
 {}
+.vercel
+.env*

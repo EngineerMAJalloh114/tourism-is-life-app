@@ -1,8 +1,17 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { PageHero } from "@/components/page-hero";
 import { IMG_MICE, services } from "@/data/catalog";
+import { pageHead } from "@/lib/seo";
 
-export const Route = createFileRoute("/services/")({ component: Page });
+export const Route = createFileRoute("/services/")({
+  head: () =>
+    pageHead(
+      "DMC Services",
+      "Ground handling beyond the tour catalogue: visas, vehicles, hotels, ticketing, MICE, and cruise support in Sierra Leone.",
+      "/services",
+    ),
+  component: Page,
+});
 
 function Page() {
   return (

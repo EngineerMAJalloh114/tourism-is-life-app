@@ -16,7 +16,11 @@ describe("payment provider abstraction", () => {
   });
 
   it("demo initiate does not invent a live redirect", async () => {
-    const started = await activePaymentProvider().initiate("TIL-TEST");
+    const started = await activePaymentProvider().initiate({
+      id: "TIL-TEST",
+      amountCents: 0,
+      currency: "USD",
+    });
     assert.equal(started.demo, true);
     assert.equal(started.redirectUrl, undefined);
   });

@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { SlidersHorizontal, X } from "lucide-react";
-import { cn } from "@/lib/utils";
 import type { VehicleCategory, DriverOption } from "@/data/vehicle-rental";
 import { vehicleTypeOptions, driverOptions } from "@/data/vehicle-rental";
 

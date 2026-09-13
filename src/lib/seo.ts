@@ -1,12 +1,12 @@
 import { SITE } from "@/lib/site";
 
-export function pageHead(title: string, description: string, path = "/") {
+export function pageHead(title: string, description: string, path = "/", robots = "index,follow") {
   const full = title.includes("Tourism Is Life") ? title : `${title} · ${SITE.name}`;
   return {
     meta: [
       { title: full },
       { name: "description", content: description },
-      { name: "robots", content: "index,follow" },
+      { name: "robots", content: robots },
     ],
     links: [{ rel: "canonical", href: `${SITE.website}${path === "/" ? "" : path}` }],
   };

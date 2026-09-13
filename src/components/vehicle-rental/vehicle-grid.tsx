@@ -11,7 +11,7 @@ const sortOptions = [
   { value: "seats-desc", label: "Most Seats" },
 ];
 
-export function VehicleGrid({ initialVehicles }: { initialVehicles: Vehicle[] }) {
+export function VehicleGrid({ initialVehicles: _initialVehicles }: { initialVehicles: Vehicle[] }) {
   const [sortBy, setSortBy] = useState("recommended");
   const [filters, setFilters] = useState({
     type: "any" as VehicleCategory | "any",
@@ -32,7 +32,7 @@ export function VehicleGrid({ initialVehicles }: { initialVehicles: Vehicle[] })
     }
     list = list.filter((v) => (v.pricing.dailyRateCents ?? 0) / 100 <= filters.maxPrice);
     return sortVehicles(list, sortBy);
-  }, [filters, sortBy, initialVehicles]);
+  }, [filters, sortBy]);
 
   return (
     <div className="grid gap-8 lg:grid-cols-[16rem_1fr]">

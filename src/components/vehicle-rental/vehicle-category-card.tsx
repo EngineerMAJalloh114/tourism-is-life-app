@@ -1,4 +1,3 @@
-import { cn } from "@/lib/utils";
 import type { VehicleCategoryInfo } from "@/data/vehicle-rental";
 
 export function VehicleCategoryCard({ category, onClick }: { category: VehicleCategoryInfo; onClick?: (slug: string) => void }) {

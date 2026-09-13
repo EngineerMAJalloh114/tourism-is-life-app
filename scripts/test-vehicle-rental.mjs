@@ -1,6 +1,5 @@
 import { chromium } from "playwright";
 import { mkdirSync } from "node:fs";
-import { dirname } from "node:path";
 
 const outDir = "C:\\Users\\MOHAMED ABASS JALLOH\\Documents\\tourism_is_life_final_web\\tourism-is-life-app\\screenshots";
 mkdirSync(outDir, { recursive: true });

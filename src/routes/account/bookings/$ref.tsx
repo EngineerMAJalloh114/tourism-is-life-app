@@ -20,13 +20,14 @@ function BookingDetail() {
 
   if (!booking) return <p className="text-sm text-muted">Loading booking…</p>;
   const tour = getTour(booking.tour_slug);
+  const currentBooking = booking;
 
   async function onReview(form: HTMLFormElement) {
     const fd = new FormData(form);
     try {
       await submitReview({
         data: {
-          bookingId: booking.id,
+          bookingId: currentBooking.id,
           rating: Number(fd.get("rating")),
           body: String(fd.get("body") ?? ""),
         },

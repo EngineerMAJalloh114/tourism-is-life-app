@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 import { chromium } from "playwright";
-import { writeFileSync, mkdirSync } from "node:fs";
-import { dirname, resolve } from "node:path";
+import { mkdirSync } from "node:fs";
+import { resolve } from "node:path";
 
 const outDir = resolve("C:\\workspace\\screenshots");
 mkdirSync(outDir, { recursive: true });

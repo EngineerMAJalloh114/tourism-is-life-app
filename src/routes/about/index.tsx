@@ -1,8 +1,17 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { PageHero } from "@/components/page-hero";
 import { Button } from "@/components/ui/button";
+import { pageHead } from "@/lib/seo";
 
-export const Route = createFileRoute("/about/")({ component: About });
+export const Route = createFileRoute("/about/")({
+  head: () =>
+    pageHead(
+      "About Tourism Is Life",
+      "Tourism Is Life Tours is a Freetown-based DMC planning trips across Sierra Leone's coast, forests, and heritage sites.",
+      "/about",
+    ),
+  component: About,
+});
 
 function About() {
   return (

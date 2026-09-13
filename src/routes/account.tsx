@@ -5,7 +5,7 @@ import { pageHead } from "@/lib/seo";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/account")({
-  head: () => pageHead("Account", "Your Tourism Is Life bookings and saved tours.", "/account"),
+  head: () => pageHead("Account", "Your Tourism Is Life bookings and saved tours.", "/account", "noindex,nofollow"),
   component: AccountLayout,
 });
 

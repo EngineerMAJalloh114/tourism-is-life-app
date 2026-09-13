@@ -84,9 +84,10 @@ export function CheckoutView({ step }: { step: Step }) {
 
   const tour = getTour(booking.tour_slug);
   const q = `?t=${encodeURIComponent(token)}`;
+  const bookingId = booking.id;
 
   function go(next: Step) {
-    void navigate({ href: `/checkout/${booking.id}/${next}${q}` });
+    void navigate({ href: `/checkout/${bookingId}/${next}${q}` });
   }
 
   return (

@@ -25,6 +25,7 @@ function BookingPage() {
   const [busy, setBusy] = useState(false);
 
   if (!tour) throw notFound();
+  const activeTour = tour;
 
   useEffect(() => {
     if (!date || !tour.bookable) return;
@@ -50,9 +51,9 @@ function BookingPage() {
     setError(null);
     try {
       const r = await createHold({
-        data: { tourSlug: tour.slug, travelDate: date, guests },
+        data: { tourSlug: activeTour.slug, travelDate: date, guests },
       });
-      storeCheckout({ id: r.id, token: r.accessToken, tourSlug: tour.slug });
+      storeCheckout({ id: r.id, token: r.accessToken, tourSlug: activeTour.slug });
       void navigate({
         to: "/checkout/$ref/guests",
         params: { ref: r.id },

@@ -1,4 +1,4 @@
-import { createFileRoute, notFound } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 import { JsonLd } from "@/components/json-ld";
 import { pageHead, organizationJsonLd } from "@/lib/seo";
 import { VehicleBooking } from "@/components/vehicle-rental/vehicle-booking";

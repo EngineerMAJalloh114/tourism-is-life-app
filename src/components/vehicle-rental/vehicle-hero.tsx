@@ -1,11 +1,9 @@
-import { useState, type FormEvent } from "react";
-import { Plane, Car } from "lucide-react";
-import { PageHero } from "@/components/page-hero";
+import { useState } from "react";
 import { VehicleSearchForm } from "./vehicle-search-form";
 import { type BookingSearch } from "@/data/vehicle-rental";
 
 export function VehicleHero() {
-  const [query, setQuery] = useState<Partial<BookingSearch>>({});
+  const [, setQuery] = useState<Partial<BookingSearch>>({});
 
   function handleSearch(search: Partial<BookingSearch>) {
     setQuery(search);

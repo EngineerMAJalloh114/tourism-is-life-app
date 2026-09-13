@@ -3,8 +3,17 @@ import { MessageCircle, MessageSquare } from "lucide-react";
 import { PageHero } from "@/components/page-hero";
 import { IMG_HERO } from "@/data/catalog";
 import { SITE } from "@/lib/site";
+import { pageHead } from "@/lib/seo";
 
-export const Route = createFileRoute("/contact/emergency")({ component: Page });
+export const Route = createFileRoute("/contact/emergency")({
+  head: () =>
+    pageHead(
+      "Emergency Contact",
+      "A round-the-clock phone line for travellers who need to reach Tourism Is Life outside regular hours.",
+      "/contact/emergency",
+    ),
+  component: Page,
+});
 
 function Page() {
   return (

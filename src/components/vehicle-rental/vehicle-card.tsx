@@ -1,16 +1,7 @@
 import { Link } from "@tanstack/react-router";
-import { Car, MapPin, Users, Luggage, Gauge, Fuel, Settings, Snowflake } from "lucide-react";
+import { MapPin, Users, Luggage, Fuel, Settings } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { Vehicle } from "@/data/vehicle-rental";
-
-const specIcon: Record<string, React.ComponentType<{ className?: string }>> = {
-  seats: Users,
-  doors: Car,
-  luggage: Luggage,
-  transmission: Settings,
-  fuel: Fuel,
-  ac: Snowflake,
-};
 
 export function VehicleCard({ vehicle }: { vehicle: Vehicle }) {
   const availabilityColor =

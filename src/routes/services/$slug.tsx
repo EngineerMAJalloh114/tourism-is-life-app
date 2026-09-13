@@ -2,8 +2,16 @@ import { createFileRoute, notFound } from "@tanstack/react-router";
 import { getService, IMG_MICE } from "@/data/catalog";
 import { PageHero } from "@/components/page-hero";
 import { EnquiryForm } from "@/components/enquiry-form";
+import { pageHead } from "@/lib/seo";
 
-export const Route = createFileRoute("/services/$slug")({ component: ServicePage });
+export const Route = createFileRoute("/services/$slug")({
+  head: ({ params }) => {
+    const service = getService(params.slug);
+    if (!service) return pageHead("Service", "", "/services");
+    return pageHead(service.name, service.summary, `/services/${service.slug}`);
+  },
+  component: ServicePage,
+});
 
 function ServicePage() {
   const { slug } = Route.useParams();

@@ -5,6 +5,6 @@ export const Route = createFileRoute("/checkout/$ref")({
   validateSearch: (s: Record<string, unknown>) => ({
     t: typeof s.t === "string" ? s.t : undefined,
   }),
-  head: () => pageHead("Checkout", "Complete your Tourism Is Life reservation.", "/checkout"),
+  head: () => pageHead("Checkout", "Complete your Tourism Is Life reservation.", "/checkout", "noindex,nofollow"),
   component: () => <Outlet />,
 });

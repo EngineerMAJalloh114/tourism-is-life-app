@@ -1,8 +1,17 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { PageHero } from "@/components/page-hero";
 import { IMG_FOREST, services } from "@/data/catalog";
+import { pageHead } from "@/lib/seo";
 
-export const Route = createFileRoute("/about/what-we-offer")({ component: Offer });
+export const Route = createFileRoute("/about/what-we-offer")({
+  head: () =>
+    pageHead(
+      "What We Offer",
+      "Tours, visa facilitation, vehicle rental, hotel bookings, cruise handling, and MICE support from Sierra Leone's Freetown-based DMC.",
+      "/about/what-we-offer",
+    ),
+  component: Offer,
+});
 
 function Offer() {
   return (

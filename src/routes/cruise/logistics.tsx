@@ -2,8 +2,17 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { PageHero } from "@/components/page-hero";
 import { IMG_CRUISE } from "@/data/catalog";
 import { Button } from "@/components/ui/button";
+import { pageHead } from "@/lib/seo";
 
-export const Route = createFileRoute("/cruise/logistics")({ component: Page });
+export const Route = createFileRoute("/cruise/logistics")({
+  head: () =>
+    pageHead(
+      "Cruise Logistics",
+      "Ground transport, timing, and on-shore coordination for cruise calls at Freetown, arranged by Tourism Is Life.",
+      "/cruise/logistics",
+    ),
+  component: Page,
+});
 
 function Page() {
   return (
