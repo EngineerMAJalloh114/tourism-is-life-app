@@ -16,8 +16,8 @@ export function VehicleHero() {
   return (
     <section className="relative isolate min-h-[70vh] overflow-hidden bg-brand-dark text-ivory">
       <img
-        src="/images/beaches/tokeh-beach-hero.jpg"
-        alt="West African coastal road — representative"
+        src="/images/vehicles/hero-safari-savannah.webp"
+        alt="4x4 vehicle on a dirt track through grassland — editorial stand-in for overland travel"
         className="absolute inset-0 size-full object-cover opacity-60"
       />
       <div className="absolute inset-0 bg-gradient-to-t from-brand-dark via-brand-dark/60 to-brand-dark/20" />

@@ -53,7 +53,7 @@ function Home() {
         <img
           src={IMG_HERO}
           alt="West African tropical coastline — editorial stand-in"
-          className="absolute inset-0 size-full object-cover"
+          className="absolute inset-0 size-full object-cover object-[center_78%]"
         />
         <div className="absolute inset-0 bg-gradient-to-r from-brand-dark/90 via-brand-dark/55 to-brand-dark/20" />
         <div className="film-grain pointer-events-none absolute inset-0" />
