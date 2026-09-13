@@ -1,6 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { PageHero } from "@/components/page-hero";
-import { IMG_FOREST } from "@/data/catalog";
 import { Button } from "@/components/ui/button";
 
 export const Route = createFileRoute("/about/")({ component: About });
@@ -12,8 +11,9 @@ function About() {
         kicker="The company"
         title="Tourism Is Life Tours"
         lede="A Sierra Leone destination management company based on State Avenue, Freetown."
-        image={IMG_FOREST}
-        imageAlt="Forest landscape"
+        image="/images/culture/pepper-seller.jpg"
+        imageAlt="A market vendor selling peppers, Sierra Leone"
+        imagePosition="center 12%"
       />
       <div className="container-page max-w-3xl py-16">
         <p className="text-lg leading-relaxed">

@@ -1,18 +1,5 @@
 [
   {
-    "filename": "/images/beaches/freetown-peninsula-bicycle.jpg",
-    "page": "",
-    "section": "",
-    "subject": "freetown-peninsula-bicycle.jpg",
-    "location": "Sierra Leone",
-    "source": "",
-    "sourceUrl": "",
-    "license": "license_verification_required",
-    "alt": "",
-    "purpose": "",
-    "author": ""
-  },
-  {
     "filename": "/images/beaches/lumley-beach.jpg",
     "page": "https://commons.wikimedia.org/wiki/File:Lumley_Beach_Freetown.JPG",
     "section": "peninsula beach",
@@ -27,16 +14,30 @@
   },
   {
     "filename": "/images/beaches/river-number-two-beach.jpg",
-    "page": "https://commons.wikimedia.org/wiki/File:Flickr_-_stringer_bel_-_River_No._2_Village_Beach,_Sierra_Leone_(1).jpg",
+    "page": "https://commons.wikimedia.org/wiki/File:A_Canoe_At_The_River_Number_2_-_Sierra_Leone.JPG",
     "section": "peninsula beach",
-    "subject": "River No. 2 Village Beach, Sierra Leone",
+    "subject": "A wooden canoe marked 'No 2 River' on the sand at River Number Two Beach, Sierra Leone",
     "location": "Sierra Leone",
-    "source": "https://commons.wikimedia.org/wiki/File:Flickr_-_stringer_bel_-_River_No._2_Village_Beach,_Sierra_Leone_(1).jpg",
-    "sourceUrl": "https://upload.wikimedia.org/wikipedia/commons/9/9e/Flickr_-_stringer_bel_-_River_No._2_Village_Beach%2C_Sierra_Leone_%281%29.jpg",
-    "license": "CC BY 2.0",
-    "alt": "River Number Two beach on the Freetown Peninsula, Sierra Leone",
+    "source": "Hussein Kefel / Wikimedia Commons",
+    "sourceUrl": "https://upload.wikimedia.org/wikipedia/commons/4/42/A_Canoe_At_The_River_Number_2_-_Sierra_Leone.JPG",
+    "license": "CC BY-SA 3.0",
+    "alt": "A wooden canoe marked 'No 2 River' on the sand at River Number Two Beach, Sierra Leone",
     "purpose": "peninsula beach",
-    "author": "stringer bel"
+    "note": "Replaces a prior file that did not match this JSON record — the bytes on disk were an unrelated abstract driftwood photo, not the River No. 2 Village Beach image this entry originally described.",
+    "author": "Hussein Kefel"
+  },
+  {
+    "filename": "/images/beaches/river-number-two-laterite.jpg",
+    "page": "https://commons.wikimedia.org/wiki/File:The_Number_2_,_Sierra_Leone.jpg",
+    "section": "peninsula beach",
+    "subject": "Laterite rock formation and mangrove-lined river mouth at River Number Two Beach, Sierra Leone",
+    "location": "Sierra Leone",
+    "source": "Hussein Kefel / Wikimedia Commons",
+    "sourceUrl": "https://upload.wikimedia.org/wikipedia/commons/b/b4/The_Number_2_%2C_Sierra_Leone.jpg",
+    "license": "CC BY-SA 3.0",
+    "alt": "Laterite rock formation and mangrove-lined river mouth at River Number Two Beach, Sierra Leone",
+    "purpose": "peninsula beach gallery",
+    "author": "Hussein Kefel"
   },
   {
     "filename": "/images/beaches/tokeh-beach-hero.jpg",

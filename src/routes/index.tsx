@@ -233,7 +233,7 @@ function Home() {
           {(
             [
               ["wildlife", "Wildlife", IMG_WILDLIFE],
-              ["beaches", "Beaches & Islands", IMG_HERO],
+              ["beaches", "Beaches & Islands", "/images/beaches/tokeh-beach.jpg"],
               ["culture", "Culture & Heritage", "/images/culture/kings-gate-freetown.jpg"],
               ["adventure", "Adventure & Trekking", "/images/mountains/adventure-bintumani-fb.jpg"],
             ] as const

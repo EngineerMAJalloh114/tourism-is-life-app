@@ -4,12 +4,15 @@ export function PageHero({
   lede,
   image,
   imageAlt,
+  imagePosition = "center",
 }: {
   kicker?: string;
   title: string;
   lede?: string;
   image: string;
   imageAlt: string;
+  /** CSS object-position for the hero image — override for tall/portrait source photos. */
+  imagePosition?: string;
 }) {
   return (
     <section className="relative isolate min-h-[42vh] overflow-hidden bg-brand-dark text-ivory">
@@ -17,6 +20,7 @@ export function PageHero({
         src={image}
         alt={imageAlt}
         className="absolute inset-0 size-full object-cover opacity-50"
+        style={{ objectPosition: imagePosition }}
       />
       <div className="absolute inset-0 bg-gradient-to-t from-brand-dark via-brand-dark/55 to-brand/20" />
       <div className="container-page relative flex min-h-[42vh] flex-col justify-end pb-12 pt-24">
