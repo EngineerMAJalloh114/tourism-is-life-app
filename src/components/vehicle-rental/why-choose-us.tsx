@@ -27,7 +27,7 @@ export function WhyChooseUs() {
   return (
     <section className="bg-surface py-20">
       <div className="container-page">
-        <p className="text-xs uppercase tracking-[0.22em] text-gold">Why Tourism Is Life</p>
+        <p className="text-xs uppercase tracking-[0.22em] text-gold-ink">Why Tourism Is Life</p>
         <h2 className="mt-2 font-display text-4xl text-brand">Built for tourism. Driven by local knowledge.</h2>
         <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
           {benefits.map((item) => (

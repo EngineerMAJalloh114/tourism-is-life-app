@@ -22,8 +22,10 @@ export const Route = createFileRoute("/brochure")({
   component: Brochure,
 });
 
-function Kicker({ children }: { children: string }) {
-  return <p className="text-xs uppercase tracking-[0.22em] text-gold">{children}</p>;
+function Kicker({ children, dark }: { children: string; dark?: boolean }) {
+  return (
+    <p className={`text-xs uppercase tracking-[0.22em] ${dark ? "text-gold" : "text-gold-ink"}`}>{children}</p>
+  );
 }
 
 function SectionHeading({ kicker, title, lede }: { kicker: string; title: string; lede?: string }) {
@@ -121,7 +123,7 @@ function Brochure() {
       {/* 4. Shore Excursions */}
       <section id="shore-excursions" className="border-t border-line bg-brand-dark py-16 text-ivory">
         <div className="container-page">
-          <Kicker>Shore excursions</Kicker>
+          <Kicker dark>Shore excursions</Kicker>
           <h2 className="mt-2 max-w-2xl font-display text-3xl sm:text-4xl">
             For the desk, the cruise call is a few hours. For us, it&rsquo;s the whole job.
           </h2>
@@ -228,7 +230,7 @@ function Brochure() {
       {manoRiver ? (
         <section id="mano-river-triangle" className="border-t border-line bg-brand-dark py-16 text-ivory">
           <div className="container-page">
-            <Kicker>Mano River Triangle</Kicker>
+            <Kicker dark>Mano River Triangle</Kicker>
             <h2 className="mt-2 max-w-2xl font-display text-3xl sm:text-4xl">
               Guinea, Sierra Leone, and Liberia — one route, three guides
             </h2>

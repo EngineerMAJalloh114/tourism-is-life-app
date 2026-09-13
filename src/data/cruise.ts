@@ -283,8 +283,8 @@ export const cruiseDestinations: CruiseDestination[] = [
     name: "Bunce Island",
     summary:
       "A heritage island in the Sierra Leone River, visited together with neighbouring Tasso Island.",
-    image: "/images/heritage/bunce-island-cannon.jpg",
-    imageAlt: "Historic cannon at Bunce Island fortress",
+    image: "/images/heritage/bunce-tasso-national-parks.jpg",
+    imageAlt: "Bunce and Tasso Islands, Sierra Leone River",
   },
   {
     id: "tacugama",

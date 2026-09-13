@@ -28,7 +28,7 @@ function Page() {
       <JsonLd data={organizationJsonLd()} />
       <VehicleHero />
       <section id="vehicle-results" className="container-page py-16 scroll-mt-24">
-        <p className="text-xs uppercase tracking-[0.22em] text-gold">Vehicles For Every Journey</p>
+        <p className="text-xs uppercase tracking-[0.22em] text-gold-ink">Vehicles For Every Journey</p>
         <h2 className="mt-2 font-display text-4xl text-brand">Choose your vehicle</h2>
         <p className="mt-3 max-w-2xl text-muted">
           From economy cars to 4x4s and group coaches — all maintained for Sierra Leone's roads and conditions.
@@ -51,7 +51,7 @@ function Page() {
         <div className="mt-16">
           <div className="flex items-end justify-between gap-4">
             <div>
-              <p className="text-xs uppercase tracking-[0.22em] text-gold">Popular Choices</p>
+              <p className="text-xs uppercase tracking-[0.22em] text-gold-ink">Popular Choices</p>
               <h3 className="mt-2 font-display text-3xl text-brand">Tour-ready vehicles</h3>
             </div>
           </div>

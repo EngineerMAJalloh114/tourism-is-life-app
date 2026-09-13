@@ -53,7 +53,7 @@ export function VehicleCard({ vehicle }: { vehicle: Vehicle }) {
         <div className="mt-4 flex items-center justify-between border-t border-line pt-4">
           <div>
             <p className={cn("text-xs font-medium uppercase tracking-[0.14em]", availabilityColor)}>
-              {vehicle.availability === "available" ? "Available" : vehicle.availability === "limited" ? "Limited" : "Booked"}
+              {vehicle.availability === "available" ? "Available" : vehicle.availability === "limited" ? "Limited" : "Unavailable"}
             </p>
             <p className="mt-1 font-display text-xl text-brand">
               From {new Intl.NumberFormat("en-US", { style: "currency", currency: vehicle.pricing.currency, minimumFractionDigits: 0, maximumFractionDigits: 0 }).format((vehicle.pricing.dailyRateCents ?? 0) / 100)}
@@ -65,7 +65,7 @@ export function VehicleCard({ vehicle }: { vehicle: Vehicle }) {
               <Link to="/services/vehicle-rental/vehicles/$vehicleId" params={{ vehicleId: vehicle.id }}>Details</Link>
             </Button>
             <Button asChild size="sm">
-              <Link to="/services/vehicle-rental/book/$vehicleId" params={{ vehicleId: vehicle.id }}>Book</Link>
+              <Link to="/services/vehicle-rental/book/$vehicleId" params={{ vehicleId: vehicle.id }}>Enquire</Link>
             </Button>
           </div>
         </div>

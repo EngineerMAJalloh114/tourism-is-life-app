@@ -8,7 +8,7 @@ export function pageHead(title: string, description: string, path = "/") {
       { name: "description", content: description },
       { name: "robots", content: "index,follow" },
     ],
-    links: [{ rel: "canonical", href: path }],
+    links: [{ rel: "canonical", href: `${SITE.website}${path === "/" ? "" : path}` }],
   };
 }
 

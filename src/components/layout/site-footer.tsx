@@ -99,7 +99,7 @@ export function SiteFooter() {
           <p className="mt-5 text-sm text-ivory/70">
             24/7 emergency
             <br />
-            <a href={SITE.phoneHref} className="text-gold inline-flex items-center gap-1" aria-label="Call Tourism Is Life">
+            <a href={SITE.phoneHref} className="text-gold inline-flex items-center gap-1">
               <Phone className="size-3.5" />
               {SITE.phone}
             </a>
@@ -109,7 +109,7 @@ export function SiteFooter() {
               WhatsApp
             </a>
             <br />
-            <a href={SITE.smsHref} className="text-gold inline-flex items-center gap-1" aria-label="Message Tourism Is Life">
+            <a href={SITE.smsHref} className="text-gold inline-flex items-center gap-1">
               <MessageSquare className="size-3.5" />
               SMS
             </a>

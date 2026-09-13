@@ -155,7 +155,7 @@ function Home() {
       </section>
 
       <section className="container-page py-20">
-        <p className="text-xs uppercase tracking-[0.22em] text-gold">The four circuits</p>
+        <p className="text-xs uppercase tracking-[0.22em] text-gold-ink">The four circuits</p>
         <h2 className="mt-2 font-display text-4xl text-brand">Sierra Leone, mapped as we travel it</h2>
         <div className="mt-10 grid gap-5 sm:grid-cols-2">
           {circuits.map((c) => (
@@ -185,7 +185,7 @@ function Home() {
         <div className="container-page">
           <div className="flex items-end justify-between gap-4">
             <div>
-              <p className="text-xs uppercase tracking-[0.22em] text-gold">Featured journeys</p>
+              <p className="text-xs uppercase tracking-[0.22em] text-gold-ink">Featured journeys</p>
               <h2 className="mt-2 font-display text-4xl text-brand">Tours from the public catalogue</h2>
             </div>
             <Button asChild variant="outline">
@@ -257,7 +257,7 @@ function Home() {
 
       <section className="bg-surface py-20">
         <div className="container-page">
-          <p className="text-xs uppercase tracking-[0.22em] text-gold">Signature experiences</p>
+          <p className="text-xs uppercase tracking-[0.22em] text-gold-ink">Signature experiences</p>
           <h2 className="mt-2 font-display text-4xl text-brand">Islands, chimps, rainforest, summit</h2>
           <div className="mt-10 grid gap-6 lg:grid-cols-4">
             {signatures.map((t) => (

@@ -95,8 +95,8 @@ export function SiteHeader() {
         <div className="container-page flex min-h-10 flex-wrap items-center justify-between gap-2 py-1.5 text-[11px] uppercase tracking-[0.14em]">
           <div className="flex flex-wrap items-center gap-x-4 gap-y-1">
             <span className="text-ivory/70">EN</span>
-            <span className="text-ivory/30">FR soon</span>
-            <span className="text-ivory/30">|</span>
+            <span className="text-ivory/50">FR soon</span>
+            <span className="text-ivory/50">|</span>
             <button
               type="button"
               className={cn("min-h-8", currency === "USD" ? "text-gold" : "text-ivory/70")}

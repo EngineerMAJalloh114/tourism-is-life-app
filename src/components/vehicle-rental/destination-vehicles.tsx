@@ -22,7 +22,7 @@ export function DestinationVehicles() {
   return (
     <section className="bg-surface py-20">
       <div className="container-page">
-        <p className="text-xs uppercase tracking-[0.22em] text-gold">Explore More of Sierra Leone</p>
+        <p className="text-xs uppercase tracking-[0.22em] text-gold-ink">Explore More of Sierra Leone</p>
         <h2 className="mt-2 font-display text-4xl text-brand">Vehicles for every destination</h2>
         <p className="mt-3 max-w-2xl text-muted">
           From Freetown's peninsula to remote northern circuits, the right vehicle makes the journey easier.

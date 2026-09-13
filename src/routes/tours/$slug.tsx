@@ -96,7 +96,7 @@ function TourDetail() {
           <ol className="mt-4 space-y-4">
             {tour.itinerary.map((d) => (
               <li key={d.day} className="rounded-md border border-line bg-surface p-4">
-                <p className="text-xs uppercase tracking-[0.16em] text-gold">Day {d.day}</p>
+                <p className="text-xs uppercase tracking-[0.16em] text-gold-ink">Day {d.day}</p>
                 <h3 className="mt-1 font-display text-xl text-brand">{d.title}</h3>
                 <p className="mt-1 text-sm text-muted">{d.description}</p>
               </li>

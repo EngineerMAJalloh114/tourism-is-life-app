@@ -17,7 +17,7 @@ function Team() {
       <div className="container-page grid gap-6 py-16 sm:grid-cols-2">
         {team.map((p) => (
           <article key={p.slug} className="rounded-lg border border-line bg-surface p-6">
-            <p className="text-xs uppercase tracking-[0.16em] text-gold">{p.role}</p>
+            <p className="text-xs uppercase tracking-[0.16em] text-gold-ink">{p.role}</p>
             <h2 className="mt-2 font-display text-3xl text-brand">{p.name}</h2>
             <p className="mt-3 text-sm leading-relaxed text-muted">{p.bio}</p>
           </article>

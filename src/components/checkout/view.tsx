@@ -307,7 +307,7 @@ function PaymentPanel({
 
   return (
     <div className="mt-8 max-w-lg rounded-lg border border-line bg-surface p-6">
-      <p className="text-xs uppercase tracking-[0.16em] text-gold">{mode?.label ?? "Test settlement"}</p>
+      <p className="text-xs uppercase tracking-[0.16em] text-gold-ink">{mode?.label ?? "Test settlement"}</p>
       <h2 className="mt-2 font-display text-2xl text-brand">Payment</h2>
       <p className="mt-3 text-sm text-muted">
         Card charges and Orange Money / Afrimoney confirm only after a signed Stripe or Moneroo webhook. No
@@ -384,7 +384,7 @@ function ConfirmPanel({
 function VoucherPanel({ booking, tourTitle }: { booking: BookingRow; tourTitle: string }) {
   return (
     <div className="mt-8 max-w-xl rounded-lg border border-gold bg-surface p-8 print:border-ink">
-      <p className="text-xs uppercase tracking-[0.2em] text-gold">Tourism Is Life · Voucher</p>
+      <p className="text-xs uppercase tracking-[0.2em] text-gold-ink">Tourism Is Life · Voucher</p>
       <h2 className="mt-2 font-display text-3xl text-brand">{booking.voucher_code ?? "Pending voucher"}</h2>
       <p className="mt-4">{tourTitle}</p>
       <p className="mt-1 text-sm text-muted">

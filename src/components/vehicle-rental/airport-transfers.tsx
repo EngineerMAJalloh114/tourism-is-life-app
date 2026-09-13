@@ -49,7 +49,7 @@ const scenarios = [
 export function AirportTransfers() {
   return (
     <section className="container-page py-20">
-      <p className="text-xs uppercase tracking-[0.22em] text-gold">Tour-Ready Transportation</p>
+      <p className="text-xs uppercase tracking-[0.22em] text-gold-ink">Tour-Ready Transportation</p>
       <h2 className="mt-2 font-display text-4xl text-brand">Vehicles Made For Your Journey</h2>
       <p className="mt-3 max-w-2xl text-muted">
         Every vehicle is selected for Sierra Leone's roads and your itinerary. From airport runs to remote overland, we match the vehicle to the journey.

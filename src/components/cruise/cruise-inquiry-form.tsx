@@ -43,7 +43,7 @@ export function CruiseInquiryForm({
 
   return (
     <form onSubmit={onSubmit} className="space-y-8 rounded-lg border border-line bg-surface p-6">
-      <p className="text-xs uppercase tracking-[0.16em] text-gold">
+      <p className="text-xs uppercase tracking-[0.16em] text-gold-ink">
         {user ? "Saved to your account" : "Guest request — no account required"}
       </p>
       <p className="text-sm text-muted">

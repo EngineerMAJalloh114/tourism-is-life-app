@@ -32,7 +32,7 @@ export function VehicleHero() {
             Reliable vehicles for exploring Sierra Leone and your next destination. From airport transfers to overland adventures.
           </p>
           <div className="mt-6 flex flex-wrap gap-3">
-            {["Flexible options", "Local destinations", "Professional drivers", "Easy booking", "Airport pickup", "Tour-ready"].map((benefit) => (
+            {["Flexible options", "Local destinations", "Professional drivers", "Quick enquiry", "Airport pickup", "Tour-ready"].map((benefit) => (
               <span key={benefit} className="rounded-full border border-ivory/20 bg-ivory/10 px-3 py-1.5 text-xs text-ivory/90 backdrop-blur-sm">
                 {benefit}
               </span>

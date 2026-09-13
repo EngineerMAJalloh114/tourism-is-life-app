@@ -20,23 +20,23 @@ function Contact() {
       <div className="container-page grid gap-10 py-16 lg:grid-cols-2">
         <div className="space-y-3 text-sm">
           <p>
-            Phone: <a className="text-brand inline-flex items-center gap-1.5" href={SITE.phoneHref} aria-label="Call Tourism Is Life"><Phone className="size-3.5" />{SITE.phone}</a>
+            Phone: <a className="text-brand inline-flex items-center gap-1.5" href={SITE.phoneHref}><Phone className="size-3.5" />{SITE.phone}</a>
           </p>
           <p>
-            <a className="text-brand inline-flex items-center gap-1.5" href={SITE.whatsappHref} aria-label="Chat with Tourism Is Life on WhatsApp" target="_blank" rel="noopener noreferrer"><MessageCircle className="size-3.5" />WhatsApp</a>
+            <a className="text-brand inline-flex items-center gap-1.5" href={SITE.whatsappHref} aria-label={`WhatsApp ${SITE.phone}`} target="_blank" rel="noopener noreferrer"><MessageCircle className="size-3.5" />WhatsApp</a>
             <span className="mx-2 text-muted">|</span>
-            <a className="text-brand inline-flex items-center gap-1.5" href={SITE.smsHref} aria-label="Message Tourism Is Life"><MessageSquare className="size-3.5" />SMS</a>
+            <a className="text-brand inline-flex items-center gap-1.5" href={SITE.smsHref}><MessageSquare className="size-3.5" />SMS</a>
           </p>
           <p>
-            Mobile: <a className="text-brand inline-flex items-center gap-1.5" href={SITE.mobileHref} aria-label="Call Tourism Is Life mobile"><Phone className="size-3.5" />{SITE.mobile}</a>
+            Mobile: <a className="text-brand inline-flex items-center gap-1.5" href={SITE.mobileHref}><Phone className="size-3.5" />{SITE.mobile}</a>
           </p>
           <p>
-            <a className="text-brand inline-flex items-center gap-1.5" href={SITE.whatsappMobileHref} aria-label="Chat with Tourism Is Life on WhatsApp" target="_blank" rel="noopener noreferrer"><MessageCircle className="size-3.5" />WhatsApp</a>
+            <a className="text-brand inline-flex items-center gap-1.5" href={SITE.whatsappMobileHref} aria-label={`WhatsApp ${SITE.mobile}`} target="_blank" rel="noopener noreferrer"><MessageCircle className="size-3.5" />WhatsApp</a>
             <span className="mx-2 text-muted">|</span>
-            <a className="text-brand inline-flex items-center gap-1.5" href={SITE.smsMobileHref} aria-label="Message Tourism Is Life mobile"><MessageSquare className="size-3.5" />SMS</a>
+            <a className="text-brand inline-flex items-center gap-1.5" href={SITE.smsMobileHref}><MessageSquare className="size-3.5" />SMS</a>
           </p>
           <p>
-            Email: <a className="text-brand" href={SITE.emailHref} aria-label="Email Tourism Is Life">{SITE.email}</a>
+            Email: <a className="text-brand" href={SITE.emailHref}>{SITE.email}</a>
           </p>
           <p>{SITE.address}</p>
           <p className="text-muted">

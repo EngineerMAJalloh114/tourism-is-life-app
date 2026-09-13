@@ -169,6 +169,10 @@ const FIELD_LABELS: Record<string, string> = {
   dates: "Dates",
   travelers: "Number of travelers",
   context: "Regarding",
+  vehicle: "Vehicle",
+  pickup: "Pickup location",
+  driver: "Driver preference",
+  services: "Requested extras",
 };
 
 function humanizeFieldName(key: string): string {

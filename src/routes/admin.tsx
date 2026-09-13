@@ -81,7 +81,7 @@ function AdminLayout() {
 
   return (
     <div className="container-page py-12">
-      <p className="text-xs uppercase tracking-[0.16em] text-gold">Operations · {role}</p>
+      <p className="text-xs uppercase tracking-[0.16em] text-gold-ink">Operations · {role}</p>
       <h1 className="mt-2 font-display text-4xl text-brand">Command centre</h1>
       <nav className="mt-8 flex flex-wrap gap-2" aria-label="Admin">
         {LINKS.map((l) => (

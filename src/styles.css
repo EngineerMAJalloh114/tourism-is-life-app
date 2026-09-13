@@ -8,6 +8,10 @@
   --color-brand-dark: #10201b;
   --color-sage: #7a9a7e;
   --color-gold: #c69a3e;
+  /* Same hue as --color-gold, darkened for AA text contrast (4.5:1+) on ivory/surface backgrounds.
+     --color-gold itself stays reserved for gold-on-dark contexts (hero kickers, dark sections),
+     where it already passes contrast and darkening it would only weaken that look. */
+  --color-gold-ink: #7a5c1a;
   --color-ivory: #fbf8f1;
   --color-surface: #f3ecdd;
   --color-surface-muted: #e8dfc8;

@@ -7,8 +7,8 @@ import { getVehicle } from "@/data/vehicle-rental";
 export const Route = createFileRoute("/services/vehicle-rental/book/$vehicleId")({
   head: ({ params }) => {
     const vehicle = getVehicle(params.vehicleId);
-    if (!vehicle) return pageHead("Booking", "", "/services/vehicle-rental");
-    return pageHead(`Book ${vehicle.name} | Tourism Is Life`, `Book ${vehicle.name} for your Sierra Leone journey.`, `/services/vehicle-rental/book/${vehicle.id}`);
+    if (!vehicle) return pageHead("Vehicle Enquiry", "", "/services/vehicle-rental");
+    return pageHead(`Enquire about ${vehicle.name} | Tourism Is Life`, `Send a rental enquiry for the ${vehicle.name} for your Sierra Leone journey.`, `/services/vehicle-rental/book/${vehicle.id}`);
   },
   component: Page,
 });

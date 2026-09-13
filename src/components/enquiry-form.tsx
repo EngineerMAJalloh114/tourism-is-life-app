@@ -47,7 +47,7 @@ export function EnquiryForm({
 
   return (
     <form onSubmit={onSubmit} className="space-y-4 rounded-lg border border-line bg-surface p-6">
-      <p className="text-xs uppercase tracking-[0.16em] text-gold">
+      <p className="text-xs uppercase tracking-[0.16em] text-gold-ink">
         {user ? "Saved to your account" : "Guest enquiry — no account required"}
       </p>
       {type === "B2B" ? (

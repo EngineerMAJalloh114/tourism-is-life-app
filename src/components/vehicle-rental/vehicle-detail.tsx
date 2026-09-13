@@ -8,7 +8,7 @@ export function VehicleDetail({ vehicle }: { vehicle: Vehicle }) {
       <section className="bg-surface py-12">
         <div className="container-page grid gap-8 lg:grid-cols-2">
           <div>
-            <p className="text-xs uppercase tracking-[0.22em] text-gold">{vehicle.category.replace("-", " ")}</p>
+            <p className="text-xs uppercase tracking-[0.22em] text-gold-ink">{vehicle.category.replace("-", " ")}</p>
             <h1 className="mt-2 font-display text-4xl text-brand lg:text-5xl">{vehicle.name}</h1>
             <p className="mt-4 text-muted leading-relaxed">{vehicle.description}</p>
             <div className="mt-6 flex flex-wrap gap-3">
@@ -51,7 +51,7 @@ export function VehicleDetail({ vehicle }: { vehicle: Vehicle }) {
                 </p>
                 <p className="mt-1 text-xs text-muted">Fuel not included. Driver available on request.</p>
                 <Button asChild className="mt-4 w-full" size="lg">
-                  <Link to="/services/vehicle-rental/book/$vehicleId" params={{ vehicleId: vehicle.id }}>Book This Vehicle</Link>
+                  <Link to="/services/vehicle-rental/book/$vehicleId" params={{ vehicleId: vehicle.id }}>Enquire About This Vehicle</Link>
                 </Button>
                 <Button asChild variant="outline" className="mt-2 w-full">
                   <Link to="/services/vehicle-rental">Back to search</Link>

@@ -16,7 +16,7 @@ export function SectionHeader({
   return (
     <div className={cn("max-w-2xl", className)}>
       {kicker ? (
-        <p className="text-xs font-medium uppercase tracking-[0.22em] text-gold">{kicker}</p>
+        <p className="text-xs font-medium uppercase tracking-[0.22em] text-gold-ink">{kicker}</p>
       ) : null}
       <h2 className="mt-3 font-display text-3xl text-brand sm:text-4xl">{title}</h2>
       {lede ? <p className="mt-3 text-base text-muted sm:text-lg">{lede}</p> : null}

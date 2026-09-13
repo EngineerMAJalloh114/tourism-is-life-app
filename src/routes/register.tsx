@@ -34,7 +34,7 @@ function Register() {
   return (
     <div className="container-page grid min-h-[70vh] place-items-center py-16">
       <div className="w-full max-w-md rounded-lg border border-line bg-surface p-8 shadow-[var(--shadow-card)]">
-        <p className="text-xs uppercase tracking-[0.2em] text-gold">Account</p>
+        <p className="text-xs uppercase tracking-[0.2em] text-gold-ink">Account</p>
         <h1 className="mt-2 font-display text-3xl text-brand">Create an account</h1>
         <p className="mt-2 text-sm text-muted">
           Optional. Guest checkout does not require an account. Register to keep vouchers and saved tours.
