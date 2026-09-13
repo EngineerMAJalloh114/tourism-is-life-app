@@ -56,8 +56,8 @@ export const cruiseOverview = [
     id: "excursions",
     title: "Shore Excursions",
     body: "Six primary shore programmes covering the city, heritage islands, rainforest, wildlife, and peninsula beaches.",
-    image: "/images/cities/freetown-city-tour-fb.jpg",
-    imageAlt: "Freetown city street during a sightseeing day",
+    image: "/images/cities/freetown-street.jpg",
+    imageAlt: "A busy market street in central Freetown, Sierra Leone",
   },
   {
     id: "overland",
@@ -138,8 +138,8 @@ export const excursions: Excursion[] = [
       "Sightseeing",
       "Lunch",
     ],
-    image: "/images/cities/freetown-city-tour-fb.jpg",
-    imageAlt: "Street scene in Freetown, Sierra Leone",
+    image: "/images/heritage/cotton-tree-freetown.jpg",
+    imageAlt: "The historic Cotton Tree in Freetown, wrapped in the Sierra Leone flag",
   },
   {
     id: "bunce-tasso",

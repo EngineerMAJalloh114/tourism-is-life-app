@@ -112,7 +112,7 @@ const IMG = {
   savanna:
     "/images/mountains/outamba-mountain.jpg",
   city:
-    "/images/cities/freetown-city-tour-fb.jpg",
+    "/images/cities/freetown-street.jpg",
   people:
     "/images/culture/makeni-sunset.jpg",
   cruise:
@@ -169,7 +169,7 @@ export const circuits: Circuit[] = [
 ];
 
 export const destinations: Destination[] = [
-  { slug: "freetown", name: "Freetown", circuit: "western-circuit", country: "sierra-leone", summary: "Sierra Leone’s capital: Krio heritage, Cotton Tree, and the peninsula gateway.", image: IMG.city, imageAlt: "West African city street scene — editorial stand-in" },
+  { slug: "freetown", name: "Freetown", circuit: "western-circuit", country: "sierra-leone", summary: "Sierra Leone’s capital: Krio heritage, Cotton Tree, and the peninsula gateway.", image: IMG.city, imageAlt: "A busy market street in central Freetown, Sierra Leone" },
   { slug: "banana-island", name: "Banana Island", circuit: "western-circuit", country: "sierra-leone", summary: "Three islands off Yawri Bay: Dublin (beaches), Ricketts (forest), and uninhabited Mes-Meheux — settled by freed slaves in the late 18th and 19th centuries.", image: "/images/islands/banana-island-rainbow.jpg", imageAlt: "Banana Island, Sierra Leone" },
   { slug: "freetown-peninsula", name: "Freetown Peninsula", circuit: "western-circuit", country: "sierra-leone", summary: "Eleven beaches along the Western Area peninsula, from River Number Two to Black Johnson.", image: "/images/beaches/river-number-two-beach.jpg", imageAlt: "A wooden canoe marked \"No 2 River\" on the sand at River Number Two Beach, Sierra Leone" },
   { slug: "tacugama", name: "Tacugama Chimpanzee Sanctuary", circuit: "western-circuit", country: "sierra-leone", summary: "A forest sanctuary above Freetown protecting chimpanzees rescued across Sierra Leone.", image: IMG.wildlife, imageAlt: "Chimpanzee in a forest setting — licensed stock, not a Tacugama publicity still" },
@@ -228,9 +228,9 @@ export const tours: Tour[] = [
     exclusions: ["Meals not listed", "Personal purchases", "Gratuities"],
     requirements: "Comfortable walking shoes. Modest dress for religious sites.",
     meetingPoint: "Freetown — exact pickup confirmed on voucher.",
-    image: "/images/cities/freetown-city-tour-fb.jpg",
-    imageAlt: "Freetown city street scene, Sierra Leone",
-    gallery: [{ src: "/images/cities/freetown-city-tour-fb.jpg", alt: "Freetown cityscape" }, { src: "/images/culture/sierra-leone-big-market.jpg", alt: "Local life" }],
+    image: "/images/cities/freetown-street.jpg",
+    imageAlt: "A busy market street in central Freetown, Sierra Leone",
+    gallery: [{ src: "/images/cities/freetown-street.jpg", alt: "Freetown market street" }, { src: "/images/culture/sierra-leone-big-market.jpg", alt: "Local life" }],
     itinerary: [{ day: 1, title: "City orientation", description: "Morning or afternoon circuit of Freetown highlights with a local guide." }],
   }),
   tour({
