@@ -16,7 +16,8 @@ export function CruiseInquiryForm({
 
   async function onSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    const fd = new FormData(e.currentTarget);
+    const form = e.currentTarget;
+    const fd = new FormData(form);
     const payload: Record<string, string> = {};
     fd.forEach((value, key) => {
       payload[key] = String(value);
@@ -28,7 +29,7 @@ export function CruiseInquiryForm({
     try {
       await submitEnquiry({ data: { type: "CRUISE", payload } });
       setStatus("ok");
-      e.currentTarget.reset();
+      form.reset();
     } catch (err) {
       setStatus("err");
       setMessage(

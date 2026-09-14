@@ -9,13 +9,14 @@ export function NewsletterForm({ variant = "light" }: { variant?: "light" | "dar
 
   async function onSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    const fd = new FormData(e.currentTarget);
+    const form = e.currentTarget;
+    const fd = new FormData(form);
     const email = String(fd.get("email") ?? "");
     setStatus("saving");
     try {
       await subscribeNewsletter({ data: { email } });
       setStatus("ok");
-      e.currentTarget.reset();
+      form.reset();
     } catch (err) {
       setStatus("err");
       setMessage(err instanceof Error ? err.message : "Could not subscribe.");
