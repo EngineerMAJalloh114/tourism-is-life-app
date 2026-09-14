@@ -8,7 +8,7 @@ export const Route = createFileRoute("/cruise/quote")({
   head: () =>
     pageHead(
       "Cruise Quote Request",
-      "Request a shore excursion quote for your ship's Freetown call — send ship name, arrival time, and passenger count.",
+      "Request a shore excursion quote for your ship's Freetown call. Send the ship name, arrival time, and passenger count.",
       "/cruise/quote",
     ),
   component: Page,

@@ -9,7 +9,7 @@ const COPY: Record<CountryId, { title: string; lede: string }> = {
   },
   guinea: {
     title: "Guinea programmes",
-    lede: "Quote-only highland and overland work. Logistics are confirmed per departure — never treat this page as a guaranteed date.",
+    lede: "Quote-only highland and overland work. Logistics are confirmed per departure, so never treat this page as a guaranteed date.",
   },
   liberia: {
     title: "Liberia programmes",

@@ -6,7 +6,7 @@ export const Route = createFileRoute("/tours/west-africa")({
   head: () =>
     pageHead(
       "West Africa circuits",
-      "Multi-country Mano River circuits across Sierra Leone, Guinea and Liberia — operator and private-group quotes.",
+      "Multi-country Mano River circuits across Sierra Leone, Guinea and Liberia, available as operator and private-group quotes.",
       "/tours/west-africa",
     ),
   component: () => <CountryToursPage country="west-africa" />,

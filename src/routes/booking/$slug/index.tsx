@@ -78,7 +78,7 @@ function BookingPage() {
       </p>
       <h1 className="mt-2 font-display text-4xl text-brand">Check availability</h1>
       <p className="mt-3 max-w-xl text-muted">
-        Guest checkout is open — you can hold seats without creating an account. Holds last 15 minutes.
+        Guest checkout is open. You can hold seats without creating an account, and holds last 15 minutes.
       </p>
       <ol className="mt-6 flex gap-4 text-xs uppercase tracking-[0.14em] text-muted">
         <li className="text-brand">1. Date</li>

@@ -7,7 +7,7 @@ export const Route = createFileRoute("/destinations/")({
   head: () =>
     pageHead(
       "Destinations",
-      "Four Sierra Leone circuits — Western, Northern, Southern, and Eastern — plus published places.",
+      "Four Sierra Leone circuits (Western, Northern, Southern, and Eastern) plus published places.",
       "/destinations",
     ),
   component: DestinationsPage,
@@ -19,7 +19,7 @@ function DestinationsPage() {
       <PageHero
         kicker="Sierra Leone"
         title="Destinations"
-        lede="Four regional circuits — the way Tourism Is Life already frames the country — plus the places published on the public catalogue."
+        lede="Four regional circuits, the way Tourism Is Life already frames the country, plus the places published on the public catalogue."
         image={IMG_HERO}
         imageAlt="Coastal Sierra Leone"
       />

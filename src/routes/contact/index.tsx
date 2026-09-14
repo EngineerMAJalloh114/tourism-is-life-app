@@ -10,7 +10,7 @@ export const Route = createFileRoute("/contact/")({
   head: () =>
     pageHead(
       "Contact Tourism Is Life",
-      "Reach the Freetown desk by phone, WhatsApp, or email — Tourism Is Life replies to enquiries within 24 hours.",
+      "Reach the Freetown desk by phone, WhatsApp, or email. Tourism Is Life replies to enquiries within 24 hours.",
       "/contact",
     ),
   component: Contact,

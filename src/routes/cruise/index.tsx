@@ -45,7 +45,7 @@ function Cruise() {
       <PageHero
         kicker="Cruise handling"
         title="Cruise Ship Handling"
-        lede="Call Freetown with confidence. Tourism Is Life is your Sierra Leone cruise desk — shore excursions, turnaround services, destination services, and 24-hour support."
+        lede="Call Freetown with confidence. Tourism Is Life is your Sierra Leone cruise desk for shore excursions, turnaround services, destination services, and 24-hour support."
         image={CRUISE_HERO.image}
         imageAlt={CRUISE_HERO.imageAlt}
       />
@@ -87,7 +87,7 @@ function Cruise() {
           <SectionHeader
             kicker="Overview"
             title="Cruise services in Sierra Leone"
-            lede="A full-service DMC for cruise calls at Freetown — from arrival coordination to shore programmes and turnaround support."
+            lede="A full-service DMC for cruise calls at Freetown, covering arrival coordination, shore programmes, and turnaround support."
           />
           <div className="mt-8">
             <OverviewGrid />
@@ -109,7 +109,7 @@ function Cruise() {
           <SectionHeader
             kicker="Shore excursions"
             title="Explore shore excursions"
-            lede="Six primary shore programmes covering Freetown, heritage islands, rainforest, wildlife, and peninsula beaches — timed to ship schedules."
+            lede="Six primary shore programmes covering Freetown, heritage islands, rainforest, wildlife, and peninsula beaches, timed to ship schedules."
           />
           <div className="mt-8">
             <ExcursionExplorer onSelect={() => {}} />
@@ -120,7 +120,7 @@ function Cruise() {
           <SectionHeader
             kicker="Destination discovery"
             title="Where cruise guests go"
-            lede="Freetown, Bunce Island, Tacugama, Banana Island, River No. 2, and the peninsula beaches — all within reach of Queen Elizabeth II Quay."
+            lede="Freetown, Bunce Island, Tacugama, Banana Island, River No. 2, and the peninsula beaches, all within reach of Queen Elizabeth II Quay."
           />
           <div className="mt-8">
             <DestinationGrid />

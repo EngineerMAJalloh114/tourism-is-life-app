@@ -13,7 +13,7 @@ import { vehicleCategories, vehicles, getPopularVehicles } from "@/data/vehicle-
 export const Route = createFileRoute("/services/vehicle-rental/")({
   head: () =>
     pageHead(
-      "Vehicle Rental in Sierra Leone — Tourism Is Life",
+      "Vehicle Rental in Sierra Leone · Tourism Is Life",
       "Chauffeured and self-drive vehicles for tours, airport transfers, and overland travel in Sierra Leone.",
       "/services/vehicle-rental",
     ),
@@ -31,7 +31,7 @@ function Page() {
         <p className="text-xs uppercase tracking-[0.22em] text-gold-ink">Vehicles For Every Journey</p>
         <h2 className="mt-2 font-display text-4xl text-brand">Choose your vehicle</h2>
         <p className="mt-3 max-w-2xl text-muted">
-          From economy cars to 4x4s and group coaches — all maintained for Sierra Leone's roads and conditions.
+          Economy cars, 4x4s, and group coaches, all maintained for Sierra Leone's roads and conditions.
         </p>
         <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
           {vehicleCategories.map((cat) => (

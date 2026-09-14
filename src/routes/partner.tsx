@@ -8,7 +8,7 @@ export const Route = createFileRoute("/partner")({
   head: () =>
     pageHead(
       "Become a Partner",
-      "Ground handling in Sierra Leone for tour operators — from Freetown day programmes to Mano River Triangle overlands.",
+      "Ground handling in Sierra Leone for tour operators, covering Freetown day programmes and Mano River Triangle overlands.",
       "/partner",
     ),
   component: Partner,

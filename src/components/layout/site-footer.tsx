@@ -123,7 +123,7 @@ export function SiteFooter() {
               <p>
                 © {new Date().getFullYear()} {SITE.legalName}. {SITE.address}.
               </p>
-              <p>Member partner of 1 DCM World — as stated by the CEO in Travel And Tour World, 2024.</p>
+              <p>Member partner of 1 DCM World, as stated by the CEO in Travel And Tour World, 2024.</p>
             </div>
             <SocialLinks variant="footer" />
           </div>

@@ -41,7 +41,7 @@ export type CruiseDestination = {
 export const CRUISE_HERO = {
   image: "/images/cruise/freetown-port.jpg",
   imageAlt:
-    "Ships in the port of Freetown, Sierra Leone — Queen Elizabeth II Quay approach",
+    "Ships in the port of Freetown, Sierra Leone, at the Queen Elizabeth II Quay approach",
 } as const;
 
 export const cruiseOverview = [
@@ -274,7 +274,7 @@ export const cruiseDestinations: CruiseDestination[] = [
     id: "freetown",
     name: "Freetown",
     summary:
-      "Sierra Leone’s capital and the starting point for city sightseeing — Cotton Tree, museums, churches, markets, and Old Fourah Bay College.",
+      "Sierra Leone’s capital and the starting point for city sightseeing: Cotton Tree, museums, churches, markets, and Old Fourah Bay College.",
     image: "/images/heritage/cotton-tree-freetown.jpg",
     imageAlt: "The historic Cotton Tree in Freetown with the Sierra Leonean flag",
   },
@@ -392,7 +392,7 @@ export const pilotage = [
 export const anchorageNotes = [
   "An anchorage area is available",
   "Tugs are listed as available",
-  "Maximum draft for a specific call is confirmed with the agent — figures are not published here as live conditions",
+  "Maximum draft for a specific call is confirmed with the agent, since figures are not published here as live conditions",
 ] as const;
 
 export const berthingNote =

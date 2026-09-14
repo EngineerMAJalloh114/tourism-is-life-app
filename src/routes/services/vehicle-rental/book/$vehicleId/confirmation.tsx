@@ -40,7 +40,7 @@ function Confirmation() {
         <CheckCircle2 className="mx-auto size-16 text-ok" aria-hidden />
         <h1 className="mt-6 font-display text-4xl text-brand">Enquiry Received</h1>
         <p className="mt-4 text-muted">
-          Thank you — your enquiry has been sent to the Freetown desk. The team will confirm vehicle availability
+          Thank you. Your enquiry has been sent to the Freetown desk. The team will confirm vehicle availability
           and pricing directly with you, usually within 24 hours.
         </p>
         <div className="mt-6 rounded-lg border border-line bg-surface p-6 text-left">

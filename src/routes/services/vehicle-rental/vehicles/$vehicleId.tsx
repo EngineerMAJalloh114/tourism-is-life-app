@@ -9,7 +9,7 @@ export const Route = createFileRoute("/services/vehicle-rental/vehicles/$vehicle
     const vehicle = getVehicle(params.vehicleId);
     if (!vehicle) return pageHead("Vehicle Not Found", "", "/services/vehicle-rental");
     return pageHead(
-      `${vehicle.name} — Vehicle Rental | Tourism Is Life`,
+      `${vehicle.name} · Vehicle Rental · Tourism Is Life`,
       `${vehicle.description.slice(0, 160)}…`,
       `/services/vehicle-rental/vehicles/${vehicle.id}`,
     );

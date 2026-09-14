@@ -16,7 +16,7 @@ export const Route = createFileRoute("/brochure")({
   head: () =>
     pageHead(
       "DMC Brochure",
-      "Tourism Is Life's destination management brochure — Sierra Leone circuits, shore excursions, and the Mano River Triangle across Guinea, Sierra Leone, and Liberia.",
+      "Tourism Is Life's destination management brochure: Sierra Leone circuits, shore excursions, and the Mano River Triangle across Guinea, Sierra Leone, and Liberia.",
       "/brochure",
     ),
   component: Brochure,
@@ -47,7 +47,7 @@ function Brochure() {
       <PageHero
         kicker="DMC brochure"
         title="Tourism Is Life, in one document"
-        lede="A working DMC brochure for tour operators, cruise lines, and independent travellers — the circuits we run, the shore excursions we handle, and the three-country route through the Mano River basin."
+        lede="A working DMC brochure for tour operators, cruise lines, and independent travellers: the circuits we run, the shore excursions we handle, and the three-country route through the Mano River basin."
         image={IMG_HERO}
         imageAlt="Sierra Leone coastline"
       />
@@ -59,14 +59,14 @@ function Brochure() {
           A small country with an outsized amount to see
         </h1>
         <p className="mt-4 text-lg leading-relaxed">
-          Sierra Leone sits on the West African coast between Guinea and Liberia — beaches that once
-          stood in for a Bounty chocolate advert, a rainforest that still holds pygmy hippos and forest
-          elephants, and a capital, Freetown, whose Krio name — Romarong, &ldquo;the place of the
-          wailers&rdquo; — comes from the hills that rise straight out of the sea.
+          Sierra Leone sits on the West African coast between Guinea and Liberia. It has beaches that
+          once stood in for a Bounty chocolate advert, a rainforest that still holds pygmy hippos and
+          forest elephants, and a capital, Freetown, whose Krio name, Romarong, meaning &ldquo;the place
+          of the wailers,&rdquo; comes from the hills that rise straight out of the sea.
         </p>
         <p className="mt-4 leading-relaxed text-muted">
           Tourism Is Life is a Freetown-based destination management company. We plan the itinerary,
-          brief the guides, and handle the logistics on the ground — for independent travellers, tour
+          brief the guides, and handle the logistics on the ground for independent travellers, tour
           operators, and cruise lines calling at Freetown.
         </p>
       </section>
@@ -129,7 +129,7 @@ function Brochure() {
           </h2>
           <p className="mt-3 max-w-2xl text-ivory/80">
             Turnaround support, port-to-hotel logistics, and shore programmes built around how much time a
-            call actually gives passengers — city heritage, rainforest, wildlife, or a peninsula beach.
+            call actually gives passengers: city heritage, rainforest, wildlife, or a peninsula beach.
           </p>
           <div className="mt-8 grid gap-5 sm:grid-cols-3">
             {shoreExcursionSample.map((ex) => (
@@ -159,7 +159,7 @@ function Brochure() {
             <p className="mt-2 leading-relaxed text-muted">
               A former slave-trading fort on the Sierra Leone River, built in 1668 and operating until
               1807. It was declared a national monument in 1948. Tens of thousands of people were held and
-              shipped from here, a documented number of them to the Carolinas and Georgia — one of the
+              shipped from here, a documented number of them to the Carolinas and Georgia, one of the
               clearer historical threads between Sierra Leone and the United States.
             </p>
           </article>
@@ -190,14 +190,14 @@ function Brochure() {
               <h3 className="font-display text-xl text-brand">Tiwai Island</h3>
               <p className="mt-2 text-sm leading-relaxed text-muted">
                 A wildlife sanctuary on the Moa River. A forest walk by day, a boat ride up-river toward
-                evening for a chance — never a guarantee — of a pygmy hippo.
+                evening for a chance, never a guarantee, of a pygmy hippo.
               </p>
             </article>
             <article>
               <h3 className="font-display text-xl text-brand">Bird watching</h3>
               <p className="mt-2 text-sm leading-relaxed text-muted">
                 Around 630 recorded species across the country's important bird areas, 23 of them of global
-                conservation concern — including the white-necked picathartes, which nests near River
+                conservation concern, including the white-necked picathartes, which nests near River
                 Number Two beach.
               </p>
             </article>
@@ -212,8 +212,8 @@ function Brochure() {
             <h3 className="font-display text-xl text-brand">Banana Island & Turtle Islands</h3>
             <p className="mt-2 leading-relaxed text-muted">
               Banana Island pairs beaches with a former plantation settlement and a small Krio community.
-              Further south, the eight low-lying Turtle Islands — Bakie, Bumpetuk, Chepo, Mut, Hoong,
-              Nydgei, Sei, and Yele — are remote enough that getting there is most of the experience.
+              Further south, the eight low-lying Turtle Islands (Bakie, Bumpetuk, Chepo, Mut, Hoong,
+              Nydgei, Sei, and Yele) are remote enough that getting there is most of the experience.
             </p>
           </article>
           <article>
@@ -232,7 +232,7 @@ function Brochure() {
           <div className="container-page">
             <Kicker dark>Mano River Triangle</Kicker>
             <h2 className="mt-2 max-w-2xl font-display text-3xl sm:text-4xl">
-              Guinea, Sierra Leone, and Liberia — one route, three guides
+              Guinea, Sierra Leone, and Liberia: one route, three guides
             </h2>
             <p className="mt-4 max-w-2xl text-ivory/80">{manoRiver.summary}</p>
             <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
@@ -246,7 +246,7 @@ function Brochure() {
               <div className="rounded-lg border border-ivory/15 bg-ivory/5 p-5">
                 <h3 className="font-display text-lg">Sierra Leone</h3>
                 <p className="mt-2 text-sm text-ivory/75">
-                  Bunce Island, Banana Island, Bo, and Kenema — the same heritage and coast sold to
+                  Bunce Island, Banana Island, Bo, and Kenema: the same heritage and coast sold to
                   independent travellers, worked into the middle of a longer route.
                 </p>
               </div>
@@ -314,7 +314,7 @@ function Brochure() {
       <section className="container-page py-16 text-center">
         <h2 className="font-display text-3xl text-brand sm:text-4xl">Talk to the Freetown desk</h2>
         <p className="mx-auto mt-3 max-w-xl text-muted">
-          Guest enquiries, operator ground handling, or a cruise call — the same desk handles all three.
+          Guest enquiries, operator ground handling, or a cruise call: the same desk handles all three.
         </p>
         <div className="mt-6 flex flex-wrap items-center justify-center gap-3 text-sm">
           <a href={SITE.emailHref} className="underline decoration-gold underline-offset-4">

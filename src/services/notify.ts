@@ -229,7 +229,7 @@ export function buildEnquiryTeamEmail(opts: {
   `;
 
   const textLines = [
-    `New ${typeLabel} — Tourism Is Life website`,
+    `New ${typeLabel} · Tourism Is Life website`,
     `Name: ${opts.payload.name || opts.payload.contact || "Not supplied"}`,
     `Email: ${opts.email}`,
     ...(phone ? [`Phone: ${phone}`] : []),
@@ -240,7 +240,7 @@ export function buildEnquiryTeamEmail(opts: {
   ];
 
   return {
-    subject: `New ${typeLabel} — ${opts.ref}`,
+    subject: `New ${typeLabel} · ${opts.ref}`,
     html,
     text: textLines.join("\n"),
   };

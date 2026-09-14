@@ -23,7 +23,7 @@ export function CruiseInquiryForm({
       payload[key] = String(value);
     });
     if (user?.primaryEmail && !payload.email) payload.email = user.primaryEmail;
-    payload.context = "Cruise ship page — Request a cruise plan";
+    payload.context = "Cruise ship page: request a cruise plan";
     setStatus("saving");
     setMessage("");
     try {
@@ -45,7 +45,7 @@ export function CruiseInquiryForm({
   return (
     <form onSubmit={onSubmit} className="space-y-8 rounded-lg border border-line bg-surface p-6">
       <p className="text-xs uppercase tracking-[0.16em] text-gold-ink">
-        {user ? "Saved to your account" : "Guest request — no account required"}
+        {user ? "Saved to your account" : "Guest request, no account required"}
       </p>
       <p className="text-sm text-muted">
         This is a planning request, not live inventory. The desk confirms programmes in writing.
@@ -115,7 +115,7 @@ export function CruiseInquiryForm({
 
       {status === "ok" ? (
         <p className="text-sm text-ok" role="status">
-          Request received. The desk follows up in writing — this is not a live booking confirmation.
+          Request received. The desk follows up in writing. This is not a live booking confirmation.
         </p>
       ) : null}
       {status === "err" ? (

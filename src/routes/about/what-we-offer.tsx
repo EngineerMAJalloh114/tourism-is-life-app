@@ -19,7 +19,7 @@ function Offer() {
       <PageHero
         kicker="DMC"
         title="What we offer"
-        lede="Tours and excursions, visa facilitation, travel insurance, vehicles, hotels, ticketing, MICE, and cruise handling — as described by the CEO in 2024 and on the public site."
+        lede="Tours and excursions, visa facilitation, travel insurance, vehicles, hotels, ticketing, MICE, and cruise handling, as described by the CEO in 2024 and on the public site."
         image={IMG_FOREST}
         imageAlt="Landscape"
       />

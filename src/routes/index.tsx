@@ -5,7 +5,7 @@ import { TourCard } from "@/components/tour-card";
 import { Button } from "@/components/ui/button";
 import { NewsletterForm } from "@/components/newsletter-form";
 import { JsonLd } from "@/components/json-ld";
-import { organizationJsonLd, pageHead } from "@/lib/seo";
+import { organizationJsonLd, pageHead, websiteJsonLd } from "@/lib/seo";
 import {
   articles,
   circuits,
@@ -22,7 +22,7 @@ import {
 export const Route = createFileRoute("/")({
   head: () =>
     pageHead(
-      "Tourism Is Life — Discover the Heart of West Africa",
+      "Tourism Is Life · Discover the Heart of West Africa",
       "Sierra Leone destination management company for tours, cruise shore excursions, and West Africa travel.",
       "/",
     ),
@@ -49,10 +49,11 @@ function Home() {
   return (
     <>
       <JsonLd data={organizationJsonLd()} />
+      <JsonLd data={websiteJsonLd()} />
       <section className="relative isolate min-h-[92vh] overflow-hidden bg-brand-dark text-ivory">
         <img
           src={IMG_HERO}
-          alt="West African tropical coastline — editorial stand-in"
+          alt="West African tropical coastline, editorial stand-in"
           className="absolute inset-0 size-full object-cover object-[center_78%]"
         />
         <div className="absolute inset-0 bg-gradient-to-r from-brand-dark/90 via-brand-dark/55 to-brand-dark/20" />
@@ -208,8 +209,8 @@ function Home() {
             <p className="text-xs uppercase tracking-[0.22em] text-gold">Why Tourism Is Life</p>
             <h2 className="mt-3 font-display text-4xl">A Sierra Leone story, told on the ground</h2>
             <p className="mt-5 text-ivory/80">
-              Founded by Alieya Alie Kargbo and shaped by guides such as Peter Momoh Bassie — featured in AFAR
-              Magazine — the company builds thoughtful Freetown days and harder expeditions to Gola Rainforest
+              Founded by Alieya Alie Kargbo and shaped by guides such as Peter Momoh Bassie, featured in AFAR
+              Magazine, the company builds thoughtful Freetown days and harder expeditions to Gola Rainforest
               and Mount Bintumani.
             </p>
             <Button asChild className="mt-8">

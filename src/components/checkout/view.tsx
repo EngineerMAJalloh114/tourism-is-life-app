@@ -205,7 +205,7 @@ function GuestsForm({
   return (
     <form onSubmit={onSubmit} className="mt-8 max-w-md space-y-4">
       <p className="text-sm text-muted">
-        Guest checkout is available — you do not need an account to finish this booking.
+        Guest checkout is available, you do not need an account to finish this booking.
       </p>
       <div>
         <Label htmlFor="guestName">Lead guest name</Label>

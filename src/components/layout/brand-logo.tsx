@@ -15,7 +15,7 @@ export function BrandLogo({ className, size = "header" }: BrandLogoProps) {
       <source srcSet={BRAND_LOGO_WEBP} type="image/webp" />
       <img
         src={BRAND_LOGO_JPG}
-        alt="Tourism is Life Tours — Discover Nature, Life, the World"
+        alt="Tourism Is Life Tours logo"
         width={1024}
         height={512}
         decoding="async"

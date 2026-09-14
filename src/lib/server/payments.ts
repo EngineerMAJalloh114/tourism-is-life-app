@@ -33,7 +33,7 @@ export function getPaymentMode(): PaymentMode {
     provider: "demo",
     live: false,
     demoAllowed,
-    label: demoAllowed ? "Test settlement — not a card charge" : "Invoice — live payment is not configured",
+    label: demoAllowed ? "Test settlement, not a card charge" : "Invoice, live payment is not configured",
   };
 }
 

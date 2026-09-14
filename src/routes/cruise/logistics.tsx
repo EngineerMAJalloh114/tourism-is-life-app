@@ -21,7 +21,7 @@ function Page() {
       <div className="container-page py-16">
         <p className="max-w-2xl text-muted">
           Ground transport, timing, and on-shore coordination. Customs facilitation is discussed per
-          call — not guaranteed in this copy.
+          call, but not guaranteed in this copy.
         </p>
         <Button asChild className="mt-6">
           <Link to="/cruise/quote">Request a quote</Link>

@@ -6,7 +6,7 @@ export const Route = createFileRoute("/tours/liberia")({
   head: () =>
     pageHead(
       "Liberia programmes",
-      "Custom Liberia ground handling including Sapo National Park — quote-only from Tourism Is Life.",
+      "Custom Liberia ground handling including Sapo National Park, quote-only from Tourism Is Life.",
       "/tours/liberia",
     ),
   component: () => <CountryToursPage country="liberia" />,

@@ -26,8 +26,8 @@ function About() {
       />
       <div className="container-page max-w-3xl py-16">
         <p className="text-lg leading-relaxed">
-          We help travellers and operators explore Sierra Leone’s cultural heritage and landscapes —
-          from Freetown and the peninsula to Gola Rainforest and Mount Bintumani. The public site
+          We help travellers and operators explore Sierra Leone’s cultural heritage and landscapes,
+          including Freetown, the peninsula, Gola Rainforest, and Mount Bintumani. The public site
           describes the company as a reliable local operator that plans itineraries from on-the-ground
           knowledge.
         </p>

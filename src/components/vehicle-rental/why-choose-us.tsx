@@ -9,7 +9,7 @@ const benefits = [
   {
     icon: Shield,
     title: "Flexible Travel",
-    description: "Choose a vehicle that matches your journey — from economy to 4x4, self-drive or with driver.",
+    description: "Choose a vehicle that matches your journey: economy cars, 4x4s, self-drive, or with a driver.",
   },
   {
     icon: Clock,

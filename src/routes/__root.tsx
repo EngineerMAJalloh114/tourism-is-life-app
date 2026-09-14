@@ -17,14 +17,18 @@ export const Route = createRootRoute({
       {
         name: "description",
         content:
-          "Tourism Is Life — Sierra Leone destination management company for tours, cruise handling, and West Africa travel.",
+          "Tourism Is Life is a Sierra Leone destination management company for tours, cruise handling, and West Africa travel.",
       },
+      { property: "og:type", content: "website" },
+      { property: "og:site_name", content: APP_NAME },
+      { property: "og:image", content: "https://tourismislife.com/images/misc/og-image.jpg" },
+      { name: "twitter:card", content: "summary_large_image" },
     ],
     links: [
       { rel: "icon", type: "image/svg+xml", href: "/favicon.svg" },
       { rel: "stylesheet", href: appCss },
-      { rel: "manifest", href: "/__grok/manifest.webmanifest" },
-      { rel: "apple-touch-icon", href: "/__grok/icon-180.png" },
+      { rel: "manifest", href: "/manifest.webmanifest" },
+      { rel: "apple-touch-icon", href: "/icons/icon-180.png" },
       {
         rel: "stylesheet",
         href: "https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&family=Fraunces:opsz,wght@9..144,500;9..144,650&display=swap",

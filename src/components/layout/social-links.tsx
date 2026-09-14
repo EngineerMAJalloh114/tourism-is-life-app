@@ -65,7 +65,7 @@ export function SocialLinks({
             href={isPlaceholder ? undefined : link.url}
             target={isPlaceholder ? undefined : "_blank"}
             rel={isPlaceholder ? undefined : "noopener noreferrer"}
-            aria-label={isPlaceholder ? `${link.label} — coming soon` : `Visit Tourism Is Life on ${link.label}`}
+            aria-label={isPlaceholder ? `${link.label} coming soon` : `Visit Tourism Is Life on ${link.label}`}
             className={cn(
               "inline-flex items-center justify-center transition-colors duration-200",
               "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold focus-visible:ring-offset-2 focus-visible:ring-offset-brand-dark",

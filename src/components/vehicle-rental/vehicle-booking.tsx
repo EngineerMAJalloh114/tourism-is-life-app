@@ -103,7 +103,7 @@ export function VehicleBooking() {
           <Link to="/services/vehicle-rental" className="text-sm text-brand hover:text-gold">← Back to search</Link>
           <h1 className="mt-2 font-display text-4xl text-brand">Enquire about {vehicle.name}</h1>
           <p className="mt-2 max-w-xl text-sm text-muted">
-            This sends an enquiry to the Freetown desk — it does not reserve the vehicle or take payment. The team
+            This sends an enquiry to the Freetown desk. It does not reserve the vehicle or take payment. The team
             confirms availability and pricing directly with you.
           </p>
         </div>
@@ -148,7 +148,7 @@ export function VehicleBooking() {
             {step === 2 && (
               <div className="space-y-4">
                 <h2 className="font-display text-2xl text-brand">Additional Services</h2>
-                <p className="text-sm text-muted">Tell us what you'd like — the desk will confirm what's available and the cost.</p>
+                <p className="text-sm text-muted">Tell us what you'd like, and the desk will confirm what's available and the cost.</p>
                 <div className="grid gap-3 sm:grid-cols-2">
                   {["Professional driver", "Airport pickup", "Child seat", "Extra luggage", "Fuel package", "Tour guide"].map((svc) => (
                     <label key={svc} className="flex items-center gap-2 rounded-md border border-line bg-surface p-3 cursor-pointer">
@@ -209,7 +209,7 @@ export function VehicleBooking() {
                   </p>
                 </div>
               </div>
-              <p className="mt-4 text-xs text-muted">Fuel, additional services, and driver fees (if applicable) are confirmed with your quote — nothing is charged here.</p>
+              <p className="mt-4 text-xs text-muted">Fuel, additional services, and driver fees (if applicable) are confirmed with your quote. Nothing is charged here.</p>
             </div>
           </div>
         </form>
