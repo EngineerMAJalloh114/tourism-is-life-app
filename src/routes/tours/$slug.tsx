@@ -77,7 +77,9 @@ function TourDetail() {
               <strong>Duration:</strong> {tour.duration}
             </li>
             <li>
-              <strong>Group:</strong> {tour.groupMin}–{tour.groupMax}
+              {/* 0/0 means the published source documents no group limits — never show "0–0". */}
+              <strong>Group:</strong>{" "}
+              {tour.groupMax > 0 ? `${tour.groupMin}–${tour.groupMax}` : "On request"}
             </li>
             <li>
               <strong>Difficulty:</strong> {tour.difficulty}

@@ -60,6 +60,7 @@ import { Route as JournalIndexRouteImport } from './routes/journal/index'
 import { Route as JournalSlugRouteImport } from './routes/journal/$slug'
 import { Route as ServicesIndexRouteImport } from './routes/services/index'
 import { Route as ServicesSlugRouteImport } from './routes/services/$slug'
+import { Route as ServicesToursExcursionsRouteImport } from './routes/services/tours-excursions'
 import { Route as ToursIndexRouteImport } from './routes/tours/index'
 import { Route as ToursSlugRouteImport } from './routes/tours/$slug'
 import { Route as ToursGuineaRouteImport } from './routes/tours/guinea'
@@ -348,6 +349,11 @@ const ServicesSlugRoute = ServicesSlugRouteImport.update({
   path: '/services/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ServicesToursExcursionsRoute = ServicesToursExcursionsRouteImport.update({
+  id: '/services/tours-excursions',
+  path: '/services/tours-excursions',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ToursIndexRoute = ToursIndexRouteImport.update({
   id: '/tours/',
   path: '/tours/',
@@ -558,6 +564,7 @@ export interface FileRoutesByFullPath {
   '/destinations/$circuit': typeof DestinationsCircuitRouteWithChildren
   '/journal/$slug': typeof JournalSlugRoute
   '/services/$slug': typeof ServicesSlugRoute
+  '/services/tours-excursions': typeof ServicesToursExcursionsRoute
   '/tours/$slug': typeof ToursSlugRoute
   '/tours/guinea': typeof ToursGuineaRoute
   '/tours/liberia': typeof ToursLiberiaRoute
@@ -636,6 +643,7 @@ export interface FileRoutesByTo {
   '/cruise/vip-meet-and-greet': typeof CruiseVipMeetAndGreetRoute
   '/journal/$slug': typeof JournalSlugRoute
   '/services/$slug': typeof ServicesSlugRoute
+  '/services/tours-excursions': typeof ServicesToursExcursionsRoute
   '/tours/$slug': typeof ToursSlugRoute
   '/tours/guinea': typeof ToursGuineaRoute
   '/tours/liberia': typeof ToursLiberiaRoute
@@ -722,6 +730,7 @@ export interface FileRoutesById {
   '/destinations/$circuit': typeof DestinationsCircuitRouteWithChildren
   '/journal/$slug': typeof JournalSlugRoute
   '/services/$slug': typeof ServicesSlugRoute
+  '/services/tours-excursions': typeof ServicesToursExcursionsRoute
   '/tours/$slug': typeof ToursSlugRoute
   '/tours/guinea': typeof ToursGuineaRoute
   '/tours/liberia': typeof ToursLiberiaRoute
@@ -809,6 +818,7 @@ export interface FileRouteTypes {
     | '/destinations/$circuit'
     | '/journal/$slug'
     | '/services/$slug'
+    | '/services/tours-excursions'
     | '/tours/$slug'
     | '/tours/guinea'
     | '/tours/liberia'
@@ -887,6 +897,7 @@ export interface FileRouteTypes {
     | '/cruise/vip-meet-and-greet'
     | '/journal/$slug'
     | '/services/$slug'
+    | '/services/tours-excursions'
     | '/tours/$slug'
     | '/tours/guinea'
     | '/tours/liberia'
@@ -972,6 +983,7 @@ export interface FileRouteTypes {
     | '/destinations/$circuit'
     | '/journal/$slug'
     | '/services/$slug'
+    | '/services/tours-excursions'
     | '/tours/$slug'
     | '/tours/guinea'
     | '/tours/liberia'
@@ -1041,6 +1053,7 @@ export interface RootRouteChildren {
   DestinationsCircuitRoute: typeof DestinationsCircuitRouteWithChildren
   JournalSlugRoute: typeof JournalSlugRoute
   ServicesSlugRoute: typeof ServicesSlugRoute
+  ServicesToursExcursionsRoute: typeof ServicesToursExcursionsRoute
   ToursSlugRoute: typeof ToursSlugRoute
   ToursGuineaRoute: typeof ToursGuineaRoute
   ToursLiberiaRoute: typeof ToursLiberiaRoute
@@ -1420,6 +1433,13 @@ declare module '@tanstack/react-router' {
       path: '/services/$slug'
       fullPath: '/services/$slug'
       preLoaderRoute: typeof ServicesSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/services/tours-excursions': {
+      id: '/services/tours-excursions'
+      path: '/services/tours-excursions'
+      fullPath: '/services/tours-excursions'
+      preLoaderRoute: typeof ServicesToursExcursionsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/tours/': {
@@ -1828,6 +1848,7 @@ const rootRouteChildren: RootRouteChildren = {
   DestinationsCircuitRoute: DestinationsCircuitRouteWithChildren,
   JournalSlugRoute: JournalSlugRoute,
   ServicesSlugRoute: ServicesSlugRoute,
+  ServicesToursExcursionsRoute: ServicesToursExcursionsRoute,
   ToursSlugRoute: ToursSlugRoute,
   ToursGuineaRoute: ToursGuineaRoute,
   ToursLiberiaRoute: ToursLiberiaRoute,
