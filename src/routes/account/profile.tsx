@@ -20,7 +20,7 @@ function Profile() {
       </dl>
       <p className="text-sm text-muted">
         Profile edits beyond sign-in providers are handled by writing to {SITE.email} or using{" "}
-        <Link to="/account/settings" className="text-brand hover:text-gold">
+        <Link to="/account/settings" className="text-heading hover:text-gold-ink">
           account settings
         </Link>
         .

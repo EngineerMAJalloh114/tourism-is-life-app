@@ -52,7 +52,7 @@ export function CruiseInquiryForm({
       </p>
 
       <fieldset>
-        <legend className="font-display text-2xl text-brand">Cruise information</legend>
+        <legend className="font-display text-2xl text-heading">Cruise information</legend>
         <div className="mt-4 grid gap-4 sm:grid-cols-2">
           <Field name="ship" label="Cruise / vessel name" required />
           <Field name="arrival" label="Expected arrival date" type="date" required />
@@ -64,7 +64,7 @@ export function CruiseInquiryForm({
               id="excursions"
               name="excursions"
               defaultValue={preferredExcursion ?? ""}
-              className="min-h-11 w-full rounded-md border border-line bg-ivory px-3 text-sm"
+              className="min-h-11 w-full rounded-md border border-line bg-page px-3 text-sm"
             >
               <option value="">Not sure yet</option>
               {excursions.map((item) => (
@@ -78,7 +78,7 @@ export function CruiseInquiryForm({
       </fieldset>
 
       <fieldset>
-        <legend className="font-display text-2xl text-brand">Traveler requirements</legend>
+        <legend className="font-display text-2xl text-heading">Traveler requirements</legend>
         <div className="mt-4 grid gap-4">
           <Field name="preferredActivities" label="Preferred activities" />
           <div>
@@ -92,7 +92,7 @@ export function CruiseInquiryForm({
       </fieldset>
 
       <fieldset>
-        <legend className="font-display text-2xl text-brand">Contact</legend>
+        <legend className="font-display text-2xl text-heading">Contact</legend>
         <div className="mt-4 grid gap-4 sm:grid-cols-2">
           <Field name="name" label="Name" required={!user} defaultValue={user?.displayName ?? ""} />
           <Field name="company" label="Company / organization" />

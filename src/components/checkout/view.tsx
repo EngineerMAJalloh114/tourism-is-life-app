@@ -58,7 +58,7 @@ export function CheckoutView({ step }: { step: Step }) {
   if (!token) {
     return (
       <div className="container-page py-20">
-        <h1 className="font-display text-3xl text-brand">Resume checkout</h1>
+        <h1 className="font-display text-3xl text-heading">Resume checkout</h1>
         <p className="mt-3 text-muted">
           This hold lives in this browser. Start again from the tour if the link is missing its access token.
         </p>
@@ -72,7 +72,7 @@ export function CheckoutView({ step }: { step: Step }) {
   if (error) {
     return (
       <div className="container-page py-20">
-        <h1 className="font-display text-3xl text-brand">Checkout unavailable</h1>
+        <h1 className="font-display text-3xl text-heading">Checkout unavailable</h1>
         <p className="mt-3 text-danger">{error}</p>
       </div>
     );
@@ -99,10 +99,10 @@ export function CheckoutView({ step }: { step: Step }) {
         {" · "}
         {booking.id}
       </p>
-      <h1 className="mt-2 font-display text-4xl text-brand">Checkout</h1>
+      <h1 className="mt-2 font-display text-4xl text-heading">Checkout</h1>
       <ol className="mt-6 flex flex-wrap gap-4 text-xs uppercase tracking-[0.14em] text-muted">
         {STEPS.map((s, i) => (
-          <li key={s.id} className={s.id === step ? "text-brand" : ""}>
+          <li key={s.id} className={s.id === step ? "text-heading" : ""}>
             {i + 1}. {s.label}
           </li>
         ))}
@@ -110,7 +110,7 @@ export function CheckoutView({ step }: { step: Step }) {
       {booking.status === "EXPIRED" && step !== "expired" ? (
         <p className="mt-6 rounded-md border border-warn/40 bg-surface px-4 py-3 text-sm">
           This hold expired.{" "}
-          <Link className="text-brand" to="/tours/$slug" params={{ slug: booking.tour_slug }}>
+          <Link className="text-heading" to="/tours/$slug" params={{ slug: booking.tour_slug }}>
             Choose a new date
           </Link>
           .
@@ -246,7 +246,7 @@ function ReviewPanel({
 }) {
   return (
     <div className="mt-8 max-w-lg rounded-lg border border-line bg-surface p-6">
-      <h2 className="font-display text-2xl text-brand">Review</h2>
+      <h2 className="font-display text-2xl text-heading">Review</h2>
       <ul className="mt-4 space-y-1 text-sm">
         <li>{tourTitle}</li>
         <li>
@@ -309,7 +309,7 @@ function PaymentPanel({
   return (
     <div className="mt-8 max-w-lg rounded-lg border border-line bg-surface p-6">
       <p className="text-xs uppercase tracking-[0.16em] text-gold-ink">{mode?.label ?? "Test settlement"}</p>
-      <h2 className="mt-2 font-display text-2xl text-brand">Payment</h2>
+      <h2 className="mt-2 font-display text-2xl text-heading">Payment</h2>
       <p className="mt-3 text-sm text-muted">
         Card charges and Orange Money / Afrimoney confirm only after a signed Stripe or Moneroo webhook. No
         raw card data is collected on this site.
@@ -366,7 +366,7 @@ function ConfirmPanel({
   return (
     <div className="mt-8 max-w-lg">
       <p className="text-xs uppercase tracking-[0.2em] text-ok">Confirmed</p>
-      <h2 className="mt-2 font-display text-3xl text-brand">You’re booked</h2>
+      <h2 className="mt-2 font-display text-3xl text-heading">You’re booked</h2>
       <p className="mt-3 text-muted">
         {tourTitle}. Reference {booking.id}. Voucher {booking.voucher_code ?? "issuing…"}.
       </p>
@@ -386,7 +386,7 @@ function VoucherPanel({ booking, tourTitle }: { booking: BookingRow; tourTitle: 
   return (
     <div className="mt-8 max-w-xl rounded-lg border border-gold bg-surface p-8 print:border-ink">
       <p className="text-xs uppercase tracking-[0.2em] text-gold-ink">Tourism Is Life · Voucher</p>
-      <h2 className="mt-2 font-display text-3xl text-brand">{booking.voucher_code ?? "Pending voucher"}</h2>
+      <h2 className="mt-2 font-display text-3xl text-heading">{booking.voucher_code ?? "Pending voucher"}</h2>
       <p className="mt-4">{tourTitle}</p>
       <p className="mt-1 text-sm text-muted">
         {booking.travel_date} · {booking.guests} guests · {booking.guest_name}
@@ -402,7 +402,7 @@ function VoucherPanel({ booking, tourTitle }: { booking: BookingRow; tourTitle: 
 function StatusPanel({ title, body }: { title: string; body: string }) {
   return (
     <div className="mt-8 max-w-lg">
-      <h2 className="font-display text-3xl text-brand">{title}</h2>
+      <h2 className="font-display text-3xl text-heading">{title}</h2>
       <p className="mt-3 text-muted">{body}</p>
       <Button asChild className="mt-6">
         <Link to="/tours">Browse tours</Link>

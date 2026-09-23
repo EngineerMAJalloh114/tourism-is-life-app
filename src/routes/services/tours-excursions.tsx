@@ -96,7 +96,7 @@ function ToursExcursionsPage() {
       {featured.length > 0 ? (
         <section className="container-page py-16">
           <p className="text-xs uppercase tracking-[0.22em] text-gold-ink">Signature itineraries</p>
-          <h2 className="mt-2 max-w-2xl font-display text-3xl text-brand sm:text-4xl">
+          <h2 className="mt-2 max-w-2xl font-display text-3xl text-heading sm:text-4xl">
             Three routes we plan end to end
           </h2>
           <p className="mt-3 max-w-2xl text-muted">
@@ -132,7 +132,7 @@ function ToursExcursionsPage() {
                       {tour.country === "west-africa" ? "West Africa" : "Sierra Leone"}
                     </span>
                   </div>
-                  <h3 className="mt-3 font-display text-2xl text-brand sm:text-3xl">
+                  <h3 className="mt-3 font-display text-2xl text-heading sm:text-3xl">
                     <Link to="/tours/$slug" params={{ slug: tour.slug }} className="hover:text-gold-ink">
                       {tour.title}
                     </Link>
@@ -168,7 +168,7 @@ function ToursExcursionsPage() {
       <section id="all-tours" className="scroll-mt-24 border-t border-line bg-surface py-16">
         <div className="container-page">
           <p className="text-xs uppercase tracking-[0.22em] text-gold-ink">The catalogue</p>
-          <h2 className="mt-2 font-display text-3xl text-brand sm:text-4xl">Find a tour</h2>
+          <h2 className="mt-2 font-display text-3xl text-heading sm:text-4xl">Find a tour</h2>
           <p className="mt-3 max-w-2xl text-muted">
             Filter by what you want to do and how long you have. Prices are quoted per trip, so every
             tour here leads to a written quote rather than an online checkout.
@@ -185,8 +185,8 @@ function ToursExcursionsPage() {
               ))}
             </div>
           ) : (
-            <div className="mt-10 rounded-lg border border-line bg-ivory p-8 text-center">
-              <p className="font-display text-2xl text-brand">Nothing matches that combination</p>
+            <div className="mt-10 rounded-lg border border-line bg-page p-8 text-center">
+              <p className="font-display text-2xl text-heading">Nothing matches that combination</p>
               <p className="mx-auto mt-2 max-w-md text-sm text-muted">
                 Try a different length or experience, or clear the filters. If what you want is not
                 in the catalogue, the desk still plans custom itineraries.
@@ -206,14 +206,14 @@ function ToursExcursionsPage() {
 
       <section className="container-page py-16">
         <p className="text-xs uppercase tracking-[0.22em] text-gold-ink">How it works</p>
-        <h2 className="mt-2 max-w-2xl font-display text-3xl text-brand sm:text-4xl">
+        <h2 className="mt-2 max-w-2xl font-display text-3xl text-heading sm:text-4xl">
           From first message to landing in Freetown
         </h2>
         <ol className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
           {ENQUIRY_STEPS.map((step, index) => (
             <li key={step.title} className="flex flex-col gap-3">
               <span className="font-display text-4xl text-gold-ink">{String(index + 1).padStart(2, "0")}</span>
-              <h3 className="font-display text-xl text-brand">{step.title}</h3>
+              <h3 className="font-display text-xl text-heading">{step.title}</h3>
               <p className="text-sm leading-relaxed text-muted">{step.body}</p>
             </li>
           ))}
@@ -223,21 +223,21 @@ function ToursExcursionsPage() {
       <section className="border-t border-line bg-surface py-16">
         <div className="container-page grid gap-10 lg:grid-cols-[1fr_minmax(0,28rem)]">
           <div>
-            <h2 className="font-display text-3xl text-brand sm:text-4xl">Plan your trip</h2>
+            <h2 className="font-display text-3xl text-heading sm:text-4xl">Plan your trip</h2>
             <p className="mt-3 max-w-xl leading-relaxed text-muted">
               Tell us roughly when you want to travel and what you would like to see. The Freetown
               desk replies within 24 hours, and a person reads every message.
             </p>
             <dl className="mt-8 flex flex-col gap-4 text-sm">
               <div>
-                <dt className="font-medium text-brand">Custom itineraries</dt>
+                <dt className="font-medium text-heading">Custom itineraries</dt>
                 <dd className="mt-1 text-muted">
                   Published tours are a starting point. Routes get rebuilt around your dates, pace
                   and interests.
                 </dd>
               </div>
               <div>
-                <dt className="font-medium text-brand">Groups and operators</dt>
+                <dt className="font-medium text-heading">Groups and operators</dt>
                 <dd className="mt-1 text-muted">
                   The same circuits run for tour operators and private groups, quoted per group.
                 </dd>

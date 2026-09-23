@@ -58,7 +58,9 @@ export function ThemeSwitcher() {
         <span
           aria-hidden
           className="ml-0.5 size-2.5 rounded-full border border-ivory/40"
-          style={{ background: active.swatch[1] }}
+          /* The highlight, not the page or band colour: this dot sits on the dark
+             utility bar, where a theme's page colour would be nearly invisible. */
+          style={{ background: active.swatch[2] }}
         />
       </button>
 
@@ -66,7 +68,7 @@ export function ThemeSwitcher() {
         <div
           role="radiogroup"
           aria-label="Site theme"
-          className="absolute right-0 top-[calc(100%+0.5rem)] z-50 w-60 overflow-hidden rounded-lg border border-line bg-ivory p-1.5 text-ink shadow-[var(--shadow-lift)]"
+          className="absolute right-0 top-[calc(100%+0.5rem)] z-50 w-60 overflow-hidden rounded-lg border border-line bg-page p-1.5 text-ink shadow-[var(--shadow-lift)]"
         >
           {THEMES.map((option) => {
             const selected = option.id === theme;
@@ -88,7 +90,7 @@ export function ThemeSwitcher() {
                   ))}
                 </span>
                 <span className="flex-1">
-                  <span className="block text-[13px] font-medium leading-tight text-brand">
+                  <span className="block text-[13px] font-medium leading-tight text-heading">
                     {option.label}
                   </span>
                   <span className="block text-[11px] leading-tight text-muted">{option.description}</span>

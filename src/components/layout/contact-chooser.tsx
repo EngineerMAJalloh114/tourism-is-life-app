@@ -44,7 +44,7 @@ export function ContactChooser({ phone, label }: ContactChooserProps) {
           align="start"
           collisionPadding={8}
           className={cn(
-            "z-50 w-72 rounded-md border border-line bg-ivory p-4 shadow-[var(--shadow-card)]",
+            "z-50 w-72 rounded-md border border-line bg-page p-4 shadow-[var(--shadow-card)]",
             "data-[state=open]:animate-in data-[state=closed]:animate-out",
             "data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0",
             "data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95",
@@ -57,14 +57,14 @@ export function ContactChooser({ phone, label }: ContactChooserProps) {
               <p className="text-xs font-medium uppercase tracking-[0.14em] text-muted">
                 Contact
               </p>
-              <p className="mt-1 font-display text-lg text-brand">{phone}</p>
+              <p className="mt-1 font-display text-lg text-heading">{phone}</p>
             </div>
             <div className="grid grid-cols-1 gap-2">
               <a
                 href={createWhatsAppUrl(phone)}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center gap-2 rounded-md border border-line bg-surface px-3 py-2.5 text-sm font-medium text-brand hover:border-gold hover:text-brand-dark transition-colors"
+                className="flex items-center gap-2 rounded-md border border-line bg-surface px-3 py-2.5 text-sm font-medium text-heading hover:border-gold hover:text-brand-dark transition-colors"
                 onClick={() => setOpen(false)}
               >
                 <MessageCircle className="size-4 shrink-0" aria-hidden="true" />
@@ -72,7 +72,7 @@ export function ContactChooser({ phone, label }: ContactChooserProps) {
               </a>
               <a
                 href={createSmsUrl(phone)}
-                className="flex items-center gap-2 rounded-md border border-line bg-surface px-3 py-2.5 text-sm font-medium text-brand hover:border-gold hover:text-brand-dark transition-colors"
+                className="flex items-center gap-2 rounded-md border border-line bg-surface px-3 py-2.5 text-sm font-medium text-heading hover:border-gold hover:text-brand-dark transition-colors"
                 onClick={() => setOpen(false)}
               >
                 <MessageSquare className="size-4 shrink-0" aria-hidden="true" />
@@ -80,7 +80,7 @@ export function ContactChooser({ phone, label }: ContactChooserProps) {
               </a>
               <a
                 href={createTelUrl(phone)}
-                className="flex items-center gap-2 rounded-md border border-line bg-surface px-3 py-2.5 text-sm font-medium text-brand hover:border-gold hover:text-brand-dark transition-colors"
+                className="flex items-center gap-2 rounded-md border border-line bg-surface px-3 py-2.5 text-sm font-medium text-heading hover:border-gold hover:text-brand-dark transition-colors"
                 onClick={() => setOpen(false)}
               >
                 <Phone className="size-4 shrink-0" aria-hidden="true" />

@@ -22,7 +22,11 @@ export type ThemeOption = {
   label: string;
   /** Short description read by screen readers and shown under the label. */
   description: string;
-  /** Three representative colours for the selector preview, dark to light. */
+  /**
+   * Preview colours for the selector, in the order [page, accent band, highlight].
+   * These must mirror `--color-page`, `--color-brand` and `--color-gold` for the
+   * theme, or the swatch advertises a palette the page does not use.
+   */
   swatch: [string, string, string];
 };
 
@@ -30,26 +34,26 @@ export const THEMES: ThemeOption[] = [
   {
     id: "default",
     label: "Default",
-    description: "Forest green and gold",
-    swatch: ["#1b2e28", "#c69a3e", "#fbf8f1"],
+    description: "Light, forest green and gold",
+    swatch: ["#fbf8f1", "#1b2e28", "#c69a3e"],
   },
   {
     id: "two",
     label: "Theme Two",
-    description: "Deep teal and sand",
-    swatch: ["#00525E", "#6BCED8", "#FAF7F3"],
+    description: "Dark, deep teal and turquoise",
+    swatch: ["#012026", "#004b56", "#47c2cf"],
   },
   {
     id: "three",
     label: "Theme Three",
-    description: "Navy and sky blue",
-    swatch: ["#171725", "#5A94C1", "#F7F8FA"],
+    description: "Dark, navy and sky blue",
+    swatch: ["#0b0f1a", "#052747", "#5a94c1"],
   },
   {
     id: "four",
     label: "Theme Four",
-    description: "Coastal slate and teal",
-    swatch: ["#383E3D", "#83B1C4", "#F7F9F9"],
+    description: "Dark, coastal slate and teal",
+    swatch: ["#12191a", "#13404d", "#7cadc1"],
   },
 ];
 

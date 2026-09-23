@@ -34,20 +34,20 @@ function DestinationsPage() {
             >
               <img src={c.image} alt={c.imageAlt} className="h-48 w-full object-cover" />
               <div className="p-5">
-                <h2 className="font-display text-2xl text-brand">{c.name}</h2>
+                <h2 className="font-display text-2xl text-heading">{c.name}</h2>
                 <p className="mt-2 text-sm text-muted">{c.summary}</p>
               </div>
             </Link>
           ))}
         </div>
-        <h2 className="mt-16 font-display text-3xl text-brand">Places</h2>
+        <h2 className="mt-16 font-display text-3xl text-heading">Places</h2>
         <ul className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
           {destinations.map((d) => (
             <li key={d.slug} className="rounded-md border border-line px-4 py-3">
               <Link
                 to="/destinations/$circuit/$slug"
                 params={{ circuit: d.circuit, slug: d.slug }}
-                className="font-medium text-brand hover:text-gold"
+                className="font-medium text-heading hover:text-gold-ink"
               >
                 {d.name}
               </Link>

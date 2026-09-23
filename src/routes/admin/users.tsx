@@ -54,7 +54,7 @@ function UsersPage() {
             <label className="text-sm">
               Role
               <select
-                className="ml-2 min-h-10 rounded-md border border-line bg-ivory px-2"
+                className="ml-2 min-h-10 rounded-md border border-line bg-page px-2"
                 value={r.role}
                 disabled={busy === r.user_id}
                 onChange={(e) => void change(r.user_id, e.target.value as Role)}

@@ -40,7 +40,7 @@ function Login() {
     <div className="container-page grid min-h-[70vh] place-items-center py-16">
       <div className="w-full max-w-md rounded-lg border border-line bg-surface p-8 shadow-[var(--shadow-card)]">
         <p className="text-xs uppercase tracking-[0.2em] text-gold-ink">Account</p>
-        <h1 className="mt-2 font-display text-3xl text-brand">
+        <h1 className="mt-2 font-display text-3xl text-heading">
           {mode === "in" ? "Sign in" : "Create an account"}
         </h1>
         <p className="mt-2 text-sm text-muted">
@@ -102,18 +102,18 @@ function Login() {
             </form>
             <button
               type="button"
-              className="w-full text-sm text-muted hover:text-brand"
+              className="w-full text-sm text-muted hover:text-heading"
               onClick={() => setMode(mode === "in" ? "up" : "in")}
             >
               {mode === "in" ? "Need an account? Register" : "Already registered? Sign in"}
             </button>
             {mode === "in" ? (
               <p className="text-center text-sm">
-                <Link to="/forgot-password" className="text-muted hover:text-brand">
+                <Link to="/forgot-password" className="text-muted hover:text-heading">
                   Forgot password
                 </Link>
                 {" · "}
-                <Link to="/register" className="text-muted hover:text-brand">
+                <Link to="/register" className="text-muted hover:text-heading">
                   Create an account
                 </Link>
               </p>
@@ -123,7 +123,7 @@ function Login() {
           <p className="mt-4 text-sm text-muted">Sign-in is disabled.</p>
         )}
         <p className="mt-6 text-center text-sm">
-          <Link to="/" className="text-brand hover:text-gold">
+          <Link to="/" className="text-heading hover:text-gold-ink">
             Back to home
           </Link>
         </p>

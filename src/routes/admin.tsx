@@ -45,7 +45,7 @@ function AdminLayout() {
   if (!isStaff(role) && !canBootstrap) {
     return (
       <div className="container-page py-20">
-        <h1 className="font-display text-3xl text-brand">Staff only</h1>
+        <h1 className="font-display text-3xl text-heading">Staff only</h1>
         <p className="mt-3 text-muted">This desk is limited to provisioned operations roles.</p>
       </div>
     );
@@ -54,7 +54,7 @@ function AdminLayout() {
   if (!isStaff(role) && canBootstrap) {
     return (
       <div className="container-page py-20">
-        <h1 className="font-display text-3xl text-brand">Provision operations</h1>
+        <h1 className="font-display text-3xl text-heading">Provision operations</h1>
         <p className="mt-3 max-w-xl text-muted">
           No staff roles exist yet. The first signed-in user may claim SUPER_ADMIN. After that, roles are
           granted only from this desk.
@@ -82,7 +82,7 @@ function AdminLayout() {
   return (
     <div className="container-page py-12">
       <p className="text-xs uppercase tracking-[0.16em] text-gold-ink">Operations · {role}</p>
-      <h1 className="mt-2 font-display text-4xl text-brand">Command centre</h1>
+      <h1 className="mt-2 font-display text-4xl text-heading">Command centre</h1>
       <nav className="mt-8 flex flex-wrap gap-2" aria-label="Admin">
         {LINKS.map((l) => (
           <Link

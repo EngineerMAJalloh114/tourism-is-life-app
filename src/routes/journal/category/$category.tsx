@@ -31,7 +31,7 @@ function CategoryPage() {
         {list.map((a) => (
           <Link key={a.slug} to="/journal/$slug" params={{ slug: a.slug }} className="mb-8 block">
             <p className="text-xs uppercase tracking-[0.16em] text-muted">{a.date}</p>
-            <h2 className="mt-1 font-display text-3xl text-brand">{a.title}</h2>
+            <h2 className="mt-1 font-display text-3xl text-heading">{a.title}</h2>
             <p className="mt-2 text-sm text-muted">{a.excerpt}</p>
           </Link>
         ))}

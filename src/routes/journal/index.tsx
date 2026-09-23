@@ -38,7 +38,7 @@ function Journal() {
               <p className="mt-3 text-[11px] uppercase tracking-[0.16em] text-muted">
                 {a.categoryLabel} · {a.date}
               </p>
-              <h2 className="mt-1 font-display text-3xl text-brand">{a.title}</h2>
+              <h2 className="mt-1 font-display text-3xl text-heading">{a.title}</h2>
               <p className="mt-2 text-sm text-muted">{a.excerpt}</p>
             </Link>
           ))}

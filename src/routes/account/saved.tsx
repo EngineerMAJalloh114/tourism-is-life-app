@@ -16,7 +16,7 @@ function Saved() {
     <ul className="space-y-2">
       {saved.map((slug) => (
         <li key={slug}>
-          <Link to="/tours/$slug" params={{ slug }} className="text-brand hover:text-gold">
+          <Link to="/tours/$slug" params={{ slug }} className="text-heading hover:text-gold-ink">
             {getTour(slug)?.title ?? slug}
           </Link>
         </li>

@@ -77,7 +77,7 @@ function Home() {
           </div>
           <form
             onSubmit={onSearch}
-            className="mt-10 grid w-full max-w-4xl gap-2 rounded-lg bg-ivory p-3 text-ink shadow-[var(--shadow-lift)] sm:grid-cols-2 lg:grid-cols-[1.2fr_1fr_8rem_auto]"
+            className="mt-10 grid w-full max-w-4xl gap-2 rounded-lg bg-page p-3 text-ink shadow-[var(--shadow-lift)] sm:grid-cols-2 lg:grid-cols-[1.2fr_1fr_8rem_auto]"
           >
             <label className="sr-only" htmlFor="home-search">
               Search tours
@@ -96,7 +96,7 @@ function Home() {
               id="home-place"
               value={place}
               onChange={(e) => setPlace(e.target.value)}
-              className="min-h-12 rounded-md border border-line bg-ivory px-3 text-sm"
+              className="min-h-12 rounded-md border border-line bg-page px-3 text-sm"
             >
               <option value="">Any destination</option>
               {destinations.map((d) => (
@@ -147,7 +147,7 @@ function Home() {
             <div key={item.t} className="flex gap-3">
               <item.icon className="mt-0.5 size-5 text-gold" aria-hidden />
               <div>
-                <p className="font-medium text-brand">{item.t}</p>
+                <p className="font-medium text-heading">{item.t}</p>
                 <p className="mt-1 text-sm text-muted">{item.d}</p>
               </div>
             </div>
@@ -157,7 +157,7 @@ function Home() {
 
       <section className="container-page py-20">
         <p className="text-xs uppercase tracking-[0.22em] text-gold-ink">The four circuits</p>
-        <h2 className="mt-2 font-display text-4xl text-brand">Sierra Leone, mapped as we travel it</h2>
+        <h2 className="mt-2 font-display text-4xl text-heading">Sierra Leone, mapped as we travel it</h2>
         <div className="mt-10 grid gap-5 sm:grid-cols-2">
           {circuits.map((c) => (
             <Link
@@ -187,7 +187,7 @@ function Home() {
           <div className="flex items-end justify-between gap-4">
             <div>
               <p className="text-xs uppercase tracking-[0.22em] text-gold-ink">Featured journeys</p>
-              <h2 className="mt-2 font-display text-4xl text-brand">Tours from the public catalogue</h2>
+              <h2 className="mt-2 font-display text-4xl text-heading">Tours from the public catalogue</h2>
             </div>
             <Button asChild variant="outline">
               <Link to="/tours">All tours</Link>
@@ -229,7 +229,7 @@ function Home() {
       </section>
 
       <section className="container-page py-20">
-        <h2 className="font-display text-4xl text-brand">Travel by experience</h2>
+        <h2 className="font-display text-4xl text-heading">Travel by experience</h2>
         <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {(
             [
@@ -259,7 +259,7 @@ function Home() {
       <section className="bg-surface py-20">
         <div className="container-page">
           <p className="text-xs uppercase tracking-[0.22em] text-gold-ink">Signature experiences</p>
-          <h2 className="mt-2 font-display text-4xl text-brand">Islands, chimps, rainforest, summit</h2>
+          <h2 className="mt-2 font-display text-4xl text-heading">Islands, chimps, rainforest, summit</h2>
           <div className="mt-10 grid gap-6 lg:grid-cols-4">
             {signatures.map((t) => (
               <TourCard key={t.slug} tour={t} />
@@ -297,7 +297,7 @@ function Home() {
       </section>
 
       <section className="container-page py-16">
-        <h2 className="font-display text-3xl text-brand">Seven DMC services</h2>
+        <h2 className="font-display text-3xl text-heading">Seven DMC services</h2>
         <div className="mt-8 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
           {services.map((s) => (
             <Link
@@ -306,7 +306,7 @@ function Home() {
               params={{ slug: s.slug }}
               className="rounded-md border border-line px-4 py-5 hover:border-gold"
             >
-              <p className="font-medium text-brand">{s.name}</p>
+              <p className="font-medium text-heading">{s.name}</p>
             </Link>
           ))}
         </div>
@@ -315,8 +315,8 @@ function Home() {
       <section className="bg-surface py-16">
         <div className="container-page">
           <div className="flex items-end justify-between">
-            <h2 className="font-display text-3xl text-brand">Journal</h2>
-            <Link to="/journal" className="text-sm text-brand hover:text-gold">
+            <h2 className="font-display text-3xl text-heading">Journal</h2>
+            <Link to="/journal" className="text-sm text-heading hover:text-gold-ink">
               All stories
             </Link>
           </div>
@@ -325,7 +325,7 @@ function Home() {
               <Link key={a.slug} to="/journal/$slug" params={{ slug: a.slug }} className="block">
                 <img src={a.image} alt={a.imageAlt} className="aspect-[16/10] w-full rounded-md object-cover" />
                 <p className="mt-3 text-[11px] uppercase tracking-[0.16em] text-muted">{a.date}</p>
-                <h3 className="mt-1 font-display text-2xl text-brand">{a.title}</h3>
+                <h3 className="mt-1 font-display text-2xl text-heading">{a.title}</h3>
               </Link>
             ))}
           </div>
@@ -343,7 +343,7 @@ function Home() {
       </section>
 
       <section className="container-page py-20 text-center">
-        <h2 className="font-display text-4xl text-brand">Plan your journey</h2>
+        <h2 className="font-display text-4xl text-heading">Plan your journey</h2>
         <p className="mx-auto mt-3 max-w-xl text-muted">Quotes are confirmed in writing. Published pages do not invent prices.</p>
         <div className="mt-8 flex flex-wrap justify-center gap-3">
           <Button asChild size="lg">

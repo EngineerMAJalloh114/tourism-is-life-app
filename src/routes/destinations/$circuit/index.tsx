@@ -45,7 +45,7 @@ function CircuitPage() {
             </li>
           ))}
         </ul>
-        <h2 className="mt-12 font-display text-3xl text-brand">Places</h2>
+        <h2 className="mt-12 font-display text-3xl text-heading">Places</h2>
         <ul className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {places.map((d) => (
             <li key={d.slug}>
@@ -56,14 +56,14 @@ function CircuitPage() {
               >
                 <img src={d.image} alt={d.imageAlt} className="h-40 w-full object-cover" />
                 <div className="p-4">
-                  <h3 className="font-display text-xl text-brand">{d.name}</h3>
+                  <h3 className="font-display text-xl text-heading">{d.name}</h3>
                   <p className="mt-1 text-sm text-muted">{d.summary}</p>
                 </div>
               </Link>
             </li>
           ))}
         </ul>
-        <h2 className="mt-12 font-display text-3xl text-brand">Tours in this circuit</h2>
+        <h2 className="mt-12 font-display text-3xl text-heading">Tours in this circuit</h2>
         <div className="mt-6 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {list.map((t) => (
             <TourCard key={t.slug} tour={t} />

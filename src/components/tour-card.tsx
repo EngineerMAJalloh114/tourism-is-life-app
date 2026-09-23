@@ -22,8 +22,8 @@ export function TourCard({ tour }: { tour: Tour }) {
       </Link>
       <div className="flex flex-1 flex-col p-5">
         <p className="text-[11px] uppercase tracking-[0.16em] text-muted">{tour.category.replace("-", " ")}</p>
-        <h3 className="mt-1 font-display text-2xl text-brand">
-          <Link to="/tours/$slug" params={{ slug: tour.slug }} className="hover:text-gold">
+        <h3 className="mt-1 font-display text-2xl text-heading">
+          <Link to="/tours/$slug" params={{ slug: tour.slug }} className="hover:text-gold-ink">
             {tour.title}
           </Link>
         </h3>
@@ -39,7 +39,7 @@ export function TourCard({ tour }: { tour: Tour }) {
             <Mountain className="size-3.5" aria-hidden /> {tour.difficulty}
           </span>
         </div>
-        <p className="mt-3 font-medium text-brand">
+        <p className="mt-3 font-medium text-heading">
           {tour.bookable ? "Check availability" : "Request a quote"}
         </p>
       </div>

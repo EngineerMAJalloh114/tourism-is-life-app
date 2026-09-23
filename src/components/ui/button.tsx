@@ -11,9 +11,9 @@ const buttonVariants = cva(
         primary: "bg-gold text-brand-dark hover:bg-gold/90",
         dark: "bg-brand text-ivory hover:bg-brand-dark",
         outline:
-          "border border-line bg-transparent text-ink hover:border-gold hover:text-brand",
+          "border border-line bg-transparent text-ink hover:border-gold hover:text-heading",
         ghost: "text-ivory hover:bg-ivory/10",
-        ivory: "bg-ivory text-brand hover:bg-surface",
+        ivory: "bg-page text-heading hover:bg-surface",
       },
       size: {
         default: "min-h-11 px-5",

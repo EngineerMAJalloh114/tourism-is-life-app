@@ -61,7 +61,7 @@ function SearchPage() {
         <div className="grid gap-4 rounded-lg border border-line bg-surface p-4 lg:grid-cols-3">
           <Input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Keyword" aria-label="Keyword" />
           <select
-            className="min-h-11 rounded-md border border-line bg-ivory px-3 text-sm"
+            className="min-h-11 rounded-md border border-line bg-page px-3 text-sm"
             value={category}
             onChange={(e) => setCategory(e.target.value as TourCategory | "all")}
             aria-label="Category"
@@ -73,7 +73,7 @@ function SearchPage() {
             <option value="adventure">Adventure</option>
           </select>
           <select
-            className="min-h-11 rounded-md border border-line bg-ivory px-3 text-sm"
+            className="min-h-11 rounded-md border border-line bg-page px-3 text-sm"
             value={circuit}
             onChange={(e) => setCircuit(e.target.value)}
             aria-label="Circuit"
@@ -85,7 +85,7 @@ function SearchPage() {
             <option value="eastern-circuit">Eastern</option>
           </select>
           <select
-            className="min-h-11 rounded-md border border-line bg-ivory px-3 text-sm"
+            className="min-h-11 rounded-md border border-line bg-page px-3 text-sm"
             value={difficulty}
             onChange={(e) => setDifficulty(e.target.value as Difficulty | "all")}
             aria-label="Difficulty"
@@ -96,7 +96,7 @@ function SearchPage() {
             <option value="challenging">Challenging</option>
           </select>
           <select
-            className="min-h-11 rounded-md border border-line bg-ivory px-3 text-sm"
+            className="min-h-11 rounded-md border border-line bg-page px-3 text-sm"
             value={bookable}
             onChange={(e) => setBookable(e.target.value as "all" | "yes" | "quote")}
             aria-label="Bookability"
@@ -106,7 +106,7 @@ function SearchPage() {
             <option value="quote">Quote only</option>
           </select>
           <select
-            className="min-h-11 rounded-md border border-line bg-ivory px-3 text-sm"
+            className="min-h-11 rounded-md border border-line bg-page px-3 text-sm"
             value={sort}
             onChange={(e) => setSort(e.target.value as "featured" | "duration" | "name")}
             aria-label="Sort"

@@ -54,7 +54,7 @@ export function VehicleSearchForm({ onSearch }: { onSearch: (search: Partial<Boo
               id="pickup"
               value={form.pickupLocation}
               onChange={(e) => update("pickupLocation", e.target.value)}
-              className="min-h-11 w-full rounded-md border border-line bg-ivory pl-10 pr-3 text-sm focus-visible:border-gold"
+              className="min-h-11 w-full rounded-md border border-line bg-page pl-10 pr-3 text-sm focus-visible:border-gold"
             >
               <option value="">Select pickup</option>
               {pickupLocations.map((loc) => (
@@ -71,7 +71,7 @@ export function VehicleSearchForm({ onSearch }: { onSearch: (search: Partial<Boo
               id="destination"
               value={form.destination}
               onChange={(e) => update("destination", e.target.value)}
-              className="min-h-11 w-full rounded-md border border-line bg-ivory pl-10 pr-3 text-sm focus-visible:border-gold"
+              className="min-h-11 w-full rounded-md border border-line bg-page pl-10 pr-3 text-sm focus-visible:border-gold"
             >
               <option value="">Select destination</option>
               {destinationsList.map((d) => (
@@ -89,7 +89,7 @@ export function VehicleSearchForm({ onSearch }: { onSearch: (search: Partial<Boo
               type="date"
               value={form.pickupDate}
               onChange={(e) => update("pickupDate", e.target.value)}
-              className="min-h-11 w-full rounded-md border border-line bg-ivory pl-10 pr-3 text-sm focus-visible:border-gold"
+              className="min-h-11 w-full rounded-md border border-line bg-page pl-10 pr-3 text-sm focus-visible:border-gold"
             />
           </div>
         </div>
@@ -102,7 +102,7 @@ export function VehicleSearchForm({ onSearch }: { onSearch: (search: Partial<Boo
               type="time"
               value={form.pickupTime}
               onChange={(e) => update("pickupTime", e.target.value)}
-              className="min-h-11 w-full rounded-md border border-line bg-ivory pl-10 pr-3 text-sm focus-visible:border-gold"
+              className="min-h-11 w-full rounded-md border border-line bg-page pl-10 pr-3 text-sm focus-visible:border-gold"
             />
           </div>
         </div>
@@ -115,7 +115,7 @@ export function VehicleSearchForm({ onSearch }: { onSearch: (search: Partial<Boo
               type="date"
               value={form.returnDate}
               onChange={(e) => update("returnDate", e.target.value)}
-              className="min-h-11 w-full rounded-md border border-line bg-ivory pl-10 pr-3 text-sm focus-visible:border-gold"
+              className="min-h-11 w-full rounded-md border border-line bg-page pl-10 pr-3 text-sm focus-visible:border-gold"
             />
           </div>
         </div>
@@ -128,7 +128,7 @@ export function VehicleSearchForm({ onSearch }: { onSearch: (search: Partial<Boo
               type="time"
               value={form.returnTime}
               onChange={(e) => update("returnTime", e.target.value)}
-              className="min-h-11 w-full rounded-md border border-line bg-ivory pl-10 pr-3 text-sm focus-visible:border-gold"
+              className="min-h-11 w-full rounded-md border border-line bg-page pl-10 pr-3 text-sm focus-visible:border-gold"
             />
           </div>
         </div>
@@ -140,7 +140,7 @@ export function VehicleSearchForm({ onSearch }: { onSearch: (search: Partial<Boo
               id="vehicle-type"
               value={form.vehicleType}
               onChange={(e) => update("vehicleType", e.target.value as any)}
-              className="min-h-11 w-full rounded-md border border-line bg-ivory pl-10 pr-3 text-sm focus-visible:border-gold"
+              className="min-h-11 w-full rounded-md border border-line bg-page pl-10 pr-3 text-sm focus-visible:border-gold"
             >
               {vehicleTypeOptions.map((opt) => (
                 <option key={opt.value} value={opt.value}>{opt.label}</option>
@@ -159,7 +159,7 @@ export function VehicleSearchForm({ onSearch }: { onSearch: (search: Partial<Boo
               max={40}
               value={form.passengers}
               onChange={(e) => update("passengers", parseInt(e.target.value, 10) || 1)}
-              className="min-h-11 w-full rounded-md border border-line bg-ivory pl-10 pr-3 text-sm focus-visible:border-gold"
+              className="min-h-11 w-full rounded-md border border-line bg-page pl-10 pr-3 text-sm focus-visible:border-gold"
             />
           </div>
         </div>
@@ -171,7 +171,7 @@ export function VehicleSearchForm({ onSearch }: { onSearch: (search: Partial<Boo
               id="driver"
               value={form.driverOption}
               onChange={(e) => update("driverOption", e.target.value as any)}
-              className="min-h-11 w-full rounded-md border border-line bg-ivory pl-10 pr-3 text-sm focus-visible:border-gold"
+              className="min-h-11 w-full rounded-md border border-line bg-page pl-10 pr-3 text-sm focus-visible:border-gold"
             >
               {driverOptions.map((opt) => (
                 <option key={opt.value} value={opt.value}>{opt.label}</option>
@@ -180,7 +180,7 @@ export function VehicleSearchForm({ onSearch }: { onSearch: (search: Partial<Boo
           </div>
         </div>
         <div className="flex items-end">
-          <label className="flex items-center gap-2 rounded-md border border-line bg-ivory px-3 py-2.5 text-sm cursor-pointer">
+          <label className="flex items-center gap-2 rounded-md border border-line bg-page px-3 py-2.5 text-sm cursor-pointer">
             <input
               type="checkbox"
               checked={form.airportPickup}

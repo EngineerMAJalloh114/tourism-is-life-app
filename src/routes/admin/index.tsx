@@ -26,11 +26,11 @@ function Dashboard() {
         ].map(([k, v]) => (
           <div key={k} className="rounded-lg border border-line bg-surface p-5">
             <p className="text-xs uppercase tracking-[0.14em] text-muted">{k}</p>
-            <p className="mt-2 font-display text-3xl text-brand">{v}</p>
+            <p className="mt-2 font-display text-3xl text-heading">{v}</p>
           </div>
         ))}
       </div>
-      <h2 className="mt-10 font-display text-2xl text-brand">Upcoming departures</h2>
+      <h2 className="mt-10 font-display text-2xl text-heading">Upcoming departures</h2>
       <ul className="mt-4 space-y-2 text-sm">
         {data.upcoming.map((u) => (
           <li key={u.id}>
@@ -39,7 +39,7 @@ function Dashboard() {
         ))}
         {data.upcoming.length === 0 ? <li className="text-muted">None on file.</li> : null}
       </ul>
-      <h2 className="mt-10 font-display text-2xl text-brand">Low capacity</h2>
+      <h2 className="mt-10 font-display text-2xl text-heading">Low capacity</h2>
       <ul className="mt-4 space-y-2 text-sm">
         {data.lowCap.map((s) => (
           <li key={`${s.tour_slug}-${s.travel_date}`}>
@@ -49,7 +49,7 @@ function Dashboard() {
         ))}
         {data.lowCap.length === 0 ? <li className="text-muted">No tight dates.</li> : null}
       </ul>
-      <h2 className="mt-10 font-display text-2xl text-brand">Open enquiries</h2>
+      <h2 className="mt-10 font-display text-2xl text-heading">Open enquiries</h2>
       <ul className="mt-4 space-y-2 text-sm">
         {data.openEnquiries.map((e) => (
           <li key={e.type}>

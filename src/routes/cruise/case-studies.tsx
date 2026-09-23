@@ -28,7 +28,7 @@ function Page() {
         <ul className="space-y-3">
           {cases.map((a) => (
             <li key={a.slug}>
-              <Link to="/journal/$slug" params={{ slug: a.slug }} className="text-brand hover:text-gold">
+              <Link to="/journal/$slug" params={{ slug: a.slug }} className="text-heading hover:text-gold-ink">
                 {a.title}
               </Link>
             </li>

@@ -41,7 +41,7 @@ export const Route = createRootRoute({
   notFoundComponent: () => (
     <div className="container-page py-24">
       <p className="text-xs uppercase tracking-[0.2em] text-gold-ink">404</p>
-      <h1 className="mt-2 font-display text-4xl text-brand">This page is not on the map</h1>
+      <h1 className="mt-2 font-display text-4xl text-heading">This page is not on the map</h1>
       <p className="mt-3 text-muted">Try Destinations, Tours, or the home page.</p>
     </div>
   ),
@@ -58,7 +58,7 @@ export const Route = createRootRoute({
           }}
         />
       </head>
-      <body className="bg-ivory text-ink">
+      <body className="bg-page text-ink">
         <PreviewHostBridge />
         <AuthProvider>
           <SiteShell>

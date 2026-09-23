@@ -11,7 +11,7 @@ export function HowItWorks() {
   return (
     <section className="container-page py-20">
       <p className="text-xs uppercase tracking-[0.22em] text-gold-ink">How It Works</p>
-      <h2 className="mt-2 font-display text-4xl text-brand">Four steps to a confirmed vehicle</h2>
+      <h2 className="mt-2 font-display text-4xl text-heading">Four steps to a confirmed vehicle</h2>
       <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
         {steps.map((step) => (
           <div key={step.num} className="flex flex-col rounded-lg border border-line bg-surface p-6">
@@ -19,7 +19,7 @@ export function HowItWorks() {
               <step.icon className="size-6 text-gold" aria-hidden />
               <span className="font-display text-sm text-gold">{step.num}</span>
             </div>
-            <h3 className="mt-4 font-display text-xl text-brand">{step.title}</h3>
+            <h3 className="mt-4 font-display text-xl text-heading">{step.title}</h3>
             <p className="mt-2 text-sm text-muted leading-relaxed">{step.description}</p>
           </div>
         ))}

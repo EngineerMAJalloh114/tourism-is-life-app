@@ -32,7 +32,7 @@ function SectionHeading({ kicker, title, lede }: { kicker: string; title: string
   return (
     <div className="max-w-2xl">
       <Kicker>{kicker}</Kicker>
-      <h2 className="mt-2 font-display text-3xl text-brand sm:text-4xl">{title}</h2>
+      <h2 className="mt-2 font-display text-3xl text-heading sm:text-4xl">{title}</h2>
       {lede ? <p className="mt-3 text-muted">{lede}</p> : null}
     </div>
   );
@@ -55,7 +55,7 @@ function Brochure() {
       {/* 1. Welcome */}
       <section className="container-page max-w-3xl py-16">
         <Kicker>Welcome to Sierra Leone</Kicker>
-        <h1 className="mt-2 font-display text-3xl text-brand sm:text-4xl">
+        <h1 className="mt-2 font-display text-3xl text-heading sm:text-4xl">
           A small country with an outsized amount to see
         </h1>
         <p className="mt-4 text-lg leading-relaxed">
@@ -112,7 +112,7 @@ function Brochure() {
                 loading="lazy"
               />
               <div className="p-4">
-                <h3 className="font-display text-lg text-brand">{c.name}</h3>
+                <h3 className="font-display text-lg text-heading">{c.name}</h3>
                 <p className="mt-1 text-xs text-muted">{c.region}</p>
               </div>
             </Link>
@@ -155,7 +155,7 @@ function Brochure() {
         <SectionHeading kicker="Culture & history" title="Sites that carry real weight" />
         <div className="mt-6 grid gap-6 sm:grid-cols-2">
           <article>
-            <h3 className="font-display text-xl text-brand">Bunce Island</h3>
+            <h3 className="font-display text-xl text-heading">Bunce Island</h3>
             <p className="mt-2 leading-relaxed text-muted">
               A former slave-trading fort on the Sierra Leone River, built in 1668 and operating until
               1807. It was declared a national monument in 1948. Tens of thousands of people were held and
@@ -164,7 +164,7 @@ function Brochure() {
             </p>
           </article>
           <article>
-            <h3 className="font-display text-xl text-brand">Rogbonko Village</h3>
+            <h3 className="font-display text-xl text-heading">Rogbonko Village</h3>
             <p className="mt-2 leading-relaxed text-muted">
               A working village retreat rather than a staged one. Visitors pay respects to the chief, then
               join in on cooking, basket making, or raffia work, with drumming and dance in the evening.
@@ -179,7 +179,7 @@ function Brochure() {
           <SectionHeading kicker="Nature & wildlife" title="What's actually out there" />
           <div className="mt-6 grid gap-6 sm:grid-cols-3">
             <article>
-              <h3 className="font-display text-xl text-brand">Tacugama</h3>
+              <h3 className="font-display text-xl text-heading">Tacugama</h3>
               <p className="mt-2 text-sm leading-relaxed text-muted">
                 Forty minutes from Freetown, Tacugama Chimpanzee Sanctuary has rescued and rehabilitated
                 orphaned and confiscated chimpanzees since 1995, across roughly 100 acres of rainforest and
@@ -187,14 +187,14 @@ function Brochure() {
               </p>
             </article>
             <article>
-              <h3 className="font-display text-xl text-brand">Tiwai Island</h3>
+              <h3 className="font-display text-xl text-heading">Tiwai Island</h3>
               <p className="mt-2 text-sm leading-relaxed text-muted">
                 A wildlife sanctuary on the Moa River. A forest walk by day, a boat ride up-river toward
                 evening for a chance, never a guarantee, of a pygmy hippo.
               </p>
             </article>
             <article>
-              <h3 className="font-display text-xl text-brand">Bird watching</h3>
+              <h3 className="font-display text-xl text-heading">Bird watching</h3>
               <p className="mt-2 text-sm leading-relaxed text-muted">
                 Around 630 recorded species across the country's important bird areas, 23 of them of global
                 conservation concern, including the white-necked picathartes, which nests near River
@@ -209,7 +209,7 @@ function Brochure() {
         <SectionHeading kicker="Beaches & islands" title="The coast does a lot of the work" />
         <div className="mt-6 grid gap-6 sm:grid-cols-2">
           <article>
-            <h3 className="font-display text-xl text-brand">Banana Island & Turtle Islands</h3>
+            <h3 className="font-display text-xl text-heading">Banana Island & Turtle Islands</h3>
             <p className="mt-2 leading-relaxed text-muted">
               Banana Island pairs beaches with a former plantation settlement and a small Krio community.
               Further south, the eight low-lying Turtle Islands (Bakie, Bumpetuk, Chepo, Mut, Hoong,
@@ -217,7 +217,7 @@ function Brochure() {
             </p>
           </article>
           <article>
-            <h3 className="font-display text-xl text-brand">River Number Two, Bureh, Tokeh</h3>
+            <h3 className="font-display text-xl text-heading">River Number Two, Bureh, Tokeh</h3>
             <p className="mt-2 leading-relaxed text-muted">
               Turquoise water and pale sand at River Number Two; a reliable surf break at Bureh Beach;
               sailing out of Tokeh. Different beaches for different moods, all within reach of Freetown.
@@ -284,7 +284,7 @@ function Brochure() {
               params={{ slug: s.slug }}
               className="rounded-lg border border-line bg-surface p-5 hover:border-gold"
             >
-              <h3 className="font-display text-lg text-brand">{s.name}</h3>
+              <h3 className="font-display text-lg text-heading">{s.name}</h3>
               <p className="mt-2 text-sm text-muted">{s.summary}</p>
             </Link>
           ))}
@@ -301,7 +301,7 @@ function Brochure() {
                 key={d.slug}
                 to="/destinations/$circuit/$slug"
                 params={{ circuit: d.circuit, slug: d.slug }}
-                className="rounded-full border border-line bg-ivory px-4 py-1.5 text-sm hover:border-gold"
+                className="rounded-full border border-line bg-page px-4 py-1.5 text-sm hover:border-gold"
               >
                 {d.name}
               </Link>
@@ -312,7 +312,7 @@ function Brochure() {
 
       {/* 16. Contact */}
       <section className="container-page py-16 text-center">
-        <h2 className="font-display text-3xl text-brand sm:text-4xl">Talk to the Freetown desk</h2>
+        <h2 className="font-display text-3xl text-heading sm:text-4xl">Talk to the Freetown desk</h2>
         <p className="mx-auto mt-3 max-w-xl text-muted">
           Guest enquiries, operator ground handling, or a cruise call: the same desk handles all three.
         </p>

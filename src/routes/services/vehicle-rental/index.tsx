@@ -29,7 +29,7 @@ function Page() {
       <VehicleHero />
       <section id="vehicle-results" className="container-page py-16 scroll-mt-24">
         <p className="text-xs uppercase tracking-[0.22em] text-gold-ink">Vehicles For Every Journey</p>
-        <h2 className="mt-2 font-display text-4xl text-brand">Choose your vehicle</h2>
+        <h2 className="mt-2 font-display text-4xl text-heading">Choose your vehicle</h2>
         <p className="mt-3 max-w-2xl text-muted">
           Economy cars, 4x4s, and group coaches, all maintained for Sierra Leone's roads and conditions.
         </p>
@@ -52,7 +52,7 @@ function Page() {
           <div className="flex items-end justify-between gap-4">
             <div>
               <p className="text-xs uppercase tracking-[0.22em] text-gold-ink">Popular Choices</p>
-              <h3 className="mt-2 font-display text-3xl text-brand">Tour-ready vehicles</h3>
+              <h3 className="mt-2 font-display text-3xl text-heading">Tour-ready vehicles</h3>
             </div>
           </div>
           <div className="mt-6 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
@@ -66,16 +66,16 @@ function Page() {
                     {v.popular ? <span className="absolute right-3 top-3 rounded-sm bg-gold px-2 py-1 text-[10px] uppercase tracking-[0.16em] text-brand-dark">Popular</span> : null}
                   </a>
                   <div className="flex flex-1 flex-col p-5">
-                    <h3 className="font-display text-2xl text-brand">
-                      <a href={`/services/vehicle-rental/vehicles/${v.id}`} className="hover:text-gold">{v.name}</a>
+                    <h3 className="font-display text-2xl text-heading">
+                      <a href={`/services/vehicle-rental/vehicles/${v.id}`} className="hover:text-gold-ink">{v.name}</a>
                     </h3>
                     <p className="mt-2 text-sm text-muted">{v.description.slice(0, 120)}…</p>
                     <div className="mt-4 flex items-center justify-between border-t border-line pt-4">
-                      <p className="font-display text-xl text-brand">
+                      <p className="font-display text-xl text-heading">
                         From {new Intl.NumberFormat("en-US", { style: "currency", currency: v.pricing.currency, minimumFractionDigits: 0, maximumFractionDigits: 0 }).format((v.pricing.dailyRateCents ?? 0) / 100)}
                         <span className="text-sm font-sans text-muted">/day</span>
                       </p>
-                      <a href={`/services/vehicle-rental/vehicles/${v.id}`} className="text-sm font-medium text-gold hover:text-brand">View Details</a>
+                      <a href={`/services/vehicle-rental/vehicles/${v.id}`} className="text-sm font-medium text-gold hover:text-heading">View Details</a>
                     </div>
                   </div>
                 </article>
@@ -85,7 +85,7 @@ function Page() {
         </div>
 
         <div className="mt-16">
-          <h3 className="font-display text-3xl text-brand">All Available Vehicles</h3>
+          <h3 className="font-display text-3xl text-heading">All Available Vehicles</h3>
           <VehicleGrid initialVehicles={vehicles} />
         </div>
       </section>

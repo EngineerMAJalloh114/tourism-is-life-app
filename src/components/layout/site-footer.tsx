@@ -10,7 +10,7 @@ export function SiteFooter() {
     <footer className="bg-brand-dark text-ivory">
       <div className="container-page grid gap-10 py-16 sm:grid-cols-2 lg:grid-cols-4">
         <div>
-          <Link to="/" aria-label="Tourism Is Life home" className="inline-block rounded-md bg-ivory p-1.5">
+          <Link to="/" aria-label="Tourism Is Life home" className="inline-block rounded-md bg-page p-1.5">
             <BrandLogo size="footer" />
           </Link>
           <p className="mt-3 max-w-xs text-sm leading-relaxed text-ivory/70">

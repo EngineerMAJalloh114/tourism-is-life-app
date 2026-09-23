@@ -8,6 +8,20 @@ import { ContactBar } from "@/components/layout/contact-bar";
 import { ThemeSwitcher } from "@/components/layout/theme-switcher";
 import { cn } from "@/lib/utils";
 
+/**
+ * The bar is translucent over the hero at the top of the page and solid once
+ * scrolled, so the link colour has to follow it. Both states are token-based:
+ * at the top the bar is a dark scrim continuing the utility bar above it, so
+ * links are ivory; once solid the bar is the page surface, so links are ink.
+ * Panels that open below (dropdowns, mobile nav) are always `bg-page`, so their
+ * links are always ink regardless of scroll.
+ */
+function navLinkClass(scrolled: boolean) {
+  return scrolled ? "text-ink hover:text-gold-ink" : "text-ivory hover:text-gold";
+}
+
+const PANEL_LINK_CLASS = "text-ink hover:bg-brand/10 hover:text-heading";
+
 function Dropdown({
   label,
   href,
@@ -19,8 +33,7 @@ function Dropdown({
   items: { label: string; href: string }[];
   scrolled: boolean;
 }) {
-  const linkClass = scrolled ? "text-black hover:text-brand" : "text-green-700 hover:text-green-600";
-  const dropdownLinkClass = scrolled ? "text-black hover:bg-brand/10 hover:text-brand" : "text-green-700 hover:bg-green-50 hover:text-green-800";
+  const linkClass = navLinkClass(scrolled);
 
   return (
     <div className="group relative">
@@ -35,12 +48,12 @@ function Dropdown({
         <ChevronDown className="size-3.5 opacity-70" />
       </Link>
       <div className="invisible absolute left-0 top-full z-40 min-w-56 translate-y-1 pt-2 opacity-0 transition group-focus-within:visible group-focus-within:opacity-100 group-hover:visible group-hover:opacity-100">
-           <ul className="rounded-md border border-line bg-ivory py-2 shadow-[var(--shadow-card)]">
+           <ul className="rounded-md border border-line bg-page py-2 shadow-[var(--shadow-card)]">
             {items.map((item) => (
               <li key={item.href}>
                 <Link
                   to={item.href}
-                  className={cn("block px-4 py-2.5 text-sm", dropdownLinkClass)}
+                  className={cn("block px-4 py-2.5 text-sm transition-colors", PANEL_LINK_CLASS)}
                 >
                   {item.label}
                 </Link>
@@ -85,19 +98,20 @@ export function SiteHeader() {
           className={cn(
             "border-b transition-all duration-300",
             scrolled
-              ? "border-line/30 bg-white backdrop-blur-sm"
-              : "border-transparent bg-white/20 backdrop-blur-sm",
+              ? "border-line/40 bg-page/95 backdrop-blur-md"
+              // 75% is not arbitrary: the bar floats over hero photography, and
+              // the auditor can't see that photo (the header is sticky, so the
+              // image is not an ancestor). At 0.75 over the worst case of a pure
+              // white sky, ivory text still measures ~5.6:1, so the nav stays
+              // legible over any image without relying on the image being dark.
+              : "border-transparent bg-brand-dark/75 backdrop-blur-sm",
           )}
         >
          <div className="container-page flex h-[4.25rem] items-center justify-between gap-4 lg:h-[4.75rem]">
            <Link to="/" aria-label="Tourism Is Life home" className="flex shrink-0 items-center">
-             <BrandLogo
-               className={cn(
-                 "rounded-sm",
-                 "bg-ivory/95 ring-1 ring-ivory/40",
-
-               )}
-             />
+             {/* The logo is an opaque JPG, so it carries its own light background.
+                 The ring stays ivory so it reads as a rim on the dark themes too. */}
+             <BrandLogo className="rounded-sm ring-1 ring-ivory/30" />
           </Link>
 
           <nav className="hidden items-center gap-5 xl:flex" aria-label="Primary">
@@ -106,8 +120,8 @@ export function SiteHeader() {
              <Link
                to={NAV.cruise.href}
                className={cn(
-                 "text-[13px] font-medium uppercase tracking-[0.16em]",
-                 scrolled ? "text-black hover:text-brand" : "text-green-700 hover:text-green-600",
+                 "text-[13px] font-medium uppercase tracking-[0.16em] transition-colors",
+                 navLinkClass(scrolled),
                )}
              >
               Cruise
@@ -117,8 +131,8 @@ export function SiteHeader() {
              <Link
                to={NAV.journal.href}
                className={cn(
-                 "text-[13px] font-medium uppercase tracking-[0.16em]",
-                 scrolled ? "text-black hover:text-brand" : "text-green-700 hover:text-green-600",
+                 "text-[13px] font-medium uppercase tracking-[0.16em] transition-colors",
+                 navLinkClass(scrolled),
                )}
              >
               Journal
@@ -134,8 +148,8 @@ export function SiteHeader() {
              <button
                type="button"
                className={cn(
-                 "grid size-11 place-items-center rounded-md xl:hidden",
-                 "text-green-700",
+                 "grid size-11 place-items-center rounded-md transition-colors xl:hidden",
+                 navLinkClass(scrolled),
                )}
                aria-expanded={open}
                aria-label={open ? "Close menu" : "Open menu"}
@@ -146,7 +160,7 @@ export function SiteHeader() {
            </div>
          </div>
 {open ? (
-            <nav className="border-t border-line bg-ivory px-5 py-4 xl:hidden" aria-label="Mobile">
+            <nav className="border-t border-line bg-page px-5 py-4 xl:hidden" aria-label="Mobile">
               <div className="flex flex-col gap-1">
                 {[
                   ...NAV.destinations.items,
@@ -161,8 +175,8 @@ export function SiteHeader() {
             key={item.href + item.label}
             to={item.href}
             className={cn(
-              "min-h-11 border-b border-line/60 py-3 text-sm",
-              scrolled ? "text-black hover:text-brand" : "text-green-700",
+              "min-h-11 border-b border-line/60 py-3 text-sm transition-colors",
+              PANEL_LINK_CLASS,
             )}
           >
                    {item.label}

@@ -26,15 +26,15 @@ function Page() {
         imageAlt="Coast"
       />
       <div className="container-page py-16">
-        <a href={SITE.phoneHref} className="font-display text-4xl text-brand">
+        <a href={SITE.phoneHref} className="font-display text-4xl text-heading">
           {SITE.phone}
         </a>
         <p className="mt-4 text-muted">
-          WhatsApp: <a href={SITE.whatsappHref} className="text-brand inline-flex items-center gap-1" aria-label="Chat with Tourism Is Life on WhatsApp" target="_blank" rel="noopener noreferrer"><MessageCircle className="size-4" />WhatsApp</a>
+          WhatsApp: <a href={SITE.whatsappHref} className="text-heading inline-flex items-center gap-1" aria-label="Chat with Tourism Is Life on WhatsApp" target="_blank" rel="noopener noreferrer"><MessageCircle className="size-4" />WhatsApp</a>
           <br />
-          SMS: <a href={SITE.smsHref} className="text-brand inline-flex items-center gap-1"><MessageSquare className="size-4" />Message</a>
+          SMS: <a href={SITE.smsHref} className="text-heading inline-flex items-center gap-1"><MessageSquare className="size-4" />Message</a>
           <br />
-          Email: <a href={SITE.emailHref} className="text-brand">{SITE.email}</a>
+          Email: <a href={SITE.emailHref} className="text-heading">{SITE.email}</a>
         </p>
       </div>
     </>

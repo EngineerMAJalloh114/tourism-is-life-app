@@ -30,9 +30,36 @@ This repo is its public website, live at **https://www.tourismislife.com**.
 
 Not navy/ocean blue — earlier planning documents that say so are stale.
 
-## Themes (four selectable palettes)
+## Themes (one light default + three dark palettes)
 
-Visitors pick a palette from the header utility bar. Implementation:
+Visitors pick a palette from the header utility bar. The default is light; themes
+two, three and four are **dark**, moving the page background rather than tinting it.
+
+### The token role split (read this before touching colours)
+
+The original vocabulary conflated surface and text roles, and that is what stops a
+theme from doing anything more than tinting:
+
+- `ivory` meant both *the page surface* and *text that sits on dark sections*.
+- `brand` meant both *a dark section background* and *heading text*.
+
+So two tokens were added, and the default values were chosen to be identical to
+what they replaced — the default theme is byte-for-byte unchanged:
+
+| Token | Role | Default |
+|---|---|---|
+| `--color-page` | the page/card surface | `#fbf8f1` (was `ivory`) |
+| `--color-ivory` | text and washes **on** dark surfaces | `#fbf8f1`, and stays light in every theme |
+| `--color-heading` | heading text | `#1b2e28` (was `brand`) |
+| `--color-brand` | dark accent band / section background | `#1b2e28` |
+
+The dark themes move `page`, `surface`, `ink`, `muted`, `line` and `heading`, and
+deliberately leave `ivory` light, because `ivory` is what makes hero and utility-bar
+text readable. `bg-ivory/5` and `/10` washes are likewise left alone — they are
+light washes on dark sections and are correct as they are, as is `text-brand-dark`,
+which sits on gold buttons.
+
+Implementation:
 
 - **`src/lib/theme.ts`** — the only place theme ids, names, descriptions and
   preview swatches live. Rename a theme here and nothing else needs touching.
@@ -60,32 +87,45 @@ in `styles.css`:
 
 - **SUPPLIED** — taken verbatim from the palette image.
 - **DERIVED** — generated to fill a role the palette does not cover (page
-  background, borders, secondary text). None of the three palettes contained a
-  colour light enough to use as a page background.
-- **ADJUSTED** — a supplied colour lightened the minimum amount needed to reach
-  WCAG AA as text on that theme's dark surfaces. Two exist, both noted inline
-  with their originals: theme two `#47C2CF` → `#6BCED8`, theme four `#7CADC1` →
-  `#83B1C4`.
+  background, borders, secondary text).
+- **ADJUSTED** — a supplied colour moved the minimum amount needed to reach WCAG
+  AA, noted inline with its original. Three exist, all the same pairing: the
+  accent band `--color-brand` darkened so a gold kicker on it clears 4.5:1
+  (theme two `#00525E` → `#004B56`, three `#073A69` → `#052747`, four `#1A586B`
+  → `#13404D`). Going dark is what let the supplied accents be used verbatim as
+  text; only the bands needed moving.
 
-Feedback colours (ok/warn/danger/info) stay near default in every theme so an
-error still reads as an error inside a blue palette.
+Feedback colours (ok/warn/danger/info) are lifted for dark surfaces but keep their
+meaning, so an error still reads as an error inside a blue palette.
 
-Each theme's `--color-brand` is its palette's **darkest** supplied colour rather
-than the mid-tone, with `--color-brand-dark` derived one step darker. This is
-deliberate: small accent text (section kickers) sits directly on `bg-brand`, and
-against the mid-tones it measured 3.1–3.5:1. The displaced mid-tone moves to
-`--color-info` so it stays in use. Do not "restore" the mid-tone to brand
-without re-checking that pairing.
+The `gold`-on-`brand` pairing (section kickers on the accent band) is the tightest
+in every theme and the one that fails first. If you change `--color-brand` or
+`--color-gold`, re-check it before anything else.
 
-All four themes were checked against 13 contrast pairs (body text, secondary
-text, accent text, button labels, headings, kickers on brand and on brand-dark)
-— all pass AA. Re-run that check if you change a token.
+All four themes pass AA across 18 token pairs plus a full DOM sweep of `/`,
+`/contact`, `/services/tours-excursions` and a tour detail page, at two scroll
+positions each. Re-run that check if you change a token.
 
-Two things to know when auditing contrast in a browser: Tailwind emits colours as
-`oklab()` with alpha, so a naive `rgb` parser silently produces nonsense; and
-text over hero imagery sits on an absolutely-positioned sibling overlay, so a
-checker that walks only ancestors will read the page background instead of the
-overlay and report false failures.
+Four things to know when auditing contrast in a browser, each of which has already
+produced a wrong answer once:
+
+1. Tailwind v4 emits any opacity modifier as `oklab(L a b / alpha)`. A naive `rgb`
+   parser reads L/a/b as RGB and silently reports ~1.0:1 for everything.
+2. **Canvas does not normalise `oklab()`** — `ctx.fillStyle = 'oklab(…)'` returns
+   the same string back, so "let canvas parse it" is not a fix. Convert oklab to
+   sRGB explicitly.
+3. Text over hero imagery sits on an absolutely-positioned sibling overlay, so a
+   checker that walks only ancestors reads the page background and reports false
+   failures. Skip those elements rather than "fixing" them.
+4. The header is `position: sticky`, so the hero photo behind it is **not** an
+   ancestor and cannot be measured at all. That is why the unscrolled bar uses a
+   fixed 75% scrim: it makes the nav legible over any image without depending on
+   the image.
+
+Validate the auditor itself before trusting a clean run: feed it a known-bad pair
+(must be caught) **and** a known-good pair (must not be flagged). A checker that is
+silently returning 1.0:1 for everything looks identical to a thorough one until you
+give it something it must not flag.
 
 ## Product rules (these are firm)
 

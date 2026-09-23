@@ -21,8 +21,8 @@ export function VehicleCard({ vehicle }: { vehicle: Vehicle }) {
         ) : null}
       </Link>
       <div className="flex flex-1 flex-col p-5">
-        <h3 className="font-display text-2xl text-brand">
-          <Link to="/services/vehicle-rental/vehicles/$vehicleId" params={{ vehicleId: vehicle.id }} className="hover:text-gold">
+        <h3 className="font-display text-2xl text-heading">
+          <Link to="/services/vehicle-rental/vehicles/$vehicleId" params={{ vehicleId: vehicle.id }} className="hover:text-gold-ink">
             {vehicle.name}
           </Link>
         </h3>
@@ -34,7 +34,7 @@ export function VehicleCard({ vehicle }: { vehicle: Vehicle }) {
         </div>
         <div className="mt-3 flex flex-wrap gap-2">
           {vehicle.features.slice(0, 4).map((f) => (
-            <span key={f} className="rounded-full bg-ivory px-2.5 py-1 text-[11px] text-muted">{f}</span>
+            <span key={f} className="rounded-full bg-page px-2.5 py-1 text-[11px] text-muted">{f}</span>
           ))}
         </div>
         <div className="mt-3 flex items-center gap-2 text-sm">
@@ -46,7 +46,7 @@ export function VehicleCard({ vehicle }: { vehicle: Vehicle }) {
             <p className={cn("text-xs font-medium uppercase tracking-[0.14em]", availabilityColor)}>
               {vehicle.availability === "available" ? "Available" : vehicle.availability === "limited" ? "Limited" : "Unavailable"}
             </p>
-            <p className="mt-1 font-display text-xl text-brand">
+            <p className="mt-1 font-display text-xl text-heading">
               From {new Intl.NumberFormat("en-US", { style: "currency", currency: vehicle.pricing.currency, minimumFractionDigits: 0, maximumFractionDigits: 0 }).format((vehicle.pricing.dailyRateCents ?? 0) / 100)}
               <span className="text-sm font-sans text-muted">/day</span>
             </p>
@@ -70,9 +70,9 @@ function Button({ className, variant, size, asChild, ...props }: any) {
   const variants: Record<string, string> = {
     primary: "bg-gold text-brand-dark hover:bg-gold/90",
     dark: "bg-brand text-ivory hover:bg-brand-dark",
-    outline: "border border-line bg-transparent text-ink hover:border-gold hover:text-brand",
+    outline: "border border-line bg-transparent text-ink hover:border-gold hover:text-heading",
     ghost: "text-ivory hover:bg-ivory/10",
-    ivory: "bg-ivory text-brand hover:bg-surface",
+    ivory: "bg-page text-heading hover:bg-surface",
   };
   const sizes: Record<string, string> = {
     default: "min-h-11 px-5",

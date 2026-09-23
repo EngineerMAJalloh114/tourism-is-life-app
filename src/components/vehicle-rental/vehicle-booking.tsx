@@ -38,7 +38,7 @@ export function VehicleBooking() {
   if (!vehicle) {
     return (
       <div className="container-page py-24 text-center">
-        <p className="font-display text-2xl text-brand">Vehicle not found</p>
+        <p className="font-display text-2xl text-heading">Vehicle not found</p>
         <Button asChild className="mt-4">
           <Link to="/services/vehicle-rental">Back to search</Link>
         </Button>
@@ -100,8 +100,8 @@ export function VehicleBooking() {
     <div className="bg-surface py-12">
       <div className="container-page">
         <div className="mb-8">
-          <Link to="/services/vehicle-rental" className="text-sm text-brand hover:text-gold">← Back to search</Link>
-          <h1 className="mt-2 font-display text-4xl text-brand">Enquire about {vehicle.name}</h1>
+          <Link to="/services/vehicle-rental" className="text-sm text-heading hover:text-gold-ink">← Back to search</Link>
+          <h1 className="mt-2 font-display text-4xl text-heading">Enquire about {vehicle.name}</h1>
           <p className="mt-2 max-w-xl text-sm text-muted">
             This sends an enquiry to the Freetown desk. It does not reserve the vehicle or take payment. The team
             confirms availability and pricing directly with you.
@@ -114,23 +114,23 @@ export function VehicleBooking() {
               <div className={cn("flex size-8 items-center justify-center rounded-full text-xs font-medium", i <= step ? "bg-gold text-brand-dark" : "bg-line text-muted")}>
                 {i + 1}
               </div>
-              <span className={cn("hidden text-sm sm:inline", i <= step ? "text-brand" : "text-muted")}>{s}</span>
+              <span className={cn("hidden text-sm sm:inline", i <= step ? "text-heading" : "text-muted")}>{s}</span>
               {i < steps.length - 1 ? <div className="mx-2 h-px w-8 bg-line" /> : null}
             </div>
           ))}
         </div>
 
         <form onSubmit={onSubmit} className="grid gap-8 lg:grid-cols-3">
-          <div className="lg:col-span-2 rounded-lg border border-line bg-ivory p-6">
+          <div className="lg:col-span-2 rounded-lg border border-line bg-page p-6">
             {step === 0 && (
               <div>
-                <h2 className="font-display text-2xl text-brand">Vehicle Summary</h2>
+                <h2 className="font-display text-2xl text-heading">Vehicle Summary</h2>
                 <div className="mt-4 flex gap-4 rounded-md bg-surface p-4">
                   <img src={vehicle.image} alt={vehicle.imageAlt} className="aspect-[4/3] w-32 rounded-md object-cover" />
                   <div>
-                    <p className="font-medium text-brand">{vehicle.name}</p>
+                    <p className="font-medium text-heading">{vehicle.name}</p>
                     <p className="mt-1 text-sm text-muted">{vehicle.seats} seats · {vehicle.luggage} bags · {vehicle.transmission}</p>
-                    <p className="mt-2 font-display text-xl text-brand">
+                    <p className="mt-2 font-display text-xl text-heading">
                       From {new Intl.NumberFormat("en-US", { style: "currency", currency: vehicle.pricing.currency, minimumFractionDigits: 0, maximumFractionDigits: 0 }).format((vehicle.pricing.dailyRateCents ?? 0) / 100)}/day
                     </p>
                   </div>
@@ -139,7 +139,7 @@ export function VehicleBooking() {
             )}
             {step === 1 && (
               <div className="space-y-4">
-                <h2 className="font-display text-2xl text-brand">Journey Details</h2>
+                <h2 className="font-display text-2xl text-heading">Journey Details</h2>
                 <Field name="pickup" label="Pickup Location" value={form.pickup} onChange={(v: string) => update("pickup", v)} required />
                 <Field name="destination" label="Destination" value={form.destination} onChange={(v: string) => update("destination", v)} required />
                 <Field name="date" label="Pickup Date" type="date" value={form.date} onChange={(v: string) => update("date", v)} required />
@@ -147,7 +147,7 @@ export function VehicleBooking() {
             )}
             {step === 2 && (
               <div className="space-y-4">
-                <h2 className="font-display text-2xl text-brand">Additional Services</h2>
+                <h2 className="font-display text-2xl text-heading">Additional Services</h2>
                 <p className="text-sm text-muted">Tell us what you'd like, and the desk will confirm what's available and the cost.</p>
                 <div className="grid gap-3 sm:grid-cols-2">
                   {["Professional driver", "Airport pickup", "Child seat", "Extra luggage", "Fuel package", "Tour guide"].map((svc) => (
@@ -166,7 +166,7 @@ export function VehicleBooking() {
             )}
             {step === 3 && (
               <div className="space-y-4">
-                <h2 className="font-display text-2xl text-brand">Your Details</h2>
+                <h2 className="font-display text-2xl text-heading">Your Details</h2>
                 <Field name="name" label="Full Name" value={form.name} onChange={(v: string) => update("name", v)} required />
                 <Field name="email" label="Email" type="email" value={form.email} onChange={(v: string) => update("email", v)} required />
                 <Field name="phone" label="Phone" value={form.phone} onChange={(v: string) => update("phone", v)} />
@@ -174,15 +174,15 @@ export function VehicleBooking() {
             )}
             {step === 4 && (
               <div>
-                <h2 className="font-display text-2xl text-brand">Review & Send</h2>
+                <h2 className="font-display text-2xl text-heading">Review & Send</h2>
                 <div className="mt-4 space-y-3 rounded-md bg-surface p-4 text-sm text-muted">
-                  <p><strong className="text-brand">Vehicle:</strong> {vehicle.name}</p>
-                  <p><strong className="text-brand">Pickup:</strong> {form.pickup || "Not provided"}</p>
-                  <p><strong className="text-brand">Destination:</strong> {form.destination || "Not provided"}</p>
-                  <p><strong className="text-brand">Date:</strong> {form.date || "Not provided"}</p>
-                  <p><strong className="text-brand">Driver:</strong> {form.driver === "self-drive" ? "Self drive" : "With driver"}</p>
-                  {services.length ? <p><strong className="text-brand">Extras:</strong> {services.join(", ")}</p> : null}
-                  <p><strong className="text-brand">Contact:</strong> {form.name} · {form.email}</p>
+                  <p><strong className="text-heading">Vehicle:</strong> {vehicle.name}</p>
+                  <p><strong className="text-heading">Pickup:</strong> {form.pickup || "Not provided"}</p>
+                  <p><strong className="text-heading">Destination:</strong> {form.destination || "Not provided"}</p>
+                  <p><strong className="text-heading">Date:</strong> {form.date || "Not provided"}</p>
+                  <p><strong className="text-heading">Driver:</strong> {form.driver === "self-drive" ? "Self drive" : "With driver"}</p>
+                  {services.length ? <p><strong className="text-heading">Extras:</strong> {services.join(", ")}</p> : null}
+                  <p><strong className="text-heading">Contact:</strong> {form.name} · {form.email}</p>
                 </div>
                 {status === "err" ? (
                   <p className="mt-3 text-sm text-danger" role="alert">{error}</p>
@@ -198,13 +198,13 @@ export function VehicleBooking() {
           </div>
           <div className="lg:sticky lg:top-24 lg:self-start">
             <div className="rounded-lg border border-line bg-surface p-6">
-              <h3 className="font-display text-xl text-brand">Enquiry Summary</h3>
+              <h3 className="font-display text-xl text-heading">Enquiry Summary</h3>
               <div className="mt-4 flex gap-4">
                 <img src={vehicle.image} alt={vehicle.imageAlt} className="aspect-[4/3] w-24 rounded-md object-cover" />
                 <div>
-                  <p className="font-medium text-brand">{vehicle.name}</p>
+                  <p className="font-medium text-heading">{vehicle.name}</p>
                   <p className="mt-1 text-sm text-muted">Daily rate from</p>
-                  <p className="font-display text-xl text-brand">
+                  <p className="font-display text-xl text-heading">
                     {new Intl.NumberFormat("en-US", { style: "currency", currency: vehicle.pricing.currency, minimumFractionDigits: 0, maximumFractionDigits: 0 }).format((vehicle.pricing.dailyRateCents ?? 0) / 100)}
                   </p>
                 </div>

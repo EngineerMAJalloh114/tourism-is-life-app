@@ -30,7 +30,7 @@ function Page() {
             params={{ slug: s.slug }}
             className="rounded-lg border border-line bg-surface p-6 hover:border-gold"
           >
-            <h2 className="font-display text-2xl text-brand">{s.name}</h2>
+            <h2 className="font-display text-2xl text-heading">{s.name}</h2>
             <p className="mt-2 text-sm text-muted">{s.summary}</p>
           </Link>
         ))}

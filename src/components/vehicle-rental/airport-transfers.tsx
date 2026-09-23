@@ -50,7 +50,7 @@ export function AirportTransfers() {
   return (
     <section className="container-page py-20">
       <p className="text-xs uppercase tracking-[0.22em] text-gold-ink">Tour-Ready Transportation</p>
-      <h2 className="mt-2 font-display text-4xl text-brand">Vehicles Made For Your Journey</h2>
+      <h2 className="mt-2 font-display text-4xl text-heading">Vehicles Made For Your Journey</h2>
       <p className="mt-3 max-w-2xl text-muted">
         Every vehicle is selected for Sierra Leone's roads and your itinerary. From airport runs to remote overland, we match the vehicle to the journey.
       </p>
@@ -73,7 +73,7 @@ export function AirportTransfers() {
             </div>
             <div className="flex flex-1 flex-col p-5">
               <p className="text-sm text-muted leading-relaxed">{item.description}</p>
-              <p className="mt-4 text-sm font-medium text-gold group-hover:text-brand">Learn more</p>
+              <p className="mt-4 text-sm font-medium text-gold group-hover:text-heading">Learn more</p>
             </div>
           </Link>
         ))}

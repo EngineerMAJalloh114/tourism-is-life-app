@@ -18,7 +18,7 @@ export function SectionHeader({
       {kicker ? (
         <p className="text-xs font-medium uppercase tracking-[0.22em] text-gold-ink">{kicker}</p>
       ) : null}
-      <h2 className="mt-3 font-display text-3xl text-brand sm:text-4xl">{title}</h2>
+      <h2 className="mt-3 font-display text-3xl text-heading sm:text-4xl">{title}</h2>
       {lede ? <p className="mt-3 text-base text-muted sm:text-lg">{lede}</p> : null}
     </div>
   );
@@ -33,7 +33,7 @@ export function OverviewGrid() {
             <CatalogImage src={item.image} alt={item.imageAlt} className="size-full" />
           </div>
           <div className="flex flex-1 flex-col p-5">
-            <h3 className="font-display text-xl text-brand">{item.title}</h3>
+            <h3 className="font-display text-xl text-heading">{item.title}</h3>
             <p className="mt-2 flex-1 text-sm leading-relaxed text-ink/80">{item.body}</p>
           </div>
         </article>
@@ -55,7 +55,7 @@ export function WhyTourismIsLife() {
     <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
       {items.map((item) => (
         <div key={item.title} className="rounded-lg border border-line bg-surface p-5">
-          <h3 className="font-display text-xl text-brand">{item.title}</h3>
+          <h3 className="font-display text-xl text-heading">{item.title}</h3>
           <p className="mt-2 text-sm text-muted">{item.body}</p>
         </div>
       ))}
@@ -72,7 +72,7 @@ export function DestinationGrid() {
             <CatalogImage src={item.image} alt={item.imageAlt} className="size-full" />
           </div>
           <div className="flex flex-1 flex-col p-5">
-            <h3 className="font-display text-xl text-brand">{item.name}</h3>
+            <h3 className="font-display text-xl text-heading">{item.name}</h3>
             <p className="mt-2 flex-1 text-sm leading-relaxed text-ink/80">{item.summary}</p>
           </div>
         </article>
@@ -107,7 +107,7 @@ export function ServiceGrid() {
     <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
       {services.map((item) => (
         <div key={item.title} className="rounded-lg border border-line bg-surface p-5">
-          <h3 className="font-display text-xl text-brand">{item.title}</h3>
+          <h3 className="font-display text-xl text-heading">{item.title}</h3>
           <p className="mt-2 text-sm text-muted">{item.body}</p>
         </div>
       ))}
@@ -119,7 +119,7 @@ export function PersonnelSection() {
   return (
     <div className="grid gap-6 lg:grid-cols-2">
       <div className="rounded-lg border border-line bg-surface p-6">
-        <h3 className="font-display text-2xl text-brand">Drivers</h3>
+        <h3 className="font-display text-2xl text-heading">Drivers</h3>
         <ul className="mt-4 space-y-2 text-sm text-ink/80">
           <li>English-speaking</li>
           <li>Mobile-equipped</li>
@@ -128,7 +128,7 @@ export function PersonnelSection() {
         </ul>
       </div>
       <div className="rounded-lg border border-line bg-surface p-6">
-        <h3 className="font-display text-2xl text-brand">Tour guides</h3>
+        <h3 className="font-display text-2xl text-heading">Tour guides</h3>
         <ul className="mt-4 space-y-2 text-sm text-ink/80">
           <li>Accompany excursions</li>
           <li>Provide historical and cultural information</li>
@@ -179,7 +179,7 @@ export function TermsAccordion() {
     <div className="rounded-lg border border-line bg-surface divide-y divide-line">
       {items.map((item) => (
         <details key={item.title} className="group">
-          <summary className="flex cursor-pointer items-center justify-between px-5 py-4 text-sm font-medium text-brand">
+          <summary className="flex cursor-pointer items-center justify-between px-5 py-4 text-sm font-medium text-heading">
             {item.title}
             <span className="ml-4 text-muted transition group-open:rotate-180" aria-hidden>
               <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5">

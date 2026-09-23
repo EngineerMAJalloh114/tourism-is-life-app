@@ -12,6 +12,12 @@
      --color-gold itself stays reserved for gold-on-dark contexts (hero kickers, dark sections),
      where it already passes contrast and darkening it would only weaken that look. */
   --color-gold-ink: #7a5c1a;
+  /* `page` is the page/card surface; `ivory` is text and washes that sit ON dark
+     surfaces. They share a value in this light theme but are separate roles: the
+     dark themes below move `page` and leave `ivory` light. Same idea for
+     `heading` (text) vs `brand` (dark surface). */
+  --color-page: #fbf8f1;
+  --color-heading: #1b2e28;
   --color-ivory: #fbf8f1;
   --color-surface: #f3ecdd;
   --color-surface-muted: #e8dfc8;
@@ -34,96 +40,89 @@
 }
 
 /* ---------------------------------------------------------------------------
-   Selectable themes.
+   The three alternate themes are DARK. They move `page`, `surface`, `ink`,
+   `muted`, `line` and `heading`; `ivory` deliberately stays light because it is
+   the text/wash that sits ON dark sections (heroes, the utility bar), and
+   `brand` stays a dark accent band so hero overlays keep working untouched.
 
-   The default theme is the `@theme` block above and is deliberately left
-   untouched — no `data-theme` attribute means default. Each block below
-   overrides the same custom properties, so every Tailwind utility that reads
-   them (bg-brand, text-muted, border-line, …) re-themes with no component
-   changes. `html[...]` is used so these win the cascade over `:root`.
+   SUPPLIED = verbatim from the owner's palette image. DERIVED = generated to
+   fill a role the five-colour palette does not cover. Going dark let more of
+   each supplied palette back onto the page than the earlier light versions did.
 
-   Values marked SUPPLIED come from the palette images provided by the owner.
-   Values marked DERIVED were generated to fill roles the five-colour palettes
-   do not cover (page background, borders, secondary text), keeping each
-   palette's hue. Values marked ADJUSTED are a supplied colour lightened the
-   minimum amount needed to reach WCAG AA as text on that theme's dark
-   surfaces; the original is noted beside it.
-
-   Feedback colours (ok/warn/danger/info) stay close to default in every theme:
-   an error must still read as an error inside a blue palette.
+   Feedback colours are lifted for dark surfaces but keep their meaning: an
+   error still reads red, a success still reads green.
    --------------------------------------------------------------------------- */
 
-/* Theme Two — teal and sand */
+/* Theme Two — deep teal */
 html[data-theme="two"] {
-  /* brand is the palette's darkest supplied teal, not its mid teal: small accent
-     text sits on brand surfaces and needs 4.5:1 against them. The mid teal moves
-     to --color-info below so it stays in use. */
-  --color-brand: #00525e; /* SUPPLIED */
-  --color-brand-dark: #00363e; /* DERIVED — one step darker than the supplied darkest */
+  --color-page: #012026; /* DERIVED */
+  --color-surface: #01313a; /* DERIVED — lifted card */
+  --color-surface-muted: #02444f; /* DERIVED */
+  --color-line: #0b5361; /* DERIVED */
+  --color-heading: #eaf8fa; /* DERIVED */
+  --color-ink: #cde7eb; /* DERIVED — body */
+  --color-muted: #93bac1; /* DERIVED — secondary */
+  --color-gold: #47c2cf; /* SUPPLIED — the bright turquoise, now on dark */
+  --color-gold-ink: #7bd6e0; /* DERIVED — accent text on cards */
+  --color-brand: #004b56; /* ADJUSTED — SUPPLIED #00525E darkened so the gold kicker on the band reaches AA (4.17:1 → 4.62:1) */
+  --color-brand-dark: #00161b; /* DERIVED */
   --color-sage: #008a92; /* SUPPLIED */
-  --color-gold: #6bced8; /* ADJUSTED from supplied #47C2CF for AA on brand-dark */
-  --color-gold-ink: #04616b; /* DERIVED — accent text on light surfaces */
-  --color-ivory: #faf7f3; /* DERIVED — page background */
-  --color-cream: #faf7f3; /* DERIVED */
-  --color-surface: #efe9e0; /* DERIVED from supplied sand #DACFBF */
-  --color-surface-muted: #e3dace; /* DERIVED from supplied sand */
-  --color-line: #d3c8b9; /* DERIVED from supplied sand */
-  --color-ink: #08272c; /* DERIVED — body text */
-  --color-muted: #4a6268; /* DERIVED — secondary text */
-  --color-ok: #2f7a63;
-  --color-warn: #a8762a;
-  --color-danger: #a23e2f;
-  --color-info: #03717c;
-  --shadow-card: 0 18px 40px -24px rgb(0 82 94 / 0.35);
-  --shadow-lift: 0 24px 50px -20px rgb(0 82 94 / 0.4);
+  --color-ivory: #fbf8f1; /* unchanged: text on dark */
+  --color-cream: #dacfbf; /* SUPPLIED sand */
+  --color-ok: #5cc2a0;
+  --color-warn: #e0b055;
+  --color-danger: #f08b7d;
+  --color-info: #47c2cf;
+  --shadow-card: 0 18px 40px -24px rgb(0 0 0 / 0.65);
+  --shadow-lift: 0 24px 50px -20px rgb(0 0 0 / 0.75);
 }
 
-/* Theme Three — navy and sky blue */
+/* Theme Three — deep navy */
 html[data-theme="three"] {
-  /* See the note in theme two: brand takes the darkest supplied navy so accent
-     text clears AA on it; the mid navy moves to --color-info. */
-  --color-brand: #171725; /* SUPPLIED */
-  --color-brand-dark: #0c0c14; /* DERIVED — one step darker than the supplied darkest */
-  --color-sage: #77a6c0; /* SUPPLIED */
+  --color-page: #0b0f1a; /* DERIVED */
+  --color-surface: #171725; /* SUPPLIED — lifted card */
+  --color-surface-muted: #1f2438; /* DERIVED */
+  --color-line: #2c3349; /* DERIVED */
+  --color-heading: #edf3fa; /* DERIVED */
+  --color-ink: #cbd9e8; /* DERIVED — body */
+  --color-muted: #94a8c0; /* DERIVED — secondary */
   --color-gold: #5a94c1; /* SUPPLIED */
-  --color-gold-ink: #2b6491; /* DERIVED — accent text on light surfaces */
-  --color-ivory: #f7f8fa; /* DERIVED — page background */
-  --color-cream: #f7f8fa; /* DERIVED */
-  --color-surface: #eceff3; /* DERIVED */
-  --color-surface-muted: #dde2e8; /* DERIVED */
-  --color-line: #c6cbd1; /* DERIVED from supplied grey #B4B6B8 */
-  --color-ink: #171725; /* SUPPLIED */
-  --color-muted: #4c5666; /* DERIVED — secondary text */
-  --color-ok: #2f6f52;
-  --color-warn: #9a6f24;
-  --color-danger: #a23e2f;
-  --color-info: #073a69;
-  --shadow-card: 0 18px 40px -24px rgb(23 23 37 / 0.35);
-  --shadow-lift: 0 24px 50px -20px rgb(23 23 37 / 0.4);
+  --color-gold-ink: #8fbad8; /* DERIVED — accent text on cards */
+  --color-brand: #052747; /* ADJUSTED — SUPPLIED #073A69 darkened so the gold kicker on the band reaches AA (3.54:1 → 4.64:1) */
+  --color-brand-dark: #05101f; /* DERIVED */
+  --color-sage: #77a6c0; /* SUPPLIED */
+  --color-ivory: #fbf8f1; /* unchanged: text on dark */
+  --color-cream: #b4b6b8; /* SUPPLIED grey */
+  --color-ok: #5cc2a0;
+  --color-warn: #e0b055;
+  --color-danger: #f08b7d;
+  --color-info: #5a94c1;
+  --shadow-card: 0 18px 40px -24px rgb(0 0 0 / 0.7);
+  --shadow-lift: 0 24px 50px -20px rgb(0 0 0 / 0.8);
 }
 
-/* Theme Four — coastal slate and teal */
+/* Theme Four — coastal slate */
 html[data-theme="four"] {
-  /* See the note in theme two: Metal is the palette's darkest supplied colour, so
-     it takes brand; Dark Teal moves to --color-info and stays on the page. */
-  --color-brand: #383e3d; /* SUPPLIED (Metal) */
-  --color-brand-dark: #252a29; /* DERIVED — one step darker than Metal */
+  --color-page: #12191a; /* DERIVED */
+  --color-surface: #1c2423; /* DERIVED — lifted card */
+  --color-surface-muted: #252d2c; /* DERIVED */
+  --color-line: #383e3d; /* SUPPLIED (Metal) */
+  --color-heading: #eef4f5; /* DERIVED */
+  --color-ink: #ccdadc; /* DERIVED — body */
+  --color-muted: #98abaf; /* DERIVED — secondary */
+  --color-gold: #7cadc1; /* SUPPLIED (Sky Reflection) */
+  --color-gold-ink: #a5ccd9; /* DERIVED — accent text on cards */
+  --color-brand: #13404d; /* ADJUSTED — SUPPLIED Dark Teal #1A586B darkened so the gold kicker on the band reaches AA (3.24:1 → 4.61:1) */
+  --color-brand-dark: #0b2028; /* DERIVED */
   --color-sage: #727d7d; /* SUPPLIED (Grey) */
-  --color-gold: #83b1c4; /* ADJUSTED from supplied Sky #7CADC1 for AA on brand-dark */
-  --color-gold-ink: #33708b; /* DERIVED from supplied Air Force Blue #4E93B3 */
-  --color-ivory: #f7f9f9; /* DERIVED — page background */
-  --color-cream: #f7f9f9; /* DERIVED */
-  --color-surface: #e9eff0; /* DERIVED */
-  --color-surface-muted: #dae3e5; /* DERIVED */
-  --color-line: #c2ced0; /* DERIVED */
-  --color-ink: #232827; /* DERIVED — body text */
-  --color-muted: #556063; /* DERIVED — secondary text */
-  --color-ok: #3c6f55;
-  --color-warn: #9c7328;
-  --color-danger: #a23e2f;
-  --color-info: #1a586b;
-  --shadow-card: 0 18px 40px -24px rgb(56 62 61 / 0.35);
-  --shadow-lift: 0 24px 50px -20px rgb(56 62 61 / 0.4);
+  --color-ivory: #fbf8f1; /* unchanged: text on dark */
+  --color-cream: #b9c6c9; /* DERIVED */
+  --color-ok: #5cc2a0;
+  --color-warn: #e0b055;
+  --color-danger: #f08b7d;
+  --color-info: #4e93b3; /* SUPPLIED (Air Force Blue) */
+  --shadow-card: 0 18px 40px -24px rgb(0 0 0 / 0.7);
+  --shadow-lift: 0 24px 50px -20px rgb(0 0 0 / 0.8);
 }
 
 @layer base {
@@ -145,7 +144,9 @@ html[data-theme="four"] {
   body,
   #app {
     min-height: 100%;
-    background: var(--color-ivory);
+    /* `page`, not `ivory`: in the dark themes `ivory` stays light because it is
+       the text colour used on dark sections. */
+    background: var(--color-page);
     color: var(--color-ink);
   }
   body {
