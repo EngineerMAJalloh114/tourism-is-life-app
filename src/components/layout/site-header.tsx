@@ -166,7 +166,9 @@ export function SiteHeader() {
           </nav>
 
            <div className="flex items-center gap-2">
-            <Button asChild variant="primary" size="sm" className="hidden sm:inline-flex text-brand">
+            {/* No text-* override here: the primary variant's own text-brand-dark is
+                what keeps the label readable on the accent in every theme. */}
+            <Button asChild variant="primary" size="sm" className="hidden sm:inline-flex">
               <Link to="/partner">Partner With Us</Link>
             </Button>
              <button

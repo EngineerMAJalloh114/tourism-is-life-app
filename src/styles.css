@@ -55,8 +55,11 @@
 
 /* Theme Two — teal and sand */
 html[data-theme="two"] {
-  --color-brand: #03717c; /* SUPPLIED */
-  --color-brand-dark: #00525e; /* SUPPLIED */
+  /* brand is the palette's darkest supplied teal, not its mid teal: small accent
+     text sits on brand surfaces and needs 4.5:1 against them. The mid teal moves
+     to --color-info below so it stays in use. */
+  --color-brand: #00525e; /* SUPPLIED */
+  --color-brand-dark: #00363e; /* DERIVED — one step darker than the supplied darkest */
   --color-sage: #008a92; /* SUPPLIED */
   --color-gold: #6bced8; /* ADJUSTED from supplied #47C2CF for AA on brand-dark */
   --color-gold-ink: #04616b; /* DERIVED — accent text on light surfaces */
@@ -77,8 +80,10 @@ html[data-theme="two"] {
 
 /* Theme Three — navy and sky blue */
 html[data-theme="three"] {
-  --color-brand: #073a69; /* SUPPLIED */
-  --color-brand-dark: #171725; /* SUPPLIED */
+  /* See the note in theme two: brand takes the darkest supplied navy so accent
+     text clears AA on it; the mid navy moves to --color-info. */
+  --color-brand: #171725; /* SUPPLIED */
+  --color-brand-dark: #0c0c14; /* DERIVED — one step darker than the supplied darkest */
   --color-sage: #77a6c0; /* SUPPLIED */
   --color-gold: #5a94c1; /* SUPPLIED */
   --color-gold-ink: #2b6491; /* DERIVED — accent text on light surfaces */
@@ -99,8 +104,10 @@ html[data-theme="three"] {
 
 /* Theme Four — coastal slate and teal */
 html[data-theme="four"] {
-  --color-brand: #1a586b; /* SUPPLIED (Dark Teal) */
-  --color-brand-dark: #383e3d; /* SUPPLIED (Metal) */
+  /* See the note in theme two: Metal is the palette's darkest supplied colour, so
+     it takes brand; Dark Teal moves to --color-info and stays on the page. */
+  --color-brand: #383e3d; /* SUPPLIED (Metal) */
+  --color-brand-dark: #252a29; /* DERIVED — one step darker than Metal */
   --color-sage: #727d7d; /* SUPPLIED (Grey) */
   --color-gold: #83b1c4; /* ADJUSTED from supplied Sky #7CADC1 for AA on brand-dark */
   --color-gold-ink: #33708b; /* DERIVED from supplied Air Force Blue #4E93B3 */

@@ -70,9 +70,22 @@ in `styles.css`:
 Feedback colours (ok/warn/danger/info) stay near default in every theme so an
 error still reads as an error inside a blue palette.
 
+Each theme's `--color-brand` is its palette's **darkest** supplied colour rather
+than the mid-tone, with `--color-brand-dark` derived one step darker. This is
+deliberate: small accent text (section kickers) sits directly on `bg-brand`, and
+against the mid-tones it measured 3.1–3.5:1. The displaced mid-tone moves to
+`--color-info` so it stays in use. Do not "restore" the mid-tone to brand
+without re-checking that pairing.
+
 All four themes were checked against 13 contrast pairs (body text, secondary
-text, accent text, button labels, headings, kickers on dark) — all pass AA.
-Re-run that check if you change a token.
+text, accent text, button labels, headings, kickers on brand and on brand-dark)
+— all pass AA. Re-run that check if you change a token.
+
+Two things to know when auditing contrast in a browser: Tailwind emits colours as
+`oklab()` with alpha, so a naive `rgb` parser silently produces nonsense; and
+text over hero imagery sits on an absolutely-positioned sibling overlay, so a
+checker that walks only ancestors will read the page background instead of the
+overlay and report false failures.
 
 ## Product rules (these are firm)
 
