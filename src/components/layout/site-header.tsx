@@ -1,32 +1,12 @@
 import { Link, useRouterState } from "@tanstack/react-router";
 import { ChevronDown, Menu, X } from "lucide-react";
 import { useEffect, useState } from "react";
-import { SignedIn, SignedOut, UserButton } from "@/lib/auth/gates";
-import { useCurrentUserState } from "@/lib/auth/use-current-user";
-import { usePrefs } from "@/lib/prefs";
 import { NAV } from "@/lib/site";
 import { BrandLogo } from "@/components/layout/brand-logo";
 import { Button } from "@/components/ui/button";
 import { ContactBar } from "@/components/layout/contact-bar";
 import { ThemeSwitcher } from "@/components/layout/theme-switcher";
 import { cn } from "@/lib/utils";
-
-function AuthSlot() {
-  const { user, isPending } = useCurrentUserState();
-  if (isPending) {
-    return <div className="h-8 w-8 animate-pulse rounded-full bg-ivory/20" />;
-  }
-  return user ? (
-    <UserButton />
-  ) : (
-    <Link
-      to="/login"
-      className="text-xs font-medium uppercase tracking-[0.16em] text-ivory/80 hover:text-gold"
-    >
-      Account
-    </Link>
-  );
-}
 
 function Dropdown({
   label,
@@ -76,7 +56,6 @@ export function SiteHeader() {
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const pathname = useRouterState({ select: (s) => s.location.pathname });
-  const { currency, setCurrency } = usePrefs();
 
   useEffect(() => {
     setOpen(false);
@@ -95,29 +74,10 @@ export function SiteHeader() {
       <div className="bg-brand-dark text-ivory">
         <div className="container-page flex min-h-10 flex-wrap items-center justify-between gap-2 py-1.5 text-[11px] uppercase tracking-[0.14em]">
           <div className="flex flex-wrap items-center gap-x-4 gap-y-1">
-            <span className="text-ivory/70">EN</span>
-            <span className="text-ivory/50">FR soon</span>
-            <span className="text-ivory/50">|</span>
-            <button
-              type="button"
-              className={cn("min-h-8", currency === "USD" ? "text-gold" : "text-ivory/70")}
-              onClick={() => setCurrency("USD")}
-            >
-              USD
-            </button>
-            <button
-              type="button"
-              className={cn("min-h-8", currency === "SLE" ? "text-gold" : "text-ivory/70")}
-              onClick={() => setCurrency("SLE")}
-            >
-              SLE
-            </button>
-            <span className="text-ivory/50">|</span>
             <ThemeSwitcher />
           </div>
           <div className="flex items-center gap-4">
             <ContactBar />
-            <AuthSlot />
           </div>
         </div>
       </div>
@@ -208,16 +168,6 @@ export function SiteHeader() {
                    {item.label}
                  </Link>
                ))}
-                <SignedOut>
-                 <Link to="/login" className={cn("min-h-11 py-3 text-sm font-medium", scrolled ? "text-black" : "text-green-700")}>
-                   Sign in
-                 </Link>
-               </SignedOut>
-               <SignedIn>
-                 <Link to="/account" className={cn("min-h-11 py-3 text-sm font-medium", scrolled ? "text-black" : "text-green-700")}>
-                   My account
-                 </Link>
-               </SignedIn>
              </div>
            </nav>
          ) : null}

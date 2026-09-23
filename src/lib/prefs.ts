@@ -2,14 +2,8 @@ import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { applyTheme, DEFAULT_THEME, parseTheme, type ThemeId } from "@/lib/theme";
 
-type Currency = "USD" | "SLE";
-type Lang = "EN";
-
 interface Prefs {
-  currency: Currency;
-  language: Lang;
   theme: ThemeId;
-  setCurrency: (c: Currency) => void;
   setTheme: (t: ThemeId) => void;
 }
 
@@ -18,10 +12,7 @@ export const PREFS_STORAGE_KEY = "til-prefs";
 export const usePrefs = create<Prefs>()(
   persist(
     (set) => ({
-      currency: "USD",
-      language: "EN",
       theme: DEFAULT_THEME,
-      setCurrency: (currency) => set({ currency }),
       setTheme: (theme) => {
         applyTheme(theme);
         set({ theme });
