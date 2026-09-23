@@ -33,11 +33,106 @@
   --shadow-lift: 0 24px 50px -20px rgb(16 32 27 / 0.4);
 }
 
+/* ---------------------------------------------------------------------------
+   Selectable themes.
+
+   The default theme is the `@theme` block above and is deliberately left
+   untouched — no `data-theme` attribute means default. Each block below
+   overrides the same custom properties, so every Tailwind utility that reads
+   them (bg-brand, text-muted, border-line, …) re-themes with no component
+   changes. `html[...]` is used so these win the cascade over `:root`.
+
+   Values marked SUPPLIED come from the palette images provided by the owner.
+   Values marked DERIVED were generated to fill roles the five-colour palettes
+   do not cover (page background, borders, secondary text), keeping each
+   palette's hue. Values marked ADJUSTED are a supplied colour lightened the
+   minimum amount needed to reach WCAG AA as text on that theme's dark
+   surfaces; the original is noted beside it.
+
+   Feedback colours (ok/warn/danger/info) stay close to default in every theme:
+   an error must still read as an error inside a blue palette.
+   --------------------------------------------------------------------------- */
+
+/* Theme Two — teal and sand */
+html[data-theme="two"] {
+  --color-brand: #03717c; /* SUPPLIED */
+  --color-brand-dark: #00525e; /* SUPPLIED */
+  --color-sage: #008a92; /* SUPPLIED */
+  --color-gold: #6bced8; /* ADJUSTED from supplied #47C2CF for AA on brand-dark */
+  --color-gold-ink: #04616b; /* DERIVED — accent text on light surfaces */
+  --color-ivory: #faf7f3; /* DERIVED — page background */
+  --color-cream: #faf7f3; /* DERIVED */
+  --color-surface: #efe9e0; /* DERIVED from supplied sand #DACFBF */
+  --color-surface-muted: #e3dace; /* DERIVED from supplied sand */
+  --color-line: #d3c8b9; /* DERIVED from supplied sand */
+  --color-ink: #08272c; /* DERIVED — body text */
+  --color-muted: #4a6268; /* DERIVED — secondary text */
+  --color-ok: #2f7a63;
+  --color-warn: #a8762a;
+  --color-danger: #a23e2f;
+  --color-info: #03717c;
+  --shadow-card: 0 18px 40px -24px rgb(0 82 94 / 0.35);
+  --shadow-lift: 0 24px 50px -20px rgb(0 82 94 / 0.4);
+}
+
+/* Theme Three — navy and sky blue */
+html[data-theme="three"] {
+  --color-brand: #073a69; /* SUPPLIED */
+  --color-brand-dark: #171725; /* SUPPLIED */
+  --color-sage: #77a6c0; /* SUPPLIED */
+  --color-gold: #5a94c1; /* SUPPLIED */
+  --color-gold-ink: #2b6491; /* DERIVED — accent text on light surfaces */
+  --color-ivory: #f7f8fa; /* DERIVED — page background */
+  --color-cream: #f7f8fa; /* DERIVED */
+  --color-surface: #eceff3; /* DERIVED */
+  --color-surface-muted: #dde2e8; /* DERIVED */
+  --color-line: #c6cbd1; /* DERIVED from supplied grey #B4B6B8 */
+  --color-ink: #171725; /* SUPPLIED */
+  --color-muted: #4c5666; /* DERIVED — secondary text */
+  --color-ok: #2f6f52;
+  --color-warn: #9a6f24;
+  --color-danger: #a23e2f;
+  --color-info: #073a69;
+  --shadow-card: 0 18px 40px -24px rgb(23 23 37 / 0.35);
+  --shadow-lift: 0 24px 50px -20px rgb(23 23 37 / 0.4);
+}
+
+/* Theme Four — coastal slate and teal */
+html[data-theme="four"] {
+  --color-brand: #1a586b; /* SUPPLIED (Dark Teal) */
+  --color-brand-dark: #383e3d; /* SUPPLIED (Metal) */
+  --color-sage: #727d7d; /* SUPPLIED (Grey) */
+  --color-gold: #83b1c4; /* ADJUSTED from supplied Sky #7CADC1 for AA on brand-dark */
+  --color-gold-ink: #33708b; /* DERIVED from supplied Air Force Blue #4E93B3 */
+  --color-ivory: #f7f9f9; /* DERIVED — page background */
+  --color-cream: #f7f9f9; /* DERIVED */
+  --color-surface: #e9eff0; /* DERIVED */
+  --color-surface-muted: #dae3e5; /* DERIVED */
+  --color-line: #c2ced0; /* DERIVED */
+  --color-ink: #232827; /* DERIVED — body text */
+  --color-muted: #556063; /* DERIVED — secondary text */
+  --color-ok: #3c6f55;
+  --color-warn: #9c7328;
+  --color-danger: #a23e2f;
+  --color-info: #1a586b;
+  --shadow-card: 0 18px 40px -24px rgb(56 62 61 / 0.35);
+  --shadow-lift: 0 24px 50px -20px rgb(56 62 61 / 0.4);
+}
+
 @layer base {
   html {
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     scroll-behavior: smooth;
+  }
+  /* Restrained cross-fade when the palette changes. Disabled under
+     prefers-reduced-motion by the block further down. */
+  html,
+  body,
+  #app {
+    transition:
+      background-color 220ms ease,
+      color 220ms ease;
   }
   html,
   body,

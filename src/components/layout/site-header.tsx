@@ -8,6 +8,7 @@ import { NAV } from "@/lib/site";
 import { BrandLogo } from "@/components/layout/brand-logo";
 import { Button } from "@/components/ui/button";
 import { ContactBar } from "@/components/layout/contact-bar";
+import { ThemeSwitcher } from "@/components/layout/theme-switcher";
 import { cn } from "@/lib/utils";
 
 function AuthSlot() {
@@ -111,6 +112,8 @@ export function SiteHeader() {
             >
               SLE
             </button>
+            <span className="text-ivory/50">|</span>
+            <ThemeSwitcher />
           </div>
           <div className="flex items-center gap-4">
             <ContactBar />

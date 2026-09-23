@@ -3,6 +3,7 @@ import { AuthProvider } from "@/lib/auth/provider";
 import { PreviewHostBridge } from "@/components/preview-host-bridge";
 import { SiteShell } from "@/components/layout/site-shell";
 import { AppErrorComponent } from "@/lib/error-component";
+import { THEME_BOOTSTRAP } from "@/lib/theme";
 import appCss from "../styles.css?url";
 
 const APP_NAME = "Tourism Is Life";
@@ -48,6 +49,14 @@ export const Route = createRootRoute({
     <html lang="en" className="antialiased" suppressHydrationWarning>
       <head>
         <HeadContent />
+        {/* Applies the saved theme before first paint so the page never flashes
+            the default palette. Reads the same zustand-persist record the prefs
+            store writes; the store re-applies it on rehydrate. */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: THEME_BOOTSTRAP,
+          }}
+        />
       </head>
       <body className="bg-ivory text-ink">
         <PreviewHostBridge />

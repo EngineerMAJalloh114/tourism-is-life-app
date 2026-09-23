@@ -30,6 +30,50 @@ This repo is its public website, live at **https://www.tourismislife.com**.
 
 Not navy/ocean blue — earlier planning documents that say so are stale.
 
+## Themes (four selectable palettes)
+
+Visitors pick a palette from the header utility bar. Implementation:
+
+- **`src/lib/theme.ts`** — the only place theme ids, names, descriptions and
+  preview swatches live. Rename a theme here and nothing else needs touching.
+  Also exports `THEME_BOOTSTRAP`, the inline `<head>` script.
+- **`src/styles.css`** — the default theme is the `@theme` block and is
+  deliberately untouched (no `data-theme` attribute = default). Themes two/three/
+  four are `html[data-theme="…"]` blocks overriding the *same* custom properties.
+  Because every component reads colour through Tailwind utilities that resolve to
+  those properties (1,100+ usages, no inline colours), themes need zero component
+  changes.
+- **`src/lib/prefs.ts`** — the existing zustand `persist` store (localStorage key
+  `til-prefs`) gained `theme` + `setTheme`. `onRehydrateStorage` re-validates the
+  stored value so a stale or hand-edited id falls back to default.
+- **`src/components/layout/theme-switcher.tsx`** — radiogroup popover with swatch
+  previews; closes on Escape (returning focus), outside click, and selection.
+- **No-flash:** `THEME_BOOTSTRAP` runs in `<head>` before first paint, reads the
+  same localStorage record and sets `data-theme`. It mutates an attribute rather
+  than changing rendered markup, so SSR hydration stays clean.
+
+### Palette provenance (important)
+
+Themes two/three/four come from palette images supplied by the owner. Each image
+gave five colours, which cannot fill sixteen token roles, so values are labelled
+in `styles.css`:
+
+- **SUPPLIED** — taken verbatim from the palette image.
+- **DERIVED** — generated to fill a role the palette does not cover (page
+  background, borders, secondary text). None of the three palettes contained a
+  colour light enough to use as a page background.
+- **ADJUSTED** — a supplied colour lightened the minimum amount needed to reach
+  WCAG AA as text on that theme's dark surfaces. Two exist, both noted inline
+  with their originals: theme two `#47C2CF` → `#6BCED8`, theme four `#7CADC1` →
+  `#83B1C4`.
+
+Feedback colours (ok/warn/danger/info) stay near default in every theme so an
+error still reads as an error inside a blue palette.
+
+All four themes were checked against 13 contrast pairs (body text, secondary
+text, accent text, button labels, headings, kickers on dark) — all pass AA.
+Re-run that check if you change a token.
+
 ## Product rules (these are firm)
 
 1. **No online booking or payments.** Visitor journey is discover → explore → learn → get in
