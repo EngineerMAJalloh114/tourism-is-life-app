@@ -1,4 +1,10 @@
-@import "tailwindcss";
+/* Scan only src/ for class names (PERF-1). With automatic detection the client
+   and server builds scanned the filesystem at different moments and produced
+   different CSS (one stray utility), so the server HTML linked a stylesheet
+   hash the client build never emitted. Pinning the source keeps both builds
+   byte-identical; scripts/check-built-assets.mjs guards it after every build. */
+@import "tailwindcss" source(none);
+@source "./";
 
 @theme {
   --font-sans: "Figtree", "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif;
