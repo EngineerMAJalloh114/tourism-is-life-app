@@ -1,0 +1,46 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+# Least privilege: CI only needs to read the repository.
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          # The server tests run TypeScript directly (`--experimental-strip-types`), which needs Node >= 22.6.
+          node-version: 24
+          cache: npm
+
+      - run: npm ci
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Test
+        run: npm test
+
+      # `build:dev`, not `build`: `build` also runs `db:migrate`, which needs a real DATABASE_URL.
+      - name: Build
+        run: npm run build:dev
+
+      # PERF-1: every /assets/* URL the server can put in HTML must have been emitted.
+      - name: Check built assets
+        run: npm run check:assets

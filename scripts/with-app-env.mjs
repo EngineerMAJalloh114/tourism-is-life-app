@@ -115,11 +115,13 @@ function main(argv) {
   // shell:true is required for `vite`, `npm`, etc. to resolve correctly under cmd.exe.
   // On Unix, keep shell:false for signal forwarding and security.
   const isWin = process.platform === "win32";
-  const child = spawn(command, args, {
-    stdio: "inherit",
-    env,
-    shell: isWin,
-  });
+  // With `shell: true` Node concatenates command and args into one cmd.exe
+  // line without quoting, so a path containing a space (`C:\Program Files\...`)
+  // is split apart. Quote anything with whitespace or cmd metacharacters.
+  const quoteForCmd = (value) => (/[\s"&|<>^]/.test(value) ? `"${value.replace(/"/g, '\\"')}"` : value);
+  const child = isWin
+    ? spawn(quoteForCmd(command), args.map(quoteForCmd), { stdio: "inherit", env, shell: true })
+    : spawn(command, args, { stdio: "inherit", env, shell: false });
   // The dev server is long-running and is stopped by signalling this wrapper.
   for (const signal of ["SIGINT", "SIGTERM", "SIGHUP"]) {
     process.on(signal, () => {
