@@ -16,7 +16,7 @@ function ArticlePage() {
   const article = getArticle(slug);
   if (!article) throw notFound();
   return (
-    <article className="container-page max-w-3xl py-16">
+    <article className="container-page max-w-3xl py-10">
       <JsonLd data={articleJsonLd(article)} />
       <p className="text-sm text-muted">
         <Link to="/journal">Journal</Link> /{" "}
@@ -24,7 +24,7 @@ function ArticlePage() {
           {article.categoryLabel}
         </Link>
       </p>
-      <h1 className="mt-3 font-display text-4xl text-brand">{article.title}</h1>
+      <h1 className="mt-3 font-display text-4xl text-heading">{article.title}</h1>
       <p className="mt-2 text-sm text-muted">{article.date}</p>
       <img src={article.image} alt={article.imageAlt} className="mt-8 w-full rounded-lg object-cover" />
       {article.body.split("\n\n").map((p) => (

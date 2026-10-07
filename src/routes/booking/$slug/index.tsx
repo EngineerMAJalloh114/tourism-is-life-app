@@ -36,8 +36,8 @@ function BookingPage() {
 
   if (!tour.bookable) {
     return (
-      <div className="container-page py-20">
-        <h1 className="font-display text-4xl text-brand">Quote-only programme</h1>
+      <div className="container-page py-12">
+        <h1 className="font-display text-4xl text-heading">Quote-only programme</h1>
         <p className="mt-3 text-muted">This itinerary is not self-serve. Send a quote request instead.</p>
         <div className="mt-8 max-w-lg">
           <EnquiryForm type="B2C" contextLabel={tour.title} />
@@ -76,12 +76,12 @@ function BookingPage() {
           {tour.title}
         </Link>
       </p>
-      <h1 className="mt-2 font-display text-4xl text-brand">Check availability</h1>
+      <h1 className="mt-2 font-display text-4xl text-heading">Check availability</h1>
       <p className="mt-3 max-w-xl text-muted">
         Guest checkout is open. You can hold seats without creating an account, and holds last 15 minutes.
       </p>
       <ol className="mt-6 flex gap-4 text-xs uppercase tracking-[0.14em] text-muted">
-        <li className="text-brand">1. Date</li>
+        <li className="text-heading">1. Date</li>
         <li>2. Guests</li>
         <li>3. Payment</li>
       </ol>

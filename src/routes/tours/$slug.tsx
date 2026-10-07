@@ -88,25 +88,25 @@ function TourDetail() {
               <strong>Languages:</strong> {tour.languages.join(", ")}
             </li>
           </ul>
-          <h2 className="mt-10 font-display text-3xl text-brand">Highlights</h2>
+          <h2 className="mt-10 font-display text-3xl text-heading">Highlights</h2>
           <ul className="mt-4 list-disc space-y-1 pl-5 text-sm">
             {tour.highlights.map((h) => (
               <li key={h}>{h}</li>
             ))}
           </ul>
-          <h2 className="mt-10 font-display text-3xl text-brand">Itinerary</h2>
+          <h2 className="mt-10 font-display text-3xl text-heading">Itinerary</h2>
           <ol className="mt-4 space-y-4">
             {tour.itinerary.map((d) => (
               <li key={d.day} className="rounded-md border border-line bg-surface p-4">
                 <p className="text-xs uppercase tracking-[0.16em] text-gold-ink">Day {d.day}</p>
-                <h3 className="mt-1 font-display text-xl text-brand">{d.title}</h3>
+                <h3 className="mt-1 font-display text-xl text-heading">{d.title}</h3>
                 <p className="mt-1 text-sm text-muted">{d.description}</p>
               </li>
             ))}
           </ol>
           <div className="mt-10 grid gap-6 sm:grid-cols-2">
             <div>
-              <h2 className="font-display text-2xl text-brand">Inclusions</h2>
+              <h2 className="font-display text-2xl text-heading">Inclusions</h2>
               <ul className="mt-3 list-disc pl-5 text-sm">
                 {tour.inclusions.map((x) => (
                   <li key={x}>{x}</li>
@@ -114,7 +114,7 @@ function TourDetail() {
               </ul>
             </div>
             <div>
-              <h2 className="font-display text-2xl text-brand">Exclusions</h2>
+              <h2 className="font-display text-2xl text-heading">Exclusions</h2>
               <ul className="mt-3 list-disc pl-5 text-sm">
                 {tour.exclusions.map((x) => (
                   <li key={x}>{x}</li>
@@ -122,7 +122,7 @@ function TourDetail() {
               </ul>
             </div>
           </div>
-          <h2 className="mt-10 font-display text-3xl text-brand">Practicalities</h2>
+          <h2 className="mt-10 font-display text-3xl text-heading">Practicalities</h2>
           <p className="mt-3 text-sm">
             <strong>Meeting point:</strong> {tour.meetingPoint}
           </p>
@@ -135,7 +135,7 @@ function TourDetail() {
               <Link
                 to="/destinations/$circuit/$slug"
                 params={{ circuit: dest.circuit, slug: dest.slug }}
-                className="text-brand hover:text-gold"
+                className="text-heading hover:text-gold-ink"
               >
                 {dest.name}
               </Link>
@@ -156,7 +156,7 @@ function TourDetail() {
               <img key={g.src + g.alt} src={g.src} alt={g.alt} className="h-52 w-full rounded-md object-cover" />
             ))}
           </div>
-          <h2 className="mt-10 font-display text-3xl text-brand">Reviews</h2>
+          <h2 className="mt-10 font-display text-3xl text-heading">Reviews</h2>
           <p className="mt-2 text-sm text-muted">
             Catalogue ratings come from the public website. Guest reviews appear only after moderation.
           </p>
@@ -169,7 +169,7 @@ function TourDetail() {
             ))}
             {reviews.length === 0 ? <li className="text-sm text-muted">No moderated reviews yet.</li> : null}
           </ul>
-          <h2 className="mt-10 font-display text-3xl text-brand">FAQs</h2>
+          <h2 className="mt-10 font-display text-3xl text-heading">FAQs</h2>
           <div className="mt-4 space-y-3">
             {tour.faqs.map((f) => (
               <details key={f.q} className="rounded-md border border-line bg-surface p-4">
@@ -180,11 +180,11 @@ function TourDetail() {
           </div>
           {!tour.bookable ? (
             <div className="mt-12">
-              <h2 className="font-display text-3xl text-brand">Request a quote</h2>
+              <h2 className="font-display text-3xl text-heading">Request a quote</h2>
               <EnquiryForm type="B2C" contextLabel={tour.title} />
             </div>
           ) : null}
-          <h2 className="mt-12 font-display text-3xl text-brand">Related tours</h2>
+          <h2 className="mt-12 font-display text-3xl text-heading">Related tours</h2>
           <div className="mt-6 grid gap-6 sm:grid-cols-2">
             {related.map((t) => (
               <TourCard key={t.slug} tour={t} />
@@ -195,7 +195,7 @@ function TourDetail() {
         <aside className="lg:sticky lg:top-28 lg:self-start">
           <div className="rounded-lg border border-line bg-surface p-5 shadow-[var(--shadow-card)]">
             <p className="text-xs uppercase tracking-[0.16em] text-muted">From</p>
-            <p className="mt-1 font-display text-2xl text-brand">
+            <p className="mt-1 font-display text-2xl text-heading">
               {tour.bookable ? "Quote on request" : "Custom / quote"}
             </p>
             <p className="mt-2 text-sm text-muted">No public prices. Confirm in writing before payment.</p>
@@ -230,7 +230,7 @@ function TourDetail() {
       </div>
 
       {tour.bookable ? (
-        <div className="sticky bottom-0 z-30 border-t border-line bg-ivory/95 p-3 lg:hidden">
+        <div className="sticky bottom-0 z-30 border-t border-line bg-page/95 p-3 lg:hidden">
           <Button asChild className="w-full">
             <Link to="/booking/$slug" params={{ slug: tour.slug }}>
               Select dates

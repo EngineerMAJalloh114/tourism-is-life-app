@@ -2,6 +2,7 @@ import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { destinations, getCircuit, toursForCircuit, type CircuitId } from "@/data/catalog";
 import { PageHero } from "@/components/page-hero";
 import { TourCard } from "@/components/tour-card";
+import { DestinationCard } from "@/components/cards/destination-card";
 import { pageHead } from "@/lib/seo";
 import { JsonLd } from "@/components/json-ld";
 import { breadcrumbJsonLd } from "@/lib/seo";
@@ -45,25 +46,20 @@ function CircuitPage() {
             </li>
           ))}
         </ul>
-        <h2 className="mt-12 font-display text-3xl text-brand">Places</h2>
-        <ul className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <h2 className="mt-12 font-display text-3xl text-heading">Places</h2>
+        <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {places.map((d) => (
-            <li key={d.slug}>
-              <Link
-                to="/destinations/$circuit/$slug"
-                params={{ circuit: data.id, slug: d.slug }}
-                className="block overflow-hidden rounded-lg border border-line bg-surface hover:border-gold"
-              >
-                <img src={d.image} alt={d.imageAlt} className="h-40 w-full object-cover" />
-                <div className="p-4">
-                  <h3 className="font-display text-xl text-brand">{d.name}</h3>
-                  <p className="mt-1 text-sm text-muted">{d.summary}</p>
-                </div>
-              </Link>
-            </li>
+            <Link
+              key={d.slug}
+              to="/destinations/$circuit/$slug"
+              params={{ circuit: data.id, slug: d.slug }}
+              className="group"
+            >
+              <DestinationCard title={d.name} summary={d.summary} image={d.image} imageAlt={d.imageAlt} className="min-h-40" />
+            </Link>
           ))}
-        </ul>
-        <h2 className="mt-12 font-display text-3xl text-brand">Tours in this circuit</h2>
+        </div>
+        <h2 className="mt-12 font-display text-3xl text-heading">Tours in this circuit</h2>
         <div className="mt-6 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {list.map((t) => (
             <TourCard key={t.slug} tour={t} />

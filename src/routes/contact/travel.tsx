@@ -1,7 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { PageHero } from "@/components/page-hero";
 import { EnquiryForm } from "@/components/enquiry-form";
-import { IMG_HERO } from "@/data/catalog";
 import { pageHead } from "@/lib/seo";
 
 export const Route = createFileRoute("/contact/travel")({
@@ -17,8 +16,8 @@ export const Route = createFileRoute("/contact/travel")({
 function Page() {
   return (
     <>
-      <PageHero kicker="Travellers" title="B2C enquiry" image={IMG_HERO} imageAlt="Coast" />
-      <div className="container-page max-w-xl py-16">
+      <PageHero kicker="Travellers" title="B2C enquiry" image="/images/beaches/river-number-two-beach.jpg" imageAlt="A wooden canoe marked 'No 2 River' on the sand at River Number Two Beach" />
+      <div className="container-page max-w-xl py-10">
         <EnquiryForm type="B2C" />
       </div>
     </>

@@ -15,7 +15,7 @@ function Vouchers() {
     <ul className="space-y-3">
       {confirmed.map((b) => (
         <li key={b.id} className="rounded-md border border-gold/40 bg-surface px-4 py-3">
-          <p className="font-display text-xl text-brand">{b.voucher_code}</p>
+          <p className="font-display text-xl text-heading">{b.voucher_code}</p>
           <p className="text-sm text-muted">
             {getTour(b.tour_slug)?.title} · {b.travel_date}
           </p>

@@ -41,10 +41,10 @@ function ForgotPassword() {
   }
 
   return (
-    <div className="container-page grid min-h-[70vh] place-items-center py-16">
+    <div className="container-page grid min-h-[70vh] place-items-center py-10">
       <div className="w-full max-w-md rounded-lg border border-line bg-surface p-8 shadow-[var(--shadow-card)]">
         <p className="text-xs uppercase tracking-[0.2em] text-gold-ink">Account</p>
-        <h1 className="mt-2 font-display text-3xl text-brand">Reset password</h1>
+        <h1 className="mt-2 font-display text-3xl text-heading">Reset password</h1>
         {done ? (
           <p className="mt-4 text-sm text-muted">
             If that address is on file, a reset link will follow. Production delivery requires a Resend API key.
@@ -71,7 +71,7 @@ function ForgotPassword() {
           </>
         )}
         <p className="mt-6 text-center text-sm">
-          <Link to="/login" className="text-brand hover:text-gold">
+          <Link to="/login" className="text-heading hover:text-gold-ink">
             Back to sign in
           </Link>
         </p>

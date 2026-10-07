@@ -1,7 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { articleCategories, articlesForCategory } from "@/data/catalog";
 import { PageHero } from "@/components/page-hero";
-import { IMG_FOREST } from "@/data/catalog";
 import { pageHead } from "@/lib/seo";
 
 export const Route = createFileRoute("/journal/category/$category")({
@@ -24,14 +23,14 @@ function CategoryPage() {
         kicker="Journal"
         title={meta?.label ?? "Category"}
         lede="Only verified public posts are listed. Empty categories are waiting on Tourism Is Life copy."
-        image={IMG_FOREST}
-        imageAlt="Forest"
+        image="/images/culture/makeni-sunset.jpg"
+        imageAlt="Sunset over Makeni in northern Sierra Leone"
       />
       <div className="container-page py-12">
         {list.map((a) => (
           <Link key={a.slug} to="/journal/$slug" params={{ slug: a.slug }} className="mb-8 block">
             <p className="text-xs uppercase tracking-[0.16em] text-muted">{a.date}</p>
-            <h2 className="mt-1 font-display text-3xl text-brand">{a.title}</h2>
+            <h2 className="mt-1 font-display text-3xl text-heading">{a.title}</h2>
             <p className="mt-2 text-sm text-muted">{a.excerpt}</p>
           </Link>
         ))}

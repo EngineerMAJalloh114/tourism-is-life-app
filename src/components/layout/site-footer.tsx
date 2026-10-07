@@ -1,120 +1,139 @@
 import { Link } from "@tanstack/react-router";
 import { BrandLogo } from "@/components/layout/brand-logo";
-import { MessageCircle, MessageSquare, Phone } from "lucide-react";
+import { ChevronDown, MessageCircle, MessageSquare, Phone } from "lucide-react";
+import { useState } from "react";
 import { SocialLinks } from "@/components/layout/social-links";
 import { SITE } from "@/lib/site";
 import { NewsletterForm } from "@/components/newsletter-form";
+import { cn } from "@/lib/utils";
+
+type FooterCategory = {
+  key: string;
+  label: string;
+  links: { label: string; to: string }[];
+};
+
+const FOOTER_CATEGORIES: FooterCategory[] = [
+  {
+    key: "explore",
+    label: "Explore",
+    links: [
+      { label: "Destinations", to: "/destinations" },
+      { label: "Tours", to: "/tours" },
+      { label: "Cruise Ship Handling", to: "/cruise" },
+      { label: "Search", to: "/tours/search" },
+    ],
+  },
+  {
+    key: "company",
+    label: "Company",
+    links: [
+      { label: "About", to: "/about" },
+      { label: "Our Team", to: "/about/team" },
+      { label: "Sustainability", to: "/about/sustainability" },
+      { label: "Journal", to: "/journal" },
+      { label: "Image Credits", to: "/about/image-credits" },
+      { label: "Coming Soon", to: "/coming-soon" },
+    ],
+  },
+  {
+    key: "support",
+    label: "Support",
+    links: [
+      { label: "Contact", to: "/contact" },
+      { label: "B2B enquiry", to: "/contact/partner" },
+      { label: "Emergency", to: "/contact/emergency" },
+      { label: "Services", to: "/services" },
+    ],
+  },
+];
 
 export function SiteFooter() {
+  // Single-open accordion, same convention as the mobile nav's category
+  // list — collapsed by default below `lg`, where three full link lists
+  // plus the brand blurb and emergency block otherwise stack into a very
+  // tall footer. At `lg` and up every category's own `lg:block` keeps it
+  // permanently open regardless of this state, matching the original
+  // always-expanded desktop layout exactly.
+  const [openCategory, setOpenCategory] = useState<string | null>(null);
+
   return (
     <footer className="bg-brand-dark text-ivory">
-      <div className="container-page grid gap-10 py-16 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="container-page grid gap-8 py-10 sm:grid-cols-2 lg:grid-cols-4 lg:gap-10">
         <div>
-          <Link to="/" aria-label="Tourism Is Life home" className="inline-block rounded-md bg-ivory p-1.5">
+          <Link to="/" aria-label="Tourism Is Life home" className="inline-block rounded-md bg-page p-1.5">
             <BrandLogo size="footer" />
           </Link>
           <p className="mt-3 max-w-xs text-sm leading-relaxed text-ivory/70">
             Destination management for Sierra Leone and West Africa. Local experts, global standards.
           </p>
         </div>
-        <div>
-          <p className="text-xs font-medium uppercase tracking-[0.18em] text-gold">Explore</p>
-          <ul className="mt-4 space-y-2 text-sm text-ivory/80">
-            <li>
-              <Link to="/destinations" className="hover:text-gold">
-                Destinations
-              </Link>
-            </li>
-            <li>
-              <Link to="/tours" className="hover:text-gold">
-                Tours
-              </Link>
-            </li>
-            <li>
-              <Link to="/cruise" className="hover:text-gold">
-                Cruise Ship Handling
-              </Link>
-            </li>
-            <li>
-              <Link to="/tours/search" className="hover:text-gold">
-                Search
-              </Link>
-            </li>
-          </ul>
-        </div>
-        <div>
-          <p className="text-xs font-medium uppercase tracking-[0.18em] text-gold">Company</p>
-          <ul className="mt-4 space-y-2 text-sm text-ivory/80">
-            <li>
-              <Link to="/about" className="hover:text-gold">
-                About
-              </Link>
-            </li>
-            <li>
-              <Link to="/about/team" className="hover:text-gold">
-                Our Team
-              </Link>
-            </li>
-            <li>
-              <Link to="/about/sustainability" className="hover:text-gold">
-                Sustainability
-              </Link>
-            </li>
-            <li>
-              <Link to="/journal" className="hover:text-gold">
-                Journal
-              </Link>
-            </li>
-            <li>
-              <Link to="/coming-soon" className="hover:text-gold">
-                Coming Soon
-              </Link>
-            </li>
-          </ul>
-        </div>
-        <div>
-          <p className="text-xs font-medium uppercase tracking-[0.18em] text-gold">Support</p>
-          <ul className="mt-4 space-y-2 text-sm text-ivory/80">
-            <li>
-              <Link to="/contact" className="hover:text-gold">
-                Contact
-              </Link>
-            </li>
-            <li>
-              <Link to="/contact/partner" className="hover:text-gold">
-                B2B enquiry
-              </Link>
-            </li>
-            <li>
-              <Link to="/contact/emergency" className="hover:text-gold">
-                Emergency
-              </Link>
-            </li>
-            <li>
-              <Link to="/services" className="hover:text-gold">
-                Services
-              </Link>
-            </li>
-          </ul>
-          <p className="mt-5 text-sm text-ivory/70">
-            24/7 emergency
-            <br />
-            <a href={SITE.phoneHref} className="text-gold inline-flex items-center gap-1">
-              <Phone className="size-3.5" />
-              {SITE.phone}
-            </a>
-            <br />
-            <a href={SITE.whatsappHref} className="text-gold inline-flex items-center gap-1" aria-label="Chat with Tourism Is Life on WhatsApp" target="_blank" rel="noopener noreferrer">
-              <MessageCircle className="size-3.5" />
-              WhatsApp
-            </a>
-            <br />
-            <a href={SITE.smsHref} className="text-gold inline-flex items-center gap-1">
-              <MessageSquare className="size-3.5" />
-              SMS
-            </a>
-          </p>
-        </div>
+        {FOOTER_CATEGORIES.map((category) => {
+          const isOpen = openCategory === category.key;
+          return (
+            <div key={category.key} className="border-b border-ivory/10 pb-3 sm:border-none sm:pb-0">
+              <button
+                type="button"
+                onClick={() => setOpenCategory((v) => (v === category.key ? null : category.key))}
+                aria-expanded={isOpen}
+                className="flex w-full items-center justify-between py-2 text-left lg:pointer-events-none lg:py-0"
+              >
+                <span className="text-xs font-medium uppercase tracking-[0.18em] text-gold">
+                  {category.label}
+                </span>
+                <ChevronDown
+                  className={cn("size-4 text-ivory/60 transition-transform lg:hidden", isOpen && "rotate-180")}
+                  aria-hidden="true"
+                />
+              </button>
+              <ul
+                className={cn(
+                  "space-y-2 text-sm text-ivory/80 lg:mt-4 lg:block",
+                  isOpen ? "mt-3 block" : "hidden",
+                )}
+              >
+                {category.links.map((link) => (
+                  <li key={link.to}>
+                    <Link to={link.to} className="hover:text-gold">
+                      {link.label}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+              {category.key === "support" ? (
+                <p
+                  className={cn(
+                    "text-sm text-ivory/70 lg:mt-5 lg:block",
+                    isOpen ? "mt-3 block" : "hidden",
+                  )}
+                >
+                  24/7 emergency
+                  <br />
+                  <a href={SITE.phoneHref} className="text-gold inline-flex items-center gap-1">
+                    <Phone className="size-3.5" />
+                    {SITE.phone}
+                  </a>
+                  <br />
+                  <a
+                    href={SITE.whatsappHref}
+                    className="text-gold inline-flex items-center gap-1"
+                    aria-label="Chat with Tourism Is Life on WhatsApp"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <MessageCircle className="size-3.5" />
+                    WhatsApp
+                  </a>
+                  <br />
+                  <a href={SITE.smsHref} className="text-gold inline-flex items-center gap-1">
+                    <MessageSquare className="size-3.5" />
+                    SMS
+                  </a>
+                </p>
+              ) : null}
+            </div>
+          );
+        })}
       </div>
       <div className="border-t border-ivory/10">
         <div className="container-page grid gap-6 py-8 lg:grid-cols-[1fr_20rem]">
@@ -125,6 +144,17 @@ export function SiteFooter() {
               </p>
               <p>Member partner of 1 DCM World, as stated by the CEO in Travel And Tour World, 2024.</p>
             </div>
+            <nav aria-label="Legal" className="flex flex-wrap gap-x-4 gap-y-1">
+              <Link to="/privacy" className="hover:text-gold">
+                Privacy
+              </Link>
+              <Link to="/terms" className="hover:text-gold">
+                Terms
+              </Link>
+              <Link to="/cookies" className="hover:text-gold">
+                Cookies
+              </Link>
+            </nav>
             <SocialLinks variant="footer" />
           </div>
           <NewsletterForm variant="dark" />

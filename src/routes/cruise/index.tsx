@@ -51,7 +51,7 @@ function Cruise() {
       />
 
       <div className="bg-surface">
-        <div className="container-page py-16">
+        <div className="container-page py-10">
           <div className="grid gap-8 lg:grid-cols-2">
             <div>
               <p className="text-lg leading-relaxed text-ink/80">
@@ -68,8 +68,8 @@ function Cruise() {
                 </Button>
               </div>
             </div>
-            <div className="rounded-lg border border-line bg-ivory p-6 text-sm text-muted">
-              <p className="font-medium text-brand">Emergency / operations</p>
+            <div className="rounded-lg border border-line bg-page p-6 text-sm text-muted">
+              <p className="font-medium text-heading">Emergency / operations</p>
               <p className="mt-2">
                 A 24-hour contact is provided once a request is confirmed. For urgent
                 port matters, contact the operations officer: {cruiseContacts.operationsOfficer}.
@@ -82,7 +82,7 @@ function Cruise() {
 
       <StickySectionNav />
 
-      <div className="container-page py-16 space-y-24">
+      <div className="container-page py-10 space-y-24">
         <section id="overview" className="scroll-mt-32">
           <SectionHeader
             kicker="Overview"
@@ -136,7 +136,7 @@ function Cruise() {
           <div className="mt-8 rounded-lg border border-line bg-surface p-6 sm:p-8">
             <div className="grid gap-6 lg:grid-cols-2">
               <div>
-                <h3 className="font-display text-2xl text-brand">Port facts</h3>
+                <h3 className="font-display text-2xl text-heading">Port facts</h3>
                 <dl className="mt-4 space-y-3 text-sm">
                   <div className="flex justify-between gap-3 border-b border-line pb-3">
                     <dt className="text-muted">Name</dt>
@@ -213,7 +213,7 @@ function Cruise() {
           />
           <div className="mt-8 grid gap-6 lg:grid-cols-2">
             <div className="rounded-lg border border-line bg-surface p-6">
-              <h3 className="font-display text-2xl text-brand">Pilotage</h3>
+              <h3 className="font-display text-2xl text-heading">Pilotage</h3>
               <ul className="mt-4 space-y-2 text-sm text-ink/80">
                 {pilotage.map((item) => (
                   <li key={item} className="flex items-start gap-2">
@@ -224,7 +224,7 @@ function Cruise() {
               </ul>
             </div>
             <div className="rounded-lg border border-line bg-surface p-6">
-              <h3 className="font-display text-2xl text-brand">Anchorage & tugs</h3>
+              <h3 className="font-display text-2xl text-heading">Anchorage & tugs</h3>
               <ul className="mt-4 space-y-2 text-sm text-ink/80">
                 {anchorageNotes.map((item) => (
                   <li key={item} className="flex items-start gap-2">

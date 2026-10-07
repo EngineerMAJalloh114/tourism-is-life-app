@@ -78,7 +78,7 @@ export function SocialLinks({
                 ? "text-ivory/70 hover:text-gold bg-transparent"
                 : variant === "mobile"
                 ? "text-ivory/70 hover:text-gold bg-brand/50 p-2"
-                : "text-muted hover:text-brand bg-surface p-2",
+                : "text-muted hover:text-heading bg-surface p-2",
               SIZE_CLASSES[size],
             )}
             aria-disabled={isPlaceholder}

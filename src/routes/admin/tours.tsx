@@ -11,7 +11,7 @@ function Page() {
           <span>
             {t.title} · {t.bookable ? "bookable" : "quote"}
           </span>
-          <Link to="/tours/$slug" params={{ slug: t.slug }} className="text-brand hover:text-gold">
+          <Link to="/tours/$slug" params={{ slug: t.slug }} className="text-heading hover:text-gold-ink">
             View
           </Link>
         </li>

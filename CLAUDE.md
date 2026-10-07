@@ -30,6 +30,1108 @@ This repo is its public website, live at **https://www.tourismislife.com**.
 
 Not navy/ocean blue — earlier planning documents that say so are stale.
 
+## Themes (one light default + three dark palettes)
+
+Visitors pick a palette from the header utility bar. The default is light; themes
+two, three and four are **dark**, moving the page background rather than tinting it.
+
+### The token role split (read this before touching colours)
+
+The original vocabulary conflated surface and text roles, and that is what stops a
+theme from doing anything more than tinting:
+
+- `ivory` meant both *the page surface* and *text that sits on dark sections*.
+- `brand` meant both *a dark section background* and *heading text*.
+
+So two tokens were added, and the default values were chosen to be identical to
+what they replaced — the default theme is byte-for-byte unchanged:
+
+| Token | Role | Default |
+|---|---|---|
+| `--color-page` | the page/card surface | `#fbf8f1` (was `ivory`) |
+| `--color-ivory` | text and washes **on** dark surfaces | `#fbf8f1`, and stays light in every theme |
+| `--color-heading` | heading text | `#1b2e28` (was `brand`) |
+| `--color-brand` | dark accent band / section background | `#1b2e28` |
+
+The dark themes move `page`, `surface`, `ink`, `muted`, `line` and `heading`, and
+deliberately leave `ivory` light, because `ivory` is what makes hero and utility-bar
+text readable. `bg-ivory/5` and `/10` washes are likewise left alone — they are
+light washes on dark sections and are correct as they are, as is `text-brand-dark`,
+which sits on gold buttons.
+
+Implementation:
+
+- **`src/lib/theme.ts`** — the only place theme ids, names, descriptions and
+  preview swatches live. Rename a theme here and nothing else needs touching.
+  Also exports `THEME_BOOTSTRAP`, the inline `<head>` script.
+- **`src/styles.css`** — the default theme is the `@theme` block and is
+  deliberately untouched (no `data-theme` attribute = default). Themes two/three/
+  four are `html[data-theme="…"]` blocks overriding the *same* custom properties.
+  Because every component reads colour through Tailwind utilities that resolve to
+  those properties (1,100+ usages, no inline colours), themes need zero component
+  changes.
+- **`src/lib/prefs.ts`** — the existing zustand `persist` store (localStorage key
+  `til-prefs`) gained `theme` + `setTheme`. `onRehydrateStorage` re-validates the
+  stored value so a stale or hand-edited id falls back to default.
+- **`src/components/layout/theme-switcher.tsx`** — radiogroup popover with swatch
+  previews; closes on Escape (returning focus), outside click, and selection.
+  The popover opens **left-anchored** (`left-0`), not right-anchored. It
+  shipped `right-0` originally, which rendered the 240px-wide menu 129–188px
+  off the left edge of the viewport at every breakpoint tested (375px through
+  1280px) — the trigger is the first item in the utility bar, always near the
+  header's left edge, so right-anchoring pushed the menu leftward off-screen
+  every time it opened. Functionally verified during the original build (dots
+  clicked via DOM query, selection confirmed), but never checked against its
+  own bounding rect, which is how a completely unreachable menu shipped and
+  stayed that way. If this control's trigger ever moves elsewhere in the
+  header, re-check which side has room before assuming either anchor is safe.
+- **No-flash:** `THEME_BOOTSTRAP` runs in `<head>` before first paint, reads the
+  same localStorage record and sets `data-theme`. It mutates an attribute rather
+  than changing rendered markup, so SSR hydration stays clean.
+
+### Palette provenance (important)
+
+Themes two/three/four come from palette images supplied by the owner. Each image
+gave five colours, which cannot fill sixteen token roles, so values are labelled
+in `styles.css`:
+
+- **SUPPLIED** — taken verbatim from the palette image.
+- **DERIVED** — generated to fill a role the palette does not cover (page
+  background, borders, secondary text).
+- **ADJUSTED** — a supplied colour moved the minimum amount needed to reach WCAG
+  AA, noted inline with its original. Three exist, all the same pairing: the
+  accent band `--color-brand` darkened so a gold kicker on it clears 4.5:1
+  (theme two `#00525E` → `#004B56`, three `#073A69` → `#052747`, four `#1A586B`
+  → `#13404D`). Going dark is what let the supplied accents be used verbatim as
+  text; only the bands needed moving.
+
+Feedback colours (ok/warn/danger/info) are lifted for dark surfaces but keep their
+meaning, so an error still reads as an error inside a blue palette.
+
+The `gold`-on-`brand` pairing (section kickers on the accent band) is the tightest
+in every theme and the one that fails first. If you change `--color-brand` or
+`--color-gold`, re-check it before anything else.
+
+All four themes pass AA across 18 token pairs plus a full DOM sweep of `/`,
+`/contact`, `/services/tours-excursions` and a tour detail page, at two scroll
+positions each. Re-run that check if you change a token.
+
+Four things to know when auditing contrast in a browser, each of which has already
+produced a wrong answer once:
+
+1. Tailwind v4 emits any opacity modifier as `oklab(L a b / alpha)`. A naive `rgb`
+   parser reads L/a/b as RGB and silently reports ~1.0:1 for everything.
+2. **Canvas does not normalise `oklab()`** — `ctx.fillStyle = 'oklab(…)'` returns
+   the same string back, so "let canvas parse it" is not a fix. Convert oklab to
+   sRGB explicitly.
+3. Text over hero imagery sits on an absolutely-positioned sibling overlay, so a
+   checker that walks only ancestors reads the page background and reports false
+   failures. Skip those elements rather than "fixing" them.
+4. The header is `position: sticky`, so the hero photo behind it is **not** an
+   ancestor and cannot be measured by walking ancestors. That is why the header
+   used a fixed 75% scrim, and why its glass now dims its backdrop with
+   `brightness()` instead of relying on the image (see `.glass-frosted` /
+   `.glass-clear` below). It is measured on rendered pixels, not by ancestors.
+
+Validate the auditor itself before trusting a clean run: feed it a known-bad pair
+(must be caught) **and** a known-good pair (must not be flagged). A checker that is
+silently returning 1.0:1 for everything looks identical to a thorough one until you
+give it something it must not flag.
+
+## Hero system
+
+Every page has a hero, and there are two media modes with a hard rule between them:
+**the homepage may use images or video; every other hero is images only.** That rule
+is enforced by the type system, not by convention. (Update, Sep 2026: the homepage
+hero was redesigned onto the shared image-only `ExploreHero`, see "Homepage hero"
+below, so video is currently not supported there until that component is extended.)
+
+- **`src/lib/hero-media.ts`** — `HeroImage` (`kind: "image"`) and `HeroVideo`
+  (`kind: "video"`), plus the union `HeroMedia`. `HOME_HERO_SLIDES` holds the
+  homepage's hero states. `HeroVideo` is defined but currently unused — see below.
+- **`src/components/hero/hero-frame.tsx`** — the shared shell every hero uses:
+  sizing (`page` / `tall` / `full`), the two gradient overlays, film grain, and
+  `HERO_KICKER_CLASS`.
+- **`src/components/hero/hero-media.tsx`** — the crossfade + Ken Burns engine.
+  Advancing is driven by a `setTimeout`, never `transitionend`, because the global
+  `prefers-reduced-motion` rule below forces `transition-duration: 0.01ms`, which
+  would otherwise stall a transition-driven timer forever for exactly the visitors
+  least able to tolerate a frozen page. Reduced motion instead renders slide 1
+  statically with no timer running at all. Pause/resume and per-slide selection
+  controls are present whenever there is more than one slide (WCAG 2.2.2).
+- **`src/components/page-hero.tsx`** — every hero except the homepage. Takes
+  `image`/`imageAlt` (single) or `images: HeroImage[]` (a slideshow). It **cannot**
+  accept a `HeroVideo` — passing one is a TypeScript compile error, verified by
+  hand before shipping this. That is what keeps internal pages video-free; no
+  reviewer vigilance required.
+- **`src/components/hero/explore-hero.tsx`** — the shared "explore" hero used by
+  the homepage and by `/hospitality`: a rounded container with a giant headline over
+  a photo, a circular thumbnail "orbit" on the right (a horizontal strip below `lg`),
+  a sub-heading that rides beside the active thumbnail, and an optional per-state
+  call to action. States are `ExploreSlide` data. See "Homepage hero".
+- **`src/components/hero/home-hero.tsx`** — `ExploreHero` fed by `HOME_HERO_SLIDES`,
+  with the tour search form (passed as `children`) pulled up over its lower edge as
+  a floating pill. It no longer accepts `HeroMedia`, so it cannot carry video today.
+
+### Why the kicker is ivory, not gold
+
+The small uppercase kicker above every hero headline (`HERO_KICKER_CLASS`) is
+ivory. It used to be gold-on-dark like every other kicker in the site, but the
+hero's tall content block pushes it to roughly 18% down the hero — near the top,
+where the darkening gradients are weakest and bright sky usually sits. Measured
+per pixel (real glyph rectangles, gradient alpha evaluated at each pixel's own
+position, not a single worst-case estimate) across the hero photography and all
+four themes, a gold kicker measured 2.22:1–3.30:1 against the 4.5:1 that 12px text
+needs, and could not be rescued: even a 75%-opacity overlay heavy enough to
+flatten the photograph only reached 4.42:1. Ivory measures 5.95:1 in the same
+place with the image untouched. This was a **pre-existing** failure — the original
+single-gradient homepage hero had the same gold-on-sky problem — not something
+introduced by the slideshow.
+
+Gold is unaffected everywhere else: section kickers on solid surfaces, links, and
+the primary button inside the hero.
+
+### Video: deliberately unused
+
+Three AI-generated video clips were supplied in September 2026 and set aside:
+one showed an alpine meadow, one a coral reef, neither Sierra Leone, and the
+product rule below is explicit that photography must be real Sierra Leone
+imagery where it depicts Sierra Leone. `HeroVideo` still exists in the types and
+`HeroMediaLayer` (used by `HeroFrame`) still handles video, but the redesigned
+homepage hero (`ExploreHero`) is image-only, so adding real footage there now means
+extending `ExploreHero` first (poster frame, `onEnded` timing, reduced motion).
+
+### Homepage hero (redesigned 2026-09-25)
+
+The owner asked for the homepage to have the same flow and style as the Stay and
+Dine hero, "to make users feel welcome and ready to explore". So `HomeHero` is now
+`ExploreHero` with four states in `HOME_HERO_SLIDES` (`hero-media.ts`): welcome
+(Tokeh Beach, unchanged first image), Freetown, Bunce Island heritage, coast and
+islands. Each has a headline, sub-heading, description and an internal CTA
+(`/tours`, `/destinations`, `/tours/bunce-tasso-island`); copy only restates what the
+catalogue already says. The old two buttons (Explore Our Tours, Partner With Us)
+became the per-state CTA plus the header's Partner With Us. The tour search form
+(`src/routes/index.tsx`) keeps its exact behaviour (routes to `/tours/search?q=`,
+note that Month and Travelers are collected but not used by that search, as before)
+and is restyled as the floating pill.
+
+- Inactive CTA cells are `inert`, so a hidden link never takes keyboard focus.
+- Contrast was measured per pixel on 4 states x 3 widths x 4 themes (224 text
+  regions) and passes. When sampling, blank the text with `color: transparent`,
+  not `display: none`: with a CTA in the column, removing the headline lets the
+  gold button slide up into the measured box and reports false failures.
+- The five-image sequence below is what preceded it; the peninsula-beach image is no
+  longer used on the homepage.
+
+Previous sequence (kept for the provenance notes): five images: Tokeh Beach (the
+pre-existing hero, so first paint is unchanged), Freetown aerial, a peninsula beach,
+an island aerial, Bunce Island. The peninsula beach and island aerial were supplied by the
+owner in September 2026 with no accompanying source; they are recorded in
+`image-sources.json` as `license_verification_required` with `location:
+"unconfirmed"` rather than given a licence or a place name that has not been
+established. A third supplied image (an aerial sandbank formation, filed at
+`beaches/sandbank-aerial.jpg`) is held out of every hero: its dune and channel
+formation closely resembles Mozambique's Bazaruto Archipelago, which Sierra
+Leone's coast has no equivalent of, and it should not appear until the owner
+confirms where it was taken.
+
+### Internal page images
+
+Before this, 25 of 29 `PageHero` call sites shared four images — `IMG_FOREST`
+alone covered ten unrelated pages, several with alt text like `"Landscape"` or
+`"Ship"`. Each now has an image and alt text matched to the page, sourced from
+`image-sources.json`'s curated `alt` field rather than invented. `destinations/`
+and `tours/` use `images` (a slideshow) to preview the range each page then
+lists; everything else uses a single `image`.
+
+## Card system (`src/components/cards/`)
+
+Six card components, each matched to a specific content category rather than
+one universal card. Built to remove three duplications that existed before
+(destination cards hand-rolled three times, cruise's two grids sharing one
+shape, `VehicleCard` reimplemented inline with `<a>` instead of `<Link>`), not
+to introduce variety for its own sake — a new variant was only added where an
+existing one didn't already fit.
+
+- **`ServiceCard`** — the seven DMC services. Three have no natural photo
+  subject (visa work, insurance, ticketing) and a fourth — hotel reservations —
+  has no lodging photograph in the library that isn't already used for MICE.
+  Rather than force a mismatched or repeated image, `ServiceItem.image` is
+  optional and any service without one renders an icon panel (`Stamp`,
+  `ShieldCheck`, `Hotel`, `Ticket`) at the same size the photo would occupy, so
+  the grid keeps one rhythm. The icon map lives in the component, keyed by
+  slug — a data file has no business importing React icon components.
+- **`DestinationCard`** — circuits and places. Presentational only, no
+  `<Link>` inside: TanStack Router's typed `Link` infers `params` from the
+  literal `to` string at the JSX call site, and that inference breaks when
+  passed through a generic wrapper prop. Same pattern as `VehicleCategoryCard`
+  — the caller wraps it in their own `<Link>` and keeps full route
+  type-checking. Text sits at the card's bottom edge over a `via-brand-dark/45`
+  gradient; verified per-pixel against the actual circuit/place photography,
+  it holds 5.95:1+ across all four themes.
+- **`ImageTextCard`** — cruise overview/destination grids, via `CatalogImage`
+  for its graceful onError fallback.
+- **`CompactStoryCard`** — journal. Deliberately smaller than the tour/service
+  cards — journal supports the travel content, it doesn't compete with it.
+- **`EditorialFeatureCard`** — homepage Signature Experiences only. Taller,
+  more portrait photography (`aspect-[3/4]`) with a category/duration line
+  overlaid at the image's bottom edge. **That overlay text is ivory, not
+  gold**: measured per pixel against the actual signature-tour photography,
+  gold at that position (an 11px label under a `/85` gradient stop) measured
+  2.36:1–5.38:1 — failing 4.5:1 in most themes — because this gradient is
+  much weaker than `DestinationCard`'s. Ivory in the same spot measures
+  6.3:1–11.15:1. Same lesson as the hero kicker: gold reads correctly on solid
+  surfaces, not over photography.
+- **`TourCard`, `VehicleCard`, `VehicleCategoryCard`** — kept, already correct
+  for their categories. `VehicleCard` now imports the shared `Button` instead
+  of a local copy that typed its props `any`.
+
+No carousel/slider component exists anywhere in the codebase, and none was
+added: every collection here (4 circuits, 7 services, 6 cruise items, 4
+journal articles) is small enough that a static or lightly-scrollable grid
+outperforms a carousel for discovery and SEO-crawlable content. If a
+genuinely large collection needs one later, build it as native CSS
+`scroll-snap-x` with prev/next buttons, matching how the hero crossfade was
+built with plain `setTimeout` rather than a new dependency — the project has
+no framer-motion/embla/swiper and shouldn't gain one for this.
+
+### A pre-existing gold-on-photo bug found while verifying the cards
+
+Auditing the new cards' contrast surfaced the same gold-over-photography
+failure in code this work didn't touch: the homepage's "Cruise" panel used a
+flat `bg-brand-dark/50` over `IMG_CRUISE`, and on the actual photo that
+measured 1.28:1 for gold and 3.14:1 for ivory — both fail. Raised to `/70`,
+confirmed at 4.55:1+. Six more plain `text-gold` instances (not the
+`hover:text-gold` form swept during the theme work) were on light surfaces
+and switched to `gold-ink`: a `VehicleCard` "Limited" status (`--color-warn`
+itself measured 2.75:1 on `--color-surface` with only that one call site, so
+it was routed to the already-proven-safe `gold-ink` rather than retuning a
+shared token on one data point), a step number and a "Learn more" label in
+two `vehicle-rental` components, and a destination name in
+`destination-vehicles.tsx`. `--color-ok` (the "Available" status) was
+genuinely retuned, `#4C7A52` → `#48744E`, because all 7 of its call sites are
+small status text and the same shift clears AA everywhere at once.
+
+### Grid cards are responsive per breakpoint, not one fixed size
+
+`TourCard`, `VehicleCard`, `ServiceCard`, `VehicleCategoryCard` and
+`ImageTextCard` each carry a base-tier/`sm:` split on image aspect ratio
+(`aspect-[3/2]` on a phone, `aspect-[4/3]` or `[16/9]` from `sm:` up),
+padding, title size and — on `TourCard`/`ServiceCard`/`ImageTextCard` —
+`line-clamp` on the body copy. Before this, every one of these cards used the
+same size at every viewport, and on a phone that meant a single `TourCard`
+was 543px tall, two-thirds of a typical mobile screen, before a visitor had
+scrolled past one card. None of this removes information — line-clamping
+trims the *preview* of the summary text, never the summary itself, which is
+always readable in full on the detail page. Re-check with real device widths
+(not just a browser's default "mobile" preset) if a card's content changes
+shape enough that a line-clamp starts cutting off a fact rather than
+trimming a preview.
+
+## Layered travel carousel (`src/components/carousel/`)
+
+A second rotating-slideshow pattern alongside the hero, for small curated
+collections that deserve more presence than a grid item but aren't the
+hero: homepage Signature Experiences, and `/destinations`' "Places worth the
+detour". **Not** a general browsing pattern — catalogues, filtered results and
+anything with more than about 6 items stay a grid (`TourCard`, `DestinationCard`,
+`ExcursionExplorer`); a carousel over content a visitor needs to scan or
+compare only hides it.
+
+- **`src/lib/use-slide-rotation.ts`** — the active-index/timer/pause/reduced-
+  motion state, extracted from the hero so a second carousel wouldn't
+  duplicate it. `HeroMediaLayer` was refactored onto this hook with no
+  behaviour change (verified: identical ARIA strings, identical pause/select/
+  reduced-motion behaviour, before and after). `skipAutoAdvance` takes a
+  `(active: number) => boolean` predicate, not a plain boolean — the caller
+  doesn't have `active` yet when it calls this hook, since the hook owns that
+  state internally.
+- **`src/components/carousel/slide-controls.tsx`** — `SlideDots` and
+  `SlidePauseButton`, also extracted from the hero, now shared by both
+  carousels. Each takes a `surface: "dark" | "light"` prop: "dark" (the
+  hero's original ivory-on-translucent-chip styling) is for floating over
+  photography; "light" (border/ink styling matching the prev/next arrows) is
+  for a control row sitting on the ordinary page background, where the dark
+  styling would composite into a washed-out smudge instead of reading as a
+  control.
+- **`src/components/carousel/layered-travel-carousel.tsx`** — a prominent
+  active panel (photo, kicker, title, summary, gold CTA button) with a column
+  of 2-3 upcoming items beside it on desktop (`lg:` and up only — mobile and
+  tablet get one clear active panel and the controls below, never a shrunk
+  desktop layout). Takes `TravelCarouselItem[]`, a plain object shape (image,
+  kicker, title, summary, cta text, `href`), so the same component serves
+  tours and destinations without knowing about either data model.
+  - `href` is a plain `string`, not a typed `to`/`params` pair. Confirmed
+    against this router version that `<Link to={someStringVariable}>`
+    type-checks fine — unlike `DestinationCard`'s situation, where passing
+    `to`/`params` together through a prop object breaks TanStack's literal-
+    based param inference. Different failure mode, different fix; both are
+    real constraints of this router, not stylistic choices.
+  - Dragging is Pointer Events, not separate touch/mouse handlers — one path
+    covers a finger, a mouse click-and-drag, and a pen, no dependency: a
+    >48px, mostly-horizontal drag selects the next/previous item, same
+    threshold pattern as everywhere else motion was hand-built this project
+    rather than importing embla/swiper/framer-motion. `touch-pan-y` leaves
+    vertical page scroll to the browser; the image has native drag-and-drop
+    turned off so it doesn't compete with the custom gesture.
+  - Rotates every 2 seconds (`SLIDE_MS`) — fast by design, per the owner's
+    explicit instruction. The pause control (present whenever a carousel has
+    more than one item) is what keeps that compliant with WCAG 2.2.2 rather
+    than the interval itself.
+  - Adapted from a supplied travel-template video, not copied: that reference
+    overlaps its upcoming-item thumbnails directly on the hero photo. This
+    keeps them in a separate column instead, which avoids two problems at
+    once — stacking clickable cards on a clickable hero, and needing to
+    re-verify contrast on a third overlapping surface.
+
+### The gradient is responsive, not one flat value — and it has to be
+
+Both the active panel and the thumbnail cards reuse `DestinationCard`'s
+bottom-anchored gradient idea (text sits where the gradient is darkest), but
+**not its exact `/45` value** — that value was only ever measured against
+circuit/place photography. It has been tuned up twice since, both times
+because a change elsewhere quietly moved the kicker into the gradient's
+weaker zone without anyone touching the gradient itself:
+
+1. Measured per pixel against the actual signature-tour and attraction
+   photography, the panel's kicker failed on `mount-bintumani.jpg` at `/45`
+   (2.36:1–3.84:1) — that photo has bright sky exactly where the kicker sits.
+2. When the panel was later made responsive (shorter on a phone, so a single
+   card wasn't half the viewport — see below), the *same* `/60` that had just
+   been verified safe failed again, this time at 2.91:1 on the same photo.
+   Shrinking the panel didn't move the gradient, but it did shrink the
+   proportion of it the content block *isn't* using, which pushes the kicker
+   proportionally higher up the same image — into the same weak zone,
+   from a different cause.
+
+That second failure is why the active panel's gradient is now **responsive**
+(`via-brand-dark/88` on the base tier, `sm:via-brand-dark/70` from `sm:` up)
+instead of one shared value: mobile's shorter panel needed 0.85+ to clear
+4.5:1, tablet and desktop's taller panel only needed 0.65+, and picking one
+number would have meant either failing mobile or over-darkening the desktop
+panel for no reason it needs.
+
+**Verifying this component correctly requires cycling through every item, not
+sampling whichever one happens to be active** — "Tacugama Chimpanzee
+Sanctuary" wraps to two lines where the other three signature titles wrap to
+one, and since the content block is bottom-anchored (`mt-auto`), a taller
+title pushes that *specific* item's kicker higher than the others'. Measuring
+one item's box and reusing it to test all four images (what this file's
+verification did the first time) silently tests the wrong geometry for three
+of them. The current numbers (`/88` mobile, `/70` sm/lg) come from 48
+checks — 4 items × 4 themes × 3 breakpoints, each item's real box paired
+with its own image — with zero failures.
+
+The thumbnail cards needed their own increase for the same underlying reason
+(shorter card, same relative text position, weaker gradient zone): `/60` with
+a translucent (`/80`) kicker failed at 3.29:1–4.46:1 on two of the four
+images. Fixed two ways at once — full-opacity ivory instead of `/80`, and
+`/70` instead of `/60`.
+
+If a third `LayeredTravelCarousel` instance goes in with new photography, or
+this one's sizing changes again, re-run the per-item cycling check above
+before trusting these values — a shorter panel or a longer title can each
+independently push a kicker into a gradient zone that was never tested.
+
+### Attractions vs. destinations: one data model, not two
+
+`/destinations`' "Places worth the detour" section pulls from the same
+`destinations` array as everything else — there is no separate `Attraction`
+type. Five slugs (`tacugama`, `banana-island`, `bunce-island`, `gola`,
+`bintumani`) were picked by hand for genuinely matching photography.
+**Two attraction-flavoured destinations were deliberately left out**:
+`tiwai`'s image is recorded in `image-sources.json` as a River Number Two
+canoe scene, not Tiwai Island, and `turtle-islands` uses a Tokeh Beach photo
+captioned as merely "representative of" that coastline. Both already hedge
+this honestly in their own alt text — which is exactly why they shouldn't
+anchor a section whose purpose is showing visitors what a place actually
+looks like. If either destination gets a real, verified photograph later,
+add it to `ATTRACTION_SLUGS` in `routes/destinations/index.tsx`.
+
+### Major Hotels — no confirmed data (a sample-listing preview now exists)
+
+A gated preview of hotel and restaurant discovery now exists at `/hospitality`
+(see "Hotel and restaurant discovery" below), but it runs on clearly-labelled
+**sample** listings. The statement that follows about there being no hotel data
+still holds for confirmed data.
+
+No hotel dataset exists anywhere in this project — the only named hotel
+anywhere is the Atlantic Hotel, appearing solely as an image reference, never
+as structured name/location/category/facility data. A hotel card category was
+requested and explicitly not built for this reason; the owner separately
+asked for a **mockup** (not live-integrated content) of a hotels-and-
+restaurants page using general knowledge of Sierra Leone venues, deferred as
+a standalone task. If real property data arrives later, a `HotelCard` follows
+the same pattern as `ServiceCard`/`DestinationCard` — nothing here blocks it
+structurally, only the missing data does.
+
+### `PlacePeekCarousel` — the catalogue, not a curated selection
+
+`/destinations`' "Places" section (all 15 published places) uses a third
+carousel shape, `src/components/carousel/place-peek-carousel.tsx`: a
+symmetric centred card with up to two neighbours peeking on each side,
+distinct from `LayeredTravelCarousel`'s hero-plus-column. Built for this one
+purpose — paging through a **full** collection rather than showing a curated
+handful — so its differences from the other two carousels are deliberate,
+not drift:
+
+The stage and card sizes are a three-tier scale (`h-72 sm:h-96 lg:h-[28rem]`
+for the stage, matching width/height tiers on the cards) — the stage started
+at a flat 416px on every screen, which on a phone was half the viewport for
+one place out of fifteen. This component's glass panel is a **flat** alpha
+overlay, not a gradient, so unlike `LayeredTravelCarousel` its contrast is
+position-independent — shrinking it didn't require re-tuning `/92`, only
+re-confirming that fact rather than assuming it.
+
+- **No autoplay.** `useSlideRotation` gained an `autoplay?: boolean` option
+  (default `true`, so the hero and `LayeredTravelCarousel` are unaffected)
+  specifically so this component could set it `false`. Cycling automatically
+  through 15 places would fight scanning and comparing, and nothing asked for
+  automatic rotation here — only visitor-driven next/previous/select.
+- **A "N / 15" counter instead of dots.** `SlideDots` renders one dot per
+  item; at 15 items that's an unusable row. A text counter is still a
+  pagination indicator, just one that scales past a handful of items.
+- **Glassmorphism, not a gradient fade.** Each card's text sits on a
+  `bg-brand-dark/92 backdrop-blur-md` panel rather than a bottom-anchored
+  gradient. This was the harder of the two contrast problems this component
+  hit: at `/85`, the gold CTA text failed on 8 of the 15 real destination
+  photos (as low as 3.87:1, need 4.5:1) — gold is closer in luminance to
+  average photo midtones than ivory is, so even a fairly opaque panel wasn't
+  enough. `/92` clears every one of the 15 images on all four themes with
+  margin. If this pattern is reused with new photography, re-run that check
+  before trusting `/92` again, the same warning as `LayeredTravelCarousel`'s
+  gradient values.
+- **Badges show the circuit name** (Western/Northern/Southern/Eastern),
+  not an activity category like "WILDLIFE" or "ISLAND" — `Destination` has no
+  category field, and inventing one to match a design reference would violate
+  the "never invent facts" rule. The circuit is real, available data.
+- Drag-to-advance is the same Pointer-Events pattern as
+  `LayeredTravelCarousel` (see above), added to both at once from the same
+  request — one finger-or-cursor code path, `touch-pan-y` for vertical
+  scroll, native image drag disabled.
+- Reduced motion here has no JS `animate` flag to gate on (there's no
+  autoplay to stop) — it relies on the project's existing global rule in
+  `styles.css` (`transition-duration: 0.01ms !important` under
+  `prefers-reduced-motion: reduce`, applied to `*`), plus a redundant
+  `motion-reduce:transition-none` on the cards themselves. This browser pane
+  has no way to emulate that OS-level preference, so it was reasoned about
+  and cross-checked against the existing rule rather than directly observed —
+  said plainly rather than claimed as tested.
+
+### `CircuitShowcase` — the homepage "Four Circuits" section
+
+`src/components/carousel/circuit-showcase.tsx`, wired into `src/routes/
+index.tsx`'s "The four circuits" section. Built to a supplied reference video
+("GLOBE EXPRESS" template) as a **fourth**, deliberately distinct carousel
+shape: a full-bleed crossfading background (all four circuit photos stacked,
+opacity-swapped, same technique as `HeroMediaLayer`) with a lower-right row of
+small overlapping thumbnails that double as the slide picker, rather than
+`LayeredTravelCarousel`'s side column or `PlacePeekCarousel`'s centred-peek
+stage. The brief that requested it was explicit — "follow the same design
+pattern, do not create something else" — meaning this one exists because the
+reference literally floats thumbnails over the hero photo, which is precisely
+the layout `LayeredTravelCarousel`'s own comment explains it was built to
+avoid. Don't collapse this into that component without re-reading why both
+exist.
+
+**The gradient bug this component shipped with, and why it's a different bug
+from `LayeredTravelCarousel`'s:** the first version reused `HeroFrame`'s
+proven two-gradient pairing (`/70` vertical + `/80→/25` horizontal, default
+50% stop positions) as a starting point. Verified per pixel against all four
+circuit images at mobile/tablet/desktop, `sherbro-island.jpg`'s kicker
+measured 3.58:1 at the sm/tablet tier — under the 4.5:1 small text needs. Two
+compounding causes, both structural rather than a bad constant:
+
+1. This panel is taller (`min-h-[30rem] sm:min-h-[34rem] lg:min-h-[40rem]`)
+   than `LayeredTravelCarousel`'s (`min-h-80 sm:26rem lg:28rem`), and below
+   `lg` the text column and thumbnail row stack (`flex-col`), so the
+   bottom-anchored content block — kicker, heading, summary, CTA, *and* the
+   thumbnail row, *and* the control bar — extends much further up the panel.
+   The kicker sits as high as ~85% of the panel's height at the sm tier,
+   squarely past the default gradient's 50% via-stop, in its weak end.
+2. Below `lg`, the kicker/heading can span the card's **full width** (nothing
+   confines them to a left column the way `HeroFrame` and
+   `LayeredTravelCarousel` do), so a horizontal "darken the left, fade out by
+   the right" gradient can't be relied on to reach it — the LayeredTravel/
+   HeroFrame horizontal gradient is a genuine *bonus* there because text is
+   always in a known-position left column; here that assumption doesn't hold
+   below `lg`.
+
+Fixed by making the vertical gradient carry contrast on its own: stop
+positions pulled from Tailwind's default 0/50/100 to `0%/35%/100%` so the
+strong end extends further up before fading, and both stops raised (`/92` via,
+`/55` to) — `from-brand-dark from-0% via-brand-dark/92 via-35%
+to-brand-dark/55 to-100%`. The horizontal gradient stayed (softened slightly,
+`/70→/20`) as the bonus it actually is at `lg`, not the mechanism the vertical
+one is. Re-verified: all four images clear 4.5:1 at all three breakpoints,
+worst case 4.75:1 (`sherbro-island.jpg` kicker, mobile) — a real margin, not a
+coin flip. Thumbnail cards use their own flat-shaped gradient
+(`/95` via `/60` to transparent, default stops) sized for a much smaller card
+where text sits close to the bottom edge regardless of breakpoint; measured
+11.68–15.46:1 across all four images at all three breakpoints — no changes
+needed there.
+
+If this component's panel height, breakpoint behaviour, or text layout
+changes again, re-run the per-image-per-breakpoint check above (sample the
+real photo pixel behind each text box, composite both gradients analytically
+in the oklab space Tailwind v4 actually renders them in, check against ivory)
+rather than trusting these stop values by inspection — this is the second
+time in this project a gradient tuned and verified for one panel shape failed
+silently when reused or resized for a taller one; a taller panel or a
+full-width text block can each independently defeat assumptions the previous
+shape's numbers depended on.
+
+Other decisions specific to this component:
+
+- **Autoplay at 4500ms**, distinct from `LayeredTravelCarousel`'s 2000ms — a
+  slower interval than a compact 4-card summary strip because this section
+  carries more to read per slide (region label, full name, summary sentence,
+  *and* a 4-thumbnail row to register) before it's fair to move on.
+- **Text transition is a new keyframe**, `circuit-text-in` (`styles.css`):
+  fade plus an 8px vertical settle, not `carousel-panel-in`'s plain fade —
+  matching the reference video's own text motion, kept as its own animation
+  rather than overloading the existing one so the two can diverge again later
+  without re-touching `LayeredTravelCarousel`.
+- **Thumbnail row scrolls horizontally below `lg`** (`overflow-x-auto`)
+  rather than shrinking cards to fit every phone width. Four cards near their
+  target size (comparable to the reference video's own on-screen proportions)
+  plus gaps run slightly wider than a 375px viewport once container padding
+  is subtracted — allowing the row itself to scroll (contained, not page
+  overflow — checked at 375px: `document.documentElement.scrollWidth ===
+  clientWidth`) keeps thumbnails legible instead of shrinking them into
+  illegible postage stamps.
+- **Active-thumbnail state is a ring color change, not an opacity change.**
+  An opacity difference on inactive cards was considered and deliberately
+  dropped before shipping: scaling a whole card (photo, gradient, and label
+  together) toward a dark backdrop changes the *foreground/background
+  contrast ratio*, not just brightness, and would have doubled the
+  verification matrix (active × inactive × 4 images × 3 breakpoints) for a
+  purely decorative state. A ring border sidesteps the question entirely.
+- **`href` is a plain string** on `Link`'s `to` prop, same reasoning and same
+  confirmed-safe pattern as `LayeredTravelCarousel`'s own doc comment — not
+  re-explained here, see that component.
+
+### Site-wide density pass — cards, frames, and section spacing
+
+A later pass ("reduce the heights and width of all the cards and frames... to
+fit in one scroll screen") shrank sizing across the whole site rather than one
+component. What changed, by category:
+
+- **Card components** (`TourCard`, `ServiceCard`, `VehicleCard`,
+  `VehicleCategoryCard`, `DestinationCard`): image aspect ratios shortened one
+  step (e.g. `aspect-[3/2] sm:aspect-[4/3]` → `aspect-[16/9] sm:aspect-[3/2]`),
+  padding tightened (`p-4 sm:p-5` → `p-3.5 sm:p-4`), summaries unified to
+  `line-clamp-2` at every breakpoint (was 2 lines mobile / 3 at `sm:`), and
+  internal margins tightened a step. `VehicleCard`'s feature-tag row (the
+  least essential of its five content rows) now hides below `sm:` — the
+  seats/luggage/transmission/fuel line above it already carries what a
+  visitor compares vehicles on.
+- **Grid density**: card grids that topped out at `lg:grid-cols-3` gained an
+  `xl:grid-cols-4` (or `2xl:` on the vehicle grid, which already had `xl:3`)
+  tier, and gaps went from `gap-5`/`gap-6` to `gap-4` — more, narrower cards
+  per row on wide screens rather than 3 large ones.
+- **Section vertical padding**: `py-20`→`py-12`, `py-24`→`py-14`,
+  `py-16`→`py-10`, applied mechanically across every route and component file
+  (a plain literal-string swap — `py-20`/`24`/`16` aren't prefixes of any
+  other Tailwind spacing token, so this was safe to run unreviewed file by
+  file). This is the highest-leverage change in the whole pass: on a
+  content-heavy page the stacked section padding was a bigger contributor to
+  "how much fits in one screen" than any single card's own height.
+- **`HeroFrame` HEIGHT map**: `page`/`tall`/`full` went from
+  `42vh/68vh/92vh` to `34vh/54vh/78vh`. **This is a `min-height`, not the
+  hero's actual height** — on mobile the content block (search form on the
+  homepage hero, kicker+h1+lede on `PageHero`) routinely pushes the real
+  height well past the vh target (measured 911px on a 812px-tall phone for
+  the homepage hero). `PageHero`'s own `contentClassName` padding
+  (`pb-12 pt-24` → `pb-8 pt-16`) was tightened for the same reason: it was
+  adding to that content-driven overflow, not just internal breathing room.
+- **Carousel/frame `min-h` tiers**: `CircuitShowcase` (`30/34/40rem` →
+  `22/26/30rem`), `LayeredTravelCarousel` (`20/26/28rem` → `18/22/24rem`),
+  `PlacePeekCarousel` (`18/24/28rem` stage → `15/20/24rem`, active/neighbour
+  cards scaled to match).
+
+**Two real contrast regressions came out of this, both the same underlying
+mechanism, and both worth understanding before shrinking any of these
+components again:**
+
+Shrinking a bottom-anchored panel does not proportionally shrink its content
+block — the content (kicker, heading, summary, form, whatever) keeps roughly
+its own pixel height, so it ends up occupying a *larger fraction* of a
+smaller panel, which pushes its top edge (where the kicker usually sits)
+further up — into the weaker end of a gradient tuned for the old, taller
+panel. This is the opposite of what shrinking a panel might intuitively
+suggest, and it is the second and third time this exact mechanism has broken
+a gradient in this project (see `LayeredTravelCarousel`'s own doc comment
+above for the first time, from an earlier resize).
+
+1. **`HeroFrame`**, after the height-map shrink: sampled per pixel against
+   all five homepage hero slides at mobile width, `freetown-aerial.jpg` and
+   `bunce-island-wall.jpg` fell to 2.27–2.51:1 (need 4.5:1) under the
+   previous `/70`-via/`/25`-to pairing. Fixed the same way `CircuitShowcase`
+   was: via-stop pulled up to 35% (from the default 50%) and both stops
+   raised, `from-brand-dark from-0% via-brand-dark/94 via-35%
+   to-brand-dark/58 to-100%`. Re-verified at mobile and desktop across every
+   homepage slide and every `PageHero` slide on `/tours` and `/destinations`
+   — worst case 5.21:1, real margin.
+2. **`CircuitShowcase`** and **`LayeredTravelCarousel`**, after their own
+   `min-h` shrinks: re-verified per pixel against every circuit/signature-tour
+   image at mobile/tablet/desktop. Both actually came out *safer* than
+   before (`CircuitShowcase`'s worst case rose to 11.48:1 at mobile,
+   `LayeredTravelCarousel`'s stayed above 5.5:1) — the mechanism above didn't
+   bite here because in both cases the panel's own gradient was already tuned
+   aggressively (`CircuitShowcase`'s `/92`-via-at-35% from the earlier fix,
+   `LayeredTravelCarousel`'s `/88` mobile value) with enough headroom to
+   absorb a further shrink. **Passing this time is not a guarantee it'll pass
+   the next resize** — re-run the per-image check in both components' own
+   doc comments before changing either one's `min-h` again.
+
+`PlacePeekCarousel`'s stage shrink needed no re-check: its text sits on a
+flat `bg-brand-dark/92` panel, not a gradient, so its contrast is
+position-independent by construction — the one carousel here where "did the
+new size hold up" isn't a question that needs re-asking.
+
+Not touched in this pass: the sticky site header (174px on mobile,
+unconditionally present) and `EditorialFeatureCard` (currently unused
+anywhere in the app — its own `aspect-[3/4]` portrait image would be the
+tallest card on the site if it were wired in, but there was nothing live to
+fix).
+
+### `.glass-card` — the liquid-glass card treatment
+
+`src/styles.css`, applied to `TourCard`, `ServiceCard`, `VehicleCard`,
+`VehicleCategoryCard`, and `ImageTextCard` (their outer `article`/`Link`/
+`button` wrapper, replacing a flat `border border-line bg-surface`), plus
+`DestinationCard` (a slightly different treatment — see below).
+
+A first pass — plain `color-mix(surface, transparent)` + `backdrop-filter:
+blur()` + a faint diagonal sheen — was nearly invisible on the default
+theme: `--color-page` (#fbf8f1) and `--color-surface` (#f3ecdd) are close
+enough in tone that there's not enough behind the card for blur to visibly
+do anything, and a page section is flat color anyway (no texture for blur
+to work on). It reads much better on the three dark themes, where surface
+and page separate more (e.g. theme two: page `#012026` vs surface
+`#01313a`), but the light theme needed a second element that doesn't
+depend on tonal contrast with whatever's behind the card: an inset
+top-highlight/bottom-shadow bevel (`box-shadow: inset 0 1px white-ish,
+inset 0 -1px black-ish`), which reads as a glass edge on any background.
+Three layers total — translucency+blur, the bevel, and the sheen — because
+no single one alone carried the effect on both light and dark themes.
+
+Built on `color-mix(in oklab, var(--color-X) N%, transparent)` against the
+theme's own custom properties, not hardcoded colors, so it re-tints
+correctly across all four themes without a per-theme override — the same
+principle every other themed surface on this site already follows.
+
+**Contrast here is a flat-color check, not a per-image one**, unlike every
+gradient-over-photography case elsewhere in this file: a card's own
+`backdrop-filter` blurs the *page section* behind it, which is one flat
+color, so the blend it produces is also one flat color per theme — no
+position-dependence, no per-image sweep needed. `getComputedStyle` returns
+`color-mix`'s result as a literal `oklab(...)` string, not `rgb(...)`, so
+verifying this needed the same oklab→sRGB conversion used everywhere else
+in this file, not a plain regex over the string. Verified this way, alpha-
+composited over each theme's real `--color-page`: heading and body text
+clear 10:1+ on all four themes, muted text (the tightest of the three)
+still clears 5.3:1+ on the default theme and 6.8:1+ on the three dark ones.
+The exact number in `.glass-card`'s own comment is the one that's
+load-bearing — re-run this check (in the browser, not by hand) before
+lowering it.
+
+`DestinationCard` (full-bleed photo, no separate surface panel) doesn't use
+`.glass-card` — a translucent *whole card* would mean checking contrast per
+photo again, the expensive case this treatment exists to avoid. Instead its
+gradient-only text panel became a glass *shelf*: `bg-brand-dark/92
+backdrop-blur-md`, the same alpha `PlacePeekCarousel` already verified per
+pixel against all 15 real destination photos. Reused deliberately rather
+than re-derived — same problem, same proven answer, no new sweep needed.
+
+### Theme Three and Four — replaced palettes
+
+Both were replaced with new five/six-colour reference palettes ("sage green,
+dark forest green, slate blue, light blue-grey, warm off-white" for Three;
+four greys plus a leather brown and a warm light grey for Four). Full
+derivation and every contrast number are in `src/styles.css`'s comments on
+each `html[data-theme="..."]` block — not duplicated here — but the one
+thing worth knowing before touching either again:
+
+**Theme Four's own accent (leather brown) needed the same "ADJUSTED"
+darken/lighten treatment `--color-brand` already gets in every other theme
+here, except in the opposite direction.** Every other theme's `--color-gold`
+is a medium-light saturated colour (turquoise, sky blue, sage's light
+blue-grey) that's already light enough to read as a kicker once `--color-
+brand` gets darkened under it. Theme Four's supplied accent is a mid-dark
+brown — darkening `brand` alone couldn't close a 2.01:1 gap to 4.5:1, because
+`gold` itself wasn't light enough to begin with. Fixed by lightening `gold`
+(not swapping it for a neutral grey, which would have flattened the theme's
+leather identity into plain charcoal) *and* darkening `brand`, landing at
+5.05:1. If a future theme's reference palette is similarly value-dark
+across the board (a muted, low-contrast photo rather than one with a bright
+accent swatch in it), expect to need both moves, not just the one every
+other theme here has needed so far.
+
+### `.glass-frosted` / `.glass-clear` — the header, team caption and homepage search
+
+Two more glass surfaces, added on request (Sep 2026): the site header is **frosted
+glass** at the top of the page and **ultra-clear liquid glass** once scrolled (two
+absolutely positioned layers in `site-header.tsx` that crossfade over 500ms, because
+a gradient `background-image` cannot be interpolated); the Our Team name/role caption
+(`team-orbit-carousel.tsx`) is an inset clear-glass pane instead of an opaque strip;
+and the homepage tour-search pill (`src/routes/index.tsx`) is clear glass.
+
+- **Both are smoked glass, deliberately.** A pane with no colour of its own leaves
+  text contrast to whatever is behind it, and this site puts glass over cream pages,
+  dark photographs and everything between. Each dims its backdrop with `brightness()`
+  inside `backdrop-filter` plus a light dark tint, so ivory text stays above 4.5:1
+  even over a white page. `.glass-frosted` is 22px blur; `.glass-clear` is 3px blur
+  (the backdrop stays recognisable) plus the "liquid" cues: a rim that is brightest
+  on the top and left edges, a faint inner glow and a diagonal specular sweep.
+- **Tuning knobs** are `--glass-dim` and `--glass-tint`. The values in `styles.css`
+  (frosted 0.5 / 46%, clear 0.44 / 26%) and the homepage pill's inline override
+  (`--glass-dim: 0.37`) came from measuring, not by eye. The pill needs the extra dim
+  because it straddles the hero photo and the cream page below it.
+- **Override with an inline style, not a Tailwind utility.** `--glass-dim` is set
+  inside unlayered `.glass-clear`, which beats `@layer utilities`, so a
+  `[--glass-dim:0.4]` class silently does nothing. Same cascade trap as the
+  stacked-card carousel note above.
+- **Everything in the header is ivory now**, in both states and every theme (it used
+  to switch to ink on a solid bar once scrolled). Dropdown and mobile panels are still
+  solid `bg-page` with ink text.
+- **Measured** on real rendered pixels (95th percentile luminance behind each text
+  box, text made transparent): header at every 380px of scroll on `/`, `/tours`,
+  `/about/team`, `/destinations` at 1440 and 390 wide, 4 themes (788 to 1,300 text
+  regions per theme pair), worst 4.73:1; team captions all 3 members, 4 themes, 2
+  widths, worst 5.15:1; search pill on all 4 hero states, 3 widths, 4 themes, worst
+  5.21:1. Two failures were fixed on the way: the pill on the light theme (3.66:1,
+  dim 0.52 to 0.37) and the small "Theme" label at the left edge, where the sheen adds
+  light (4.46:1, sheen lowered and frosted dim 0.6 to 0.5). Re-run before raising
+  either knob.
+- **Measuring gotchas:** hidden dropdown menu items are still in the DOM with real
+  rects, so filter with `checkVisibility()` or they report nonsense; blank text with
+  `color: transparent` rather than `display: none`, which shifts layout.
+- **Team caption uses ivory for the role, not gold.** Gold cannot reach 4.5:1 at 11px on
+  a see-through pane (the earlier opaque `/92` strip is what let gold work).
+- **Fallbacks:** a solid dark tint where `backdrop-filter` is unsupported, and under
+  `prefers-reduced-transparency: reduce`.
+
+### `.glass-btn` / `.glass-btn-tint` — buttons get the same treatment as cards
+
+`src/styles.css`, applied to the shared `Button` component (`src/components/
+ui/button.tsx`, all five variants) and every hand-rolled button-shaped
+control across the carousels and filter chips: `LayeredTravelCarousel`,
+`CircuitShowcase`, and `PlacePeekCarousel`'s CTA links and prev/next/pause
+controls, the tour-country filter chips, the journal category chips.
+
+**Built differently from `.glass-card` on purpose, not by oversight.**
+`.glass-card` puts its sheen on a `::before` with its own `z-index`, which
+depends on the card's real children (an image, a text block) getting their
+own `relative z-10` to paint above it. A button can't do that: `asChild`
+renders through Radix `Slot`, which clones the button's props onto a single
+child element (typically a `Link`) — wrapping `children` in an extra `span`
+to z-index it would hand `Slot` the wrong element to clone onto. `.glass-btn`
+puts the sheen on `background-image` instead of a separate positioned layer:
+a background always paints behind an element's own text by spec, so there's
+no stacking order to get right, no pseudo-element, no z-index, and it still
+composites over whatever `background-color` a variant supplies exactly like
+a glass tint would.
+
+**Button backgrounds stay much closer to opaque than the card's `/78`** —
+variants sit at `/92`, `.glass-btn-tint` (the currentColor-based tint for
+outline/ghost-style buttons with no background of their own) at `8%`/`14%`
+hover. Unlike a card, which only ever sits on a flat page section, these
+buttons sit over hero photography as often as they sit on a flat surface —
+the position-dependent-contrast problem every photo gradient in this file
+has to fight. Every variant's underlying colour already cleared AA with real
+margin before this (8:1+, not a 4.5:1 near-miss), so the small shift toward
+whatever's behind at `/92` doesn't come close to threatening it — confirmed
+in the browser against the homepage hero, the highest-contrast-risk
+placement any of these buttons sit in.
+
+`.glass-btn-tint` mixes toward `currentColor` rather than a fixed light or
+dark value specifically so one class works for both of `outline`'s contexts:
+its usual light/page use (`text-ink`) and the homepage hero's override to
+`text-ivory` (`HomeHero`'s "Partner With Us" button) — without needing a
+second variant or a manual per-instance override.
+
+Not glass-ed: `CircuitShowcase`'s thumbnail-row tab buttons. They're full-
+bleed photo buttons with their own opaque image filling the whole element,
+so a background-image sheen on the button itself would render completely
+behind that photo — invisible, not worth adding.
+
+### Hover-reveal cards with cursor tilt — `TourCard`, `ServiceCard`, `ImageTextCard`
+
+Built to a supplied reference video (a payment-card carousel demo, not a
+travel site — the brief was explicit: copy the *motion*, not the *content*)
+showing compact cards that reveal detail on hover with a responsive,
+cursor-aware feel. Applied to the three card components whose grids cover
+every section the brief named — `TourCard` (homepage "Featured journeys",
+`/tours`), `ServiceCard` (homepage "Seven DMC services", `/services`), and
+`ImageTextCard` (`OverviewGrid`/`DestinationGrid` on `/cruise`) — rather than
+duplicating the same two mechanisms into each one by hand.
+
+Two shared pieces, both deliberately gated to real pointer devices:
+
+- **`.reveal-panel`** (`styles.css`): each card shows only its image and
+  title at rest; everything else (location, summary, meta, CTA) sits inside
+  this class, collapsed to zero height and expanded on `:hover`/
+  `:focus-within` via a `grid-template-rows: 0fr → 1fr` transition — no
+  arbitrary max-height guess, animates to the content's real height. Gated
+  behind `@media (hover: hover) and (pointer: fine)`; outside that query the
+  rule is the identity case (`1fr` always), so **touch devices see every
+  card fully expanded, always** — a `:hover` that can't fire on a phone
+  would otherwise make that content permanently unreachable there, not just
+  less convenient. This is the one property of the brief's own instruction
+  ("info appears when you hover, but the main text must stay visible") that
+  doesn't have a touch equivalent, so touch gets the safe fallback: nothing
+  hidden to begin with.
+- **`useCardTilt`** (`src/lib/use-card-tilt.ts`): a card tilts toward the
+  cursor on mousemove (`perspective` + `rotateX`/`rotateY` scaled off pointer
+  position within the card's own bounds, reset on mouseleave) — the video's
+  "cursor control." Checks `matchMedia("(hover: hover) and (pointer: fine)")`
+  itself before responding, same reasoning as `.reveal-panel`: a touchscreen
+  firing one synthetic mousemove on tap would otherwise leave a card stuck
+  mid-tilt with no mouseleave to reset it.
+
+Both mechanisms are driven by real CSS/JS state (`:hover`, `matchMedia`), so
+they were verified by triggering genuine hover in the browser and reading
+`Element.matches(':hover')` / computed `grid-template-rows` / the tilt
+`transform` back — not by eyeballing a screenshot, which this pane's own
+capture step has repeatedly lagged or gone stale on mid-session, independent
+of whether the underlying page state was actually correct.
+
+### `StackedCardCarousel` — the layered-stack carousel
+
+`src/components/carousel/stacked-card-carousel.tsx`. Replaces six grid
+sections with a single new carousel shape: a horizontal fan of photo cards
+with one active item pulled to full scale/opacity at centre, its neighbours
+fanned to both sides at reduced scale, opacity, and a slight rotation,
+partially covered by whichever card is in front of them. The featured item
+cycles on a timer (`useSlideRotation`, same engine every carousel here
+shares), with the same drag-to-advance, prev/next, and pause affordances as
+the rest. Wired into: homepage "Featured journeys" and "Seven DMC services",
+`/tours` (the full catalogue, not just a curated slice — see below), the
+cruise page's service-overview and destination-discovery sections, and
+`/services`. This replaced `ServiceCard` and `ImageTextCard` outright —
+neither had another call site left afterward, so both files are gone rather
+than kept as unused dead code. `TourCard` stays: `/tours/search`,
+`/tours/$slug`'s related-tours rail, and several other listings still use
+its own compact hover-reveal shape (see that component's own comment).
+
+**Full catalogues (`/tours`, `/services`) go through this too, not just
+curated picks — a deliberate choice, confirmed with the owner rather than
+assumed.** A single rotating card is a worse way to *browse and compare*
+a whole catalogue than a grid is; every other carousel in this codebase
+before this one (`PlacePeekCarousel` especially) was built specifically to
+avoid exactly that trade-off for a full list. Here the owner asked for the
+stacked-carousel look across every section named, catalogues included, so
+prev/next, the counter, and drag remain the way to reach every item — nothing
+is only reachable by waiting for autoplay to cycle to it.
+
+**The one real bug this shipped with**: the active item's white content card
+initially used the shared `.glass-card` class for a bit of visual
+consistency with the rest of the site — but `.glass-card`'s own `background:
+color-mix(...)` overrode the `bg-ivory` utility sitting right next to it in
+the same class string (an unlayered plain CSS rule beats a `@layer
+utilities` one regardless of source order), leaving the "white card" visibly
+translucent, with the photo behind it bleeding through the title text. The
+reference video's card reads as a clean, solid white card, not a glass one —
+so the fix was to drop `.glass-card` here entirely, not to fight the
+cascade. Caught by comparing a real screenshot against the reference, not by
+reasoning about the CSS in the abstract.
+
+**`bg-ivory` / `text-brand-dark` is a deliberately theme-*independent*
+pairing**, not a themed surface like `bg-surface` would be — confirmed in
+the browser (not just computed by hand) at 15.01:1 under a dark theme,
+where `ivory` stays a near-white constant and `brand-dark` stays
+meaningfully dark, the same two properties every theme's hero-overlay text
+already relies on. A "white card" was the brief's own explicit request; it
+should look the same regardless of which of the four site themes is active,
+the same reasoning `ivory` itself has followed since the first hero.
+
+`cta`/`href` are optional per item — the cruise overview and destination
+data have no linkable page of their own, and a card with nothing to click
+is still a complete card. Items with no real photograph (four of the seven
+DMC services) fall back to an icon panel in the fan slot, the same
+misrepresentation-avoiding move `ServiceCard` used to make — never an
+unrelated stand-in photo.
+
+**The content card became liquid glass at `bg-ivory/30`** on a later
+request, specifically so the photo behind it reads clearly through the
+card rather than being mostly hidden by it — and that request surfaced a
+second real contrast problem, not just the first one above. Measured in the
+browser against real catalogue photos: a bright beach photo landed around
+4.7–5.7:1 after also raising the text to full opacity and adding a
+`text-shadow` halo (`.glass-panel-text` in `styles.css`) for extra real-
+world legibility, but a mid-toned forest photo still measured **2.3–2.64:1**
+— nowhere near the 4.5:1 small text needs, and no amount of text-opacity or
+shadow tuning closes that gap, because a fixed low-opacity *light* tint
+just doesn't lighten a *medium-brightness* photo enough for dark text to
+read against it. This is a hard limit of the approach, not a number that
+needed nudging.
+
+**Fix: a near-opaque strip (`bg-ivory/94`) behind the text specifically,
+not the whole card.** The `.glass-panel`/`bg-ivory/30` frame still shows
+the photo clearly everywhere else — the point of the original request —
+while the few square inches of text sit on a guaranteed-legible patch
+inside it. Re-verified against the same worst-case forest photo: 6.4–15.6:1,
+comfortably clear. `.glass-panel-text`'s halo became unnecessary on that
+strip (it's opaque now) and was removed from those elements; the class
+itself stays in `styles.css` in case a future low-opacity-text case needs
+it again.
+
+**Trackpad/mouse-wheel horizontal scroll also drives this carousel**,
+alongside the pointer-drag it already had for touch and mouse-drag. A
+native `wheel` listener (not React's synthetic `onWheel`, which attaches
+passively by default and can't call `preventDefault` — without that, the
+page would scroll sideways underneath the carousel instead of the carousel
+consuming the gesture) reads `deltaX` — what a trackpad two-finger swipe or
+shift+wheel reports — and only intercepts when the gesture is clearly
+horizontal (`|deltaX| > |deltaY|`), confirmed both ways in the browser: a
+horizontal gesture advances the carousel and a vertical one still scrolls
+the page normally, untouched. A 550ms lock after each step stops one
+continuous swipe from firing several slide changes at once.
+
+**The content card became a click-to-flip panel** on a later request: the
+front shows only the place name (large, on the same solid strip the back's
+text needs), everything else — kicker, summary, CTA — moved to a back face
+revealed on click. `StackedCardFace`, a small component of its own at the
+bottom of the file, owns this; `StackedCardCarousel` itself renders it with
+`key={current.key}` and changed nothing else about the stack/fan/autoplay/
+drag/wheel behaviour, per the brief's own instruction not to.
+
+The back face is the one kept in normal document flow, not the front —
+deliberately the opposite of what's easiest to reach for. Both faces are
+children of the same rotating element; if both were `absolute`, that
+element would need an explicit height, and guessing one risks clipping the
+back's real content (kicker + title + summary + CTA is taller than the
+front's name alone needs) at whichever breakpoint the guess was wrong for.
+Keeping the back in-flow lets its own content set that height correctly,
+and the front overlays it at `inset-0` — a CSS `transform` (the `rotateY`
+both faces carry) doesn't remove an element from flow, so "in-flow" and
+"pre-rotated 180°" aren't in tension the way they'd sound.
+
+`flipped` resets to the front on every active-item change via the
+`key={current.key}` remount — confirmed in the browser, not assumed: after
+letting autoplay advance past a card left flipped to its back, the next
+card's transform read back as `none` (identity), not carried over.
+
+## Sustainability page (`/about/sustainability`)
+
+Built to an owner-supplied light reference ("Aeline" eco site) for composition
+only, not brand, text, colours or imagery. Content lives in
+`src/data/sustainability.ts`; components in `src/components/sustainability/`;
+the route (`src/routes/about/sustainability.tsx`) only composes them and holds
+two pieces of shared state.
+
+- **Shared state, on purpose:** the route owns `pillar` and `filter`, so a hero
+  floating card opens its pillar in the explorer, and a pillar's "See … experiences"
+  link pre-selects the matching experience filter. Keep this lifted if sections move.
+- **Radix, not new deps:** Tabs (why section, pillar explorer desktop, travel guide),
+  Accordion (pillar explorer mobile, principles), Checkbox (traveler checklist) are
+  already installed. Accordion open/close uses `.acc-content` + `acc-down`/`acc-up`
+  keyframes and the entrance uses `.sus-rise`, both in `styles.css`.
+- **Content integrity is structural, not a review item.** No statistics anywhere
+  (the impact strip is qualitative). `EXPERIENCES` are nine real catalogue slugs and
+  each `relevance` line only restates a rule already on that tour's page. Do not
+  add a relevance claim the tour data does not support. `TIMELINE` marks steps 03
+  and 04 "Planned" with dashed styling so a goal cannot read as an achievement, and
+  the page states there is no formal certification.
+- **Policy document:** `SUSTAINABILITY_POLICY_URL` is `null`, so the policy section
+  shows a disabled button and an honest "not published yet" note. Setting the URL
+  switches it to a real link with no other change. Never point it at a placeholder.
+- **Experience grid count:** nine cards fill a 3-column grid. Ten left an orphan
+  and one was dropped (Makeni). If you add or remove one, check the last row.
+- **Environment pillar image** is the Wara-Wara landscape. `loma-mountains-hike.jpg`
+  was rejected (hiker beside cleared land, wrong message for sustainability), and
+  `general/karangia-trail.jpg` and `mountains/outamba-mountain.jpg` are stored
+  rotated 90° so they are unusable until re-exported.
+- **Closing CTA** uses `HeroFrame` and its shared overlay, which makes the photo dark
+  by design (contrast-tuned). Do not lighten that gradient for this page.
+- **Sticky mini-nav** (`SectionNav`) measures the site header height with a
+  ResizeObserver and uses an IntersectionObserver scroll-spy. Sections use
+  `scroll-mt-48` so headings clear header + nav.
+- **Reduced motion** is handled by the global rule plus `motion-reduce:` classes; it
+  was reviewed in code, not observed. Scroll parallax was deliberately omitted.
+
+### Browser QA method that works for long pages
+
+The built-in Browser pane cannot render CSS transitions and its screenshots of long
+pages are unreliable. Playwright (already a dev dependency) drives the installed
+Edge with `chromium.launch({ channel: "msedge" })`, so no browser download is needed.
+That gave trustworthy multi-width screenshots (`locator(...).screenshot`), overflow /
+broken-image / console checks, and real interaction tests (tab switching, keyboard
+arrows, filters, checklist, accordions, nav scroll-spy). Keep scripts in the scratch
+directory, not the repo. To test a theme, set `localStorage` key `til-prefs`
+(`{"state":{"theme":"two"},"version":0}`) via `addInitScript` before load; fresh
+contexts otherwise render a dark theme.
+
+## Hotel and restaurant discovery (`/hospitality`)
+
+Built to an owner-supplied reference video (a light hotel-booking demo): rounded
+hero with a giant headline over a photo, a circular thumbnail "orbit" that drives
+the hero state, a floating white search pill that docks under the header, compact
+portrait cards with a save heart, and a detail page with gallery, sticky booking
+card and amenities. Only the interaction model was taken, not the branding.
+
+**It is a gated preview, not live content.** The project has no confirmed hotel or
+restaurant data and no lodging photography, and the product rules forbid inventing
+listings, prices, ratings or reviews. The owner chose "live routes, gated preview":
+the whole experience works, but on **sample** listings.
+
+- `src/data/hospitality.ts`: every record is `status: "sample"`, every `price`,
+  `rating`, `priceRange`, `hours`, `menuUrl` and `coordinates` is null, and names
+  are descriptive ("Sample Beachfront Resort"). The one real name is Atlantic Lumley
+  Hotel, because the library already holds its photograph. Photos are existing
+  Sierra Leone images and each alt says what the frame shows. `HOSPITALITY_PREVIEW`
+  drives the visible "Preview with sample listings" note (`SampleNotice`).
+- The routes are `noindex,nofollow` and every card and detail page says "Sample".
+  At the owner's explicit request (2026-09-25) "Stay & Dine" **is now in the main nav**
+  (`NAV.stayDine` in `src/lib/site.ts`, desktop and mobile menu), so real visitors can
+  reach sample listings once this is deployed. The "Preview with sample listings"
+  note is what keeps that honest: do not remove it, or the noindex, until real data
+  replaces the samples.
+- **Going live** is a data change: implement `HospitalityProvider`
+  (`src/lib/hospitality/provider.ts`) against a real source, or replace the arrays,
+  flip `HOSPITALITY_PREVIEW`, and drop the `robots` argument in the three route
+  `head()` calls (the nav link is already in place). No component needs to change. Add availability or reservation
+  methods to the provider only when a real system exists.
+- **UI never invents a missing value.** No price: "Price on request". No rating: no
+  stars. No reviews: an honest empty state. No hours: "confirmed on enquiry".
+  `availableSorts` only offers price/rating sorting when some listing has them, and
+  amenity/feature filters and their counts are derived from the data.
+- **No live availability, no online booking.** "Request availability" and "Request a
+  table" open `InquiryDialog`, which sends through the existing `submitEnquiry`
+  (type `B2C`) with the listing, dates and guests in the payload and a `context`
+  that says SAMPLE when it is one. Never test that dialog against production: it
+  writes a real enquiry and emails the desk. Favorites are `localStorage` only
+  (`useFavorites`, skipHydration) and the UI says "on this device".
+- **State lives in the URL** (`validateSearch` on `/hospitality`): kind, destination,
+  dates, guests, filters, sort. `parseSearch` in `src/lib/hospitality/search.ts`
+  normalises hand-edited links (a check-out not after check-in is dropped, counts are
+  clamped, lists are comma-separated and lower-cased). That file is pure and
+  unit-tested (`search.test.ts`, listed in `package.json` `test`, which also asserts
+  the sample data never carries a price or rating).
+- **Hero** (`hospitality-hero.tsx`): states are `HeroSlide` data per mode. It reuses
+  `useSlideRotation`, so reduced motion never starts the timer, a chosen thumbnail
+  pauses rotation, and a pause control is always present. ~6s hold, ~1.1s image
+  crossfade with Ken Burns, ~0.7s text settle. The orbit is lg+ only; below it the
+  selector is a horizontal strip. `key={kind}` on the hero remounts it when
+  switching Stays and Dining, so both modes always start at their first state.
+- **Docked search bar:** a sticky sibling pulled up over the hero with a negative
+  margin, `lg:` only (a stacked bar is too tall to dock on a tablet). Its `top` comes
+  from `useHeaderOffset`, which measures the real header.
+- **Card and hero contrast were measured per pixel**, 95th percentile luminance of
+  the photo behind each text box with the text removed: hero on 6 states x 3 widths x
+  4 themes, cards on every listing x 4 themes x 2 widths. Two real failures were
+  fixed (bright pepper-market and hotel-sky slides; a two-line card title at phone
+  width) by raising the scrims/gradient stops. This is the same "content grows into
+  the weak end of a gradient" mechanism described under the carousels above.
+  Re-run before changing `HospitalityHero`'s scrims or `CardFrame`'s gradient.
+- **Measuring tip:** to remove text before sampling pixels use `display: none`. On
+  the card links `visibility: hidden` left the glyphs painted and produced ~1.0:1
+  nonsense. Also make sure the sticky bar is not covering the region sampled.
+- Unused by design: the reference's mist wipe between hero states (a plain crossfade
+  is used) and its star rating and host avatars (no real data exists for either).
+
 ## Product rules (these are firm)
 
 1. **No online booking or payments.** Visitor journey is discover → explore → learn → get in
@@ -59,17 +1161,46 @@ Not navy/ocean blue — earlier planning documents that say so are stale.
   truth; email failure must never tell the visitor their enquiry failed.
 - **Capture `e.currentTarget` before any `await`** in form handlers — React nulls it out
   afterwards. This has caused two production crashes.
-- `npm test` runs an explicit file list, not a glob — new `.test.ts` files must be added to
-  the script in `package.json` or they silently never run.
+- `npm test` runs the `scripts/*.test.mjs` glob plus an explicit list of `src/**/*.test.ts`
+  files — new `.test.ts` files must be added to that list in `package.json` or they silently
+  never run. Server tests import via the `@/` alias, resolved by `scripts/register-alias.mjs`.
+- CI (`.github/workflows/ci.yml`) runs typecheck, lint, test, build and `check:assets` on every push to main and every PR, with a read-only token (`permissions: contents: read`).
+- `/api/cron/expire-holds` releases lapsed booking holds (Bearer `CRON_SECRET`); no scheduler is
+  configured yet, so expiry still happens lazily on the next booking request.
+
+## Local database rule (firm)
+
+`.env.local` in this checkout holds the **production** `DATABASE_URL` (Neon branch
+`production`), and TanStack Start's Vite plugin copies every `.env.local` key into
+`process.env`. So `npm run dev` and anything else started through Vite talk to the live
+database (gap analysis finding QA-OPS-1).
+
+- Run the app with **`npm run dev:local`**: `scripts/local-db.mjs` blanks `DATABASE_URL`
+  and `DATABASE_URL_UNPOOLED`, so the app falls back to in-memory PGLite. A value already
+  in `process.env` beats `.env.local`, and `db.ts` treats blank as unset.
+- Do not use `DATABASE_URL= npm run dev` on Windows: PowerShell `$env:X = ""` deletes the
+  variable and `.env.local` wins. Git Bash inline assignment does work.
+- Build with **`npm run build:dev`**. Never run `npm run build` locally: it ends with
+  `db:migrate`, which migrates whatever `DATABASE_URL` points at.
+- `npm test` is safe: node's test runner never reads `.env.local`.
+- Never print, commit or paste `.env.local` values. Inspect it by key name only.
+- Lasting fix (owner): create a Neon development branch, put only its URL in
+  `.env.local`, and keep production credentials in Vercel alone.
 
 ## Verification before shipping
 
 ```bash
-npm run typecheck   # expect 0 errors
-npm run lint        # expect 0 errors
-npm test            # expect 79/79 (as of Sep 2026)
-npm run build:dev   # safe production build, skips db:migrate
+npm run typecheck     # expect 0 errors
+npm run lint          # expect 0 errors
+npm test              # expect 0 failures (2 skip on Windows where symlinks need elevation)
+npm run build:dev     # safe production build, skips db:migrate
+npm run check:assets  # every /assets/* URL in the server bundle was emitted (PERF-1)
 ```
+
+`check:assets` exists because a Tailwind source-detection difference once made the server
+and client builds hash the stylesheet differently, so every page linked a CSS file that
+404'd. `src/styles.css` now pins `@import "tailwindcss" source(none); @source "./";`.
+Keep that, and keep the check in CI.
 
 Then check the page in a browser: console clean, images load, responsive at phone width.
 
@@ -89,3 +1220,11 @@ Then check the page in a browser: console clean, images load, responsive at phon
 - **The Cotton Tree fell (2023).** Some site copy still implies it stands. The official 11-day
   itinerary calls it "the site of the (recently fallen) Cotton Tree". Needs a content pass.
 - No analytics or error monitoring is wired up.
+- **Two owner-supplied hero images lack confirmed provenance**
+  (`beaches/peninsula-beach-palms.jpg`, `islands/island-aerial-settlement.jpg`) —
+  see the hero system section above. `beaches/sandbank-aerial.jpg` is held out of
+  every page for the same reason plus a location concern.
+- **The Scenic Eclipse cruise ship render** the owner sent alongside the hero
+  images was not used anywhere: it carries a competitor's trademark and implies
+  an unverified partnership. Flagged to the owner; needs written permission from
+  Scenic before it can appear on the site, if ever.

@@ -17,6 +17,52 @@ type ContactChooserProps = {
   label?: string;
 };
 
+/**
+ * The "Contact / {phone}" heading plus the WhatsApp / Send SMS / Phone Call
+ * links — the body every contact popover on the site shows once a specific
+ * number is chosen. Extracted so `ContactChooser`'s own popover and the
+ * mobile "Get in touch" menu's drill-down step render the identical body
+ * instead of two copies drifting apart.
+ */
+export function ContactMethodList({ phone, onSelect }: { phone: string; onSelect?: () => void }) {
+  return (
+    <div className="space-y-3">
+      <div>
+        <p className="text-xs font-medium uppercase tracking-[0.14em] text-muted">Contact</p>
+        <p className="mt-1 font-display text-lg text-heading">{phone}</p>
+      </div>
+      <div className="grid grid-cols-1 gap-2">
+        <a
+          href={createWhatsAppUrl(phone)}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="flex items-center gap-2 rounded-md border border-line bg-surface px-3 py-2.5 text-sm font-medium text-heading hover:border-gold hover:text-brand-dark transition-colors"
+          onClick={onSelect}
+        >
+          <MessageCircle className="size-4 shrink-0" aria-hidden="true" />
+          WhatsApp
+        </a>
+        <a
+          href={createSmsUrl(phone)}
+          className="flex items-center gap-2 rounded-md border border-line bg-surface px-3 py-2.5 text-sm font-medium text-heading hover:border-gold hover:text-brand-dark transition-colors"
+          onClick={onSelect}
+        >
+          <MessageSquare className="size-4 shrink-0" aria-hidden="true" />
+          Send SMS
+        </a>
+        <a
+          href={createTelUrl(phone)}
+          className="flex items-center gap-2 rounded-md border border-line bg-surface px-3 py-2.5 text-sm font-medium text-heading hover:border-gold hover:text-brand-dark transition-colors"
+          onClick={onSelect}
+        >
+          <Phone className="size-4 shrink-0" aria-hidden="true" />
+          Phone Call
+        </a>
+      </div>
+    </div>
+  );
+}
+
 export function ContactChooser({ phone, label }: ContactChooserProps) {
   const [open, setOpen] = useState(false);
 
@@ -44,7 +90,7 @@ export function ContactChooser({ phone, label }: ContactChooserProps) {
           align="start"
           collisionPadding={8}
           className={cn(
-            "z-50 w-72 rounded-md border border-line bg-ivory p-4 shadow-[var(--shadow-card)]",
+            "z-50 w-72 rounded-md border border-line bg-page p-4 shadow-[var(--shadow-card)]",
             "data-[state=open]:animate-in data-[state=closed]:animate-out",
             "data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0",
             "data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95",
@@ -53,40 +99,7 @@ export function ContactChooser({ phone, label }: ContactChooserProps) {
           onCloseAutoFocus={(e) => e.preventDefault()}
         >
           <div className="space-y-3">
-            <div>
-              <p className="text-xs font-medium uppercase tracking-[0.14em] text-muted">
-                Contact
-              </p>
-              <p className="mt-1 font-display text-lg text-brand">{phone}</p>
-            </div>
-            <div className="grid grid-cols-1 gap-2">
-              <a
-                href={createWhatsAppUrl(phone)}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center gap-2 rounded-md border border-line bg-surface px-3 py-2.5 text-sm font-medium text-brand hover:border-gold hover:text-brand-dark transition-colors"
-                onClick={() => setOpen(false)}
-              >
-                <MessageCircle className="size-4 shrink-0" aria-hidden="true" />
-                WhatsApp
-              </a>
-              <a
-                href={createSmsUrl(phone)}
-                className="flex items-center gap-2 rounded-md border border-line bg-surface px-3 py-2.5 text-sm font-medium text-brand hover:border-gold hover:text-brand-dark transition-colors"
-                onClick={() => setOpen(false)}
-              >
-                <MessageSquare className="size-4 shrink-0" aria-hidden="true" />
-                Send SMS
-              </a>
-              <a
-                href={createTelUrl(phone)}
-                className="flex items-center gap-2 rounded-md border border-line bg-surface px-3 py-2.5 text-sm font-medium text-brand hover:border-gold hover:text-brand-dark transition-colors"
-                onClick={() => setOpen(false)}
-              >
-                <Phone className="size-4 shrink-0" aria-hidden="true" />
-                Phone Call
-              </a>
-            </div>
+            <ContactMethodList phone={phone} onSelect={() => setOpen(false)} />
             <PopoverClose asChild>
               <button
                 type="button"

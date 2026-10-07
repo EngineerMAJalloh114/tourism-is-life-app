@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { getPaymentMode, verifyHmacSha256 } from "@/lib/server/payments";
 import { applyVerifiedPaymentEvent } from "@/lib/server/webhooks";
+import { moneroo } from "@/services/payments";
 
 async function POST({ request }: { request: Request }) {
   const raw = await request.text();
@@ -19,23 +20,16 @@ async function POST({ request }: { request: Request }) {
       headers: { "content-type": "application/json" },
     });
   }
-  let parsed: { id?: string; event?: string; data?: { bookingId?: string; reference?: string } };
+  let event;
   try {
-    parsed = JSON.parse(raw) as typeof parsed;
+    event = moneroo.parseWebhook(raw, header);
   } catch {
     return new Response(JSON.stringify({ error: "Invalid JSON" }), { status: 400 });
   }
-  const bookingId = String(parsed.data?.bookingId ?? parsed.data?.reference ?? "");
-  if (!parsed.id || !bookingId) {
+  if (!event) {
     return new Response(JSON.stringify({ error: "Missing booking reference" }), { status: 400 });
   }
-  const success = (parsed.event ?? "").toLowerCase().includes("success") || parsed.event === "payment.succeeded";
-  const result = await applyVerifiedPaymentEvent({
-    provider: "moneroo",
-    eventId: parsed.id,
-    bookingId,
-    success,
-  });
+  const result = await applyVerifiedPaymentEvent(event);
   return new Response(JSON.stringify(result), {
     status: 200,
     headers: { "content-type": "application/json" },

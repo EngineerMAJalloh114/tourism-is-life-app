@@ -56,7 +56,7 @@ function DestinationPage() {
             <Link to="/contact">Plan this journey</Link>
           </Button>
         </div>
-        <h2 className="mt-14 font-display text-3xl text-brand">Tours that visit {dest.name}</h2>
+        <h2 className="mt-14 font-display text-3xl text-heading">Tours that visit {dest.name}</h2>
         {related.length ? (
           <div className="mt-6 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {related.map((t) => (

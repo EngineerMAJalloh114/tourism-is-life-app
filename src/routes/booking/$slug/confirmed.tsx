@@ -18,9 +18,9 @@ function Confirmed() {
   const tour = getTour(slug);
   const checkoutHref = ref ? `/checkout/${ref}/confirmation${t ? `?t=${encodeURIComponent(t)}` : ""}` : null;
   return (
-    <div className="container-page py-20">
+    <div className="container-page py-12">
       <p className="text-xs uppercase tracking-[0.2em] text-gold-ink">Booking</p>
-      <h1 className="mt-2 font-display text-4xl text-brand">Continue to confirmation</h1>
+      <h1 className="mt-2 font-display text-4xl text-heading">Continue to confirmation</h1>
       <p className="mt-4 max-w-xl text-muted">
         {tour?.title}. A seat hold is not a paid booking. Confirmation and the voucher are issued only after
         a verified payment event.

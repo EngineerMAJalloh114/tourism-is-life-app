@@ -55,7 +55,7 @@ export function ExcursionExplorer({
             <select
               value={price}
               onChange={(e) => setPrice(e.target.value as PriceFilter)}
-              className="min-h-11 w-full rounded-md border border-line bg-ivory px-3 text-sm"
+              className="min-h-11 w-full rounded-md border border-line bg-page px-3 text-sm"
             >
               <option value="all">All published prices</option>
               <option value="under-70">Under $70</option>
@@ -70,7 +70,7 @@ export function ExcursionExplorer({
             <select
               value={group}
               onChange={(e) => setGroup(e.target.value as GroupFilter)}
-              className="min-h-11 w-full rounded-md border border-line bg-ivory px-3 text-sm"
+              className="min-h-11 w-full rounded-md border border-line bg-page px-3 text-sm"
             >
               <option value="all">All published group sizes</option>
               <option value="small">Smaller groups (max 75)</option>
@@ -92,7 +92,7 @@ export function ExcursionExplorer({
                   "min-h-11 rounded-md border px-3 text-xs uppercase tracking-[0.14em]",
                   experiences.includes(item.id)
                     ? "border-brand bg-brand text-ivory"
-                    : "border-line bg-ivory text-ink hover:border-gold",
+                    : "border-line bg-page text-ink hover:border-gold",
                 )}
               >
                 {item.label}
@@ -112,8 +112,8 @@ export function ExcursionExplorer({
                 className={cn(
                   "min-h-11 rounded-md border px-3 text-xs uppercase tracking-[0.14em]",
                   activities.includes(item)
-                    ? "border-gold bg-gold/15 text-brand"
-                    : "border-line bg-ivory text-ink hover:border-gold",
+                    ? "border-gold bg-gold/15 text-heading"
+                    : "border-line bg-page text-ink hover:border-gold",
                 )}
               >
                 {item}
@@ -140,7 +140,7 @@ export function ExcursionExplorer({
                 </div>
                 <div className="flex flex-1 flex-col p-5">
                   <p className="text-[11px] uppercase tracking-[0.16em] text-muted">{item.destination}</p>
-                  <h3 className="mt-1 font-display text-2xl text-brand">{item.name}</h3>
+                  <h3 className="mt-1 font-display text-2xl text-heading">{item.name}</h3>
                   <p className="mt-3 flex-1 text-sm leading-relaxed text-ink/80">{item.summary}</p>
                   {item.itineraryNotes ? (
                     <p className="mt-3 text-sm text-muted">{item.itineraryNotes}</p>

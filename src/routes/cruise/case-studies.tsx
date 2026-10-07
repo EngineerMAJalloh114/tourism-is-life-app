@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { PageHero } from "@/components/page-hero";
-import { articles, IMG_CRUISE } from "@/data/catalog";
+import { articles } from "@/data/catalog";
 import { pageHead } from "@/lib/seo";
 
 export const Route = createFileRoute("/cruise/case-studies")({
@@ -20,15 +20,15 @@ function Page() {
       <PageHero
         kicker="Cruise"
         title="Case studies"
-        lede="Only public journal titles are listed. Detailed cruise case studies: [CONTENT REQUIRED]."
-        image={IMG_CRUISE}
-        imageAlt="Ship"
+        lede="Only public journal titles are listed. Detailed cruise case studies are not published."
+        image="/images/islands/sherbro-island.jpg"
+        imageAlt="Sherbro Island off the southern coast of Sierra Leone"
       />
-      <div className="container-page py-16">
+      <div className="container-page py-10">
         <ul className="space-y-3">
           {cases.map((a) => (
             <li key={a.slug}>
-              <Link to="/journal/$slug" params={{ slug: a.slug }} className="text-brand hover:text-gold">
+              <Link to="/journal/$slug" params={{ slug: a.slug }} className="text-heading hover:text-gold-ink">
                 {a.title}
               </Link>
             </li>

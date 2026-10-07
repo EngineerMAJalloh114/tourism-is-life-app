@@ -27,7 +27,7 @@ export function StickySectionNav() {
   return (
     <nav
       aria-label="Cruise page sections"
-      className="sticky top-[6.35rem] z-30 border-b border-line/80 bg-ivory/95 backdrop-blur-sm lg:top-[7.1rem]"
+      className="sticky top-[6.35rem] z-30 border-b border-line/80 bg-page/95 backdrop-blur-sm lg:top-[7.1rem]"
     >
       <ul className="container-page flex gap-1 overflow-x-auto py-2 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
         {SECTION_NAV.map((item) => (
@@ -36,7 +36,7 @@ export function StickySectionNav() {
               href={`#${item.id}`}
               className={cn(
                 "inline-flex min-h-11 items-center rounded-md px-3 text-[11px] font-medium uppercase tracking-[0.16em]",
-                active === item.id ? "bg-brand text-ivory" : "text-muted hover:text-brand",
+                active === item.id ? "bg-brand text-ivory" : "text-muted hover:text-heading",
               )}
               aria-current={active === item.id ? "location" : undefined}
             >

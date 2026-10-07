@@ -16,45 +16,70 @@ This package is prepared to run **independently** on Windows, macOS, or Linux us
 # 1. Install dependencies
 npm install
 
-# 2. Start the development server (http://localhost:8080)
-npm run dev
+# 2. Start the development server on the local database (http://localhost:8080)
+npm run dev:local
 ```
 
 Open **http://localhost:8080** in your browser.
 
-The app uses an embedded **PGLite** database by default (no external Postgres needed). Schema migrations run automatically on first start.
+## Local database rule (read this first)
+
+**Never point local work at the production database.** In this checkout `.env.local`
+holds the **production** `DATABASE_URL` (the Neon `production` branch), and Vite copies
+every `.env.local` key into the server's environment. A plain `npm run dev` therefore
+reads and writes **live data**: every test enquiry, sign-up or migration lands in
+production.
+
+| Do | Don't |
+|---|---|
+| `npm run dev:local` (embedded PGLite, bound to 127.0.0.1) | `npm run dev` while `.env.local` holds the production URL |
+| `npm run build:dev` to build | `npm run build` locally: it runs `db:migrate` against whatever `DATABASE_URL` is set |
+| `npm test` (never loads `.env.local`) | point a test or script at `DATABASE_URL` from `.env.local` |
+
+`dev:local` runs `scripts/local-db.mjs`, which blanks `DATABASE_URL` and
+`DATABASE_URL_UNPOOLED` before Vite starts; a variable already in the environment wins
+over `.env.local`, and the app treats a blank URL as unset, so it uses PGLite. Use the
+script rather than `DATABASE_URL= npm run dev`: that syntax does not exist in PowerShell
+or cmd.exe, and in PowerShell `$env:DATABASE_URL = ""` deletes the variable, which lets
+`.env.local` win again.
+
+The lasting fix is a separate Neon **development** branch: put only its URL in
+`.env.local` and keep production credentials in Vercel alone. Until that exists, treat
+`npm run dev` as connected to production.
+
+The PGLite database is in-memory: it starts empty, migrations run automatically on
+start, and everything is lost when the server stops.
 
 ### Common scripts
 
 | Command              | Description                                      |
 |----------------------|--------------------------------------------------|
-| `npm run dev`        | Dev server with HMR on port 8080                 |
-| `npm run build`      | Production build + DB migrate                    |
+| `npm run dev:local`  | Dev server on 127.0.0.1:8080, local PGLite only (use this) |
+| `npm run dev`        | Dev server on port 8080 using `.env.local` (see the rule above) |
+| `npm run build:dev`  | Build without migrating (use this locally)        |
+| `npm run check:assets` | After a build: every `/assets/*` URL the server emits exists |
+| `npm run build`      | Production build + DB migrate (Vercel only)      |
 | `npm run preview`    | Serve the production build                       |
 | `npm run typecheck`  | TypeScript check                                 |
-| `npm run test`       | Unit tests                                       |
+| `npm run test`       | Script + server unit tests (Node 22.6+)          |
 | `npm run lint`       | ESLint                                           |
 | `npm run format`     | Prettier                                         |
 
 ## Environment variables (optional)
 
-Create a `.env` (or `.env.local`) file in the project root if you want to override defaults:
+Copy `.env.example` to `.env` (or `.env.local`) in the project root to override defaults. Every variable listed there is one the code actually reads; each is commented out because none is required locally. The main groups are:
 
 ```env
-# Use a real Postgres / Neon database instead of embedded PGLite
-DATABASE_URL=postgresql://user:pass@host:5432/dbname
-
-# Auth providers (Better Auth)
-# GOOGLE_CLIENT_ID=...
-# GOOGLE_CLIENT_SECRET=...
-# etc.
-
-# Payment / email / Redis (optional – demo mode works without them)
-# STRIPE_SECRET_KEY=...
-# RESEND_API_KEY=...
-# UPSTASH_REDIS_REST_URL=...
-# UPSTASH_REDIS_REST_TOKEN=...
+DATABASE_URL=postgresql://user:pass@host:5432/dbname   # real Postgres / Neon (required in production)
+BETTER_AUTH_URL=... BETTER_AUTH_SECRET=...            # Better Auth (email/password sign-in)
+STRIPE_SECRET_KEY=... STRIPE_WEBHOOK_SECRET=...       # live card payments
+MONEROO_SECRET_KEY=... MONEROO_WEBHOOK_SECRET=...     # live mobile-money payments
+RESEND_API_KEY=...  TWILIO_ACCOUNT_SID=...            # email / SMS
+CRON_SECRET=...                                       # authorises /api/cron/expire-holds
+UPSTASH_REDIS_REST_URL=... UPSTASH_REDIS_REST_TOKEN=...
 ```
+
+Sign-in is email/password through Better Auth. Social login is switched off in the UI and there is no standalone Google or X OAuth wiring.
 
 Without any secrets the app runs in **demo mode** (PGLite, mock payments, local auth).
 
@@ -99,8 +124,8 @@ The file `.grok/app-env.json` can also supply `VITE_*` build flags; a real proce
 
 ## Database
 
-- **Default**: `@electric-sql/pglite` (Postgres in WASM) — zero configuration, data lives in-memory / browser-compatible storage for the session.
-- **Production**: set `DATABASE_URL` to any Postgres connection string (Neon, Supabase, local Docker, etc.). Migrations are applied on `npm run build` / first request.
+- **Local**: `@electric-sql/pglite` (Postgres in WASM), used whenever `DATABASE_URL` is blank or unset. Use `npm run dev:local`; see the local database rule above.
+- **Production**: `DATABASE_URL` is set in Vercel. Migrations are applied by `npm run build` during the Vercel build.
 
 ## Auth
 

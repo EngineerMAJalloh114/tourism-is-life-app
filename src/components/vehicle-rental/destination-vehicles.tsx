@@ -20,10 +20,10 @@ const destVehicles: Record<string, string[]> = {
 
 export function DestinationVehicles() {
   return (
-    <section className="bg-surface py-20">
+    <section className="bg-surface py-12">
       <div className="container-page">
         <p className="text-xs uppercase tracking-[0.22em] text-gold-ink">Explore More of Sierra Leone</p>
-        <h2 className="mt-2 font-display text-4xl text-brand">Vehicles for every destination</h2>
+        <h2 className="mt-2 font-display text-4xl text-heading">Vehicles for every destination</h2>
         <p className="mt-3 max-w-2xl text-muted">
           From Freetown's peninsula to remote northern circuits, the right vehicle makes the journey easier.
         </p>
@@ -36,9 +36,9 @@ export function DestinationVehicles() {
                 key={d.slug}
                 to="/destinations/$circuit/$slug"
                 params={{ circuit: d.circuit, slug: d.slug }}
-                className="group flex flex-col rounded-lg border border-line bg-ivory p-5 transition duration-300 hover:border-gold"
+                className="group flex flex-col rounded-lg border border-line bg-page p-5 transition duration-300 hover:border-gold"
               >
-                <div className="flex items-center gap-2 text-gold">
+                <div className="flex items-center gap-2 text-gold-ink">
                   <MapPin className="size-4" aria-hidden />
                   <span className="text-sm font-medium">{d.name}</span>
                 </div>
@@ -48,7 +48,7 @@ export function DestinationVehicles() {
                     <span key={v} className="rounded-full bg-surface px-2.5 py-1 text-[11px] text-muted">{v}</span>
                   ))}
                 </div>
-                <p className="mt-3 text-sm font-medium text-brand group-hover:text-gold">Explore destination</p>
+                <p className="mt-3 text-sm font-medium text-heading group-hover:text-gold-ink">Explore destination</p>
               </Link>
             ))}
         </div>

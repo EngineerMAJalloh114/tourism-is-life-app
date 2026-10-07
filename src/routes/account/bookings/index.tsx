@@ -16,7 +16,7 @@ function BookingsList() {
     <ul className="space-y-3">
       {bookings.map((b) => (
         <li key={b.id} className="rounded-md border border-line bg-surface px-4 py-3">
-          <Link to="/account/bookings/$ref" params={{ ref: b.id }} className="font-medium text-brand hover:text-gold">
+          <Link to="/account/bookings/$ref" params={{ ref: b.id }} className="font-medium text-heading hover:text-gold-ink">
             {getTour(b.tour_slug)?.title ?? b.tour_slug}
           </Link>
           <p className="text-sm text-muted">

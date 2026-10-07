@@ -3,6 +3,7 @@ import { AuthProvider } from "@/lib/auth/provider";
 import { PreviewHostBridge } from "@/components/preview-host-bridge";
 import { SiteShell } from "@/components/layout/site-shell";
 import { AppErrorComponent } from "@/lib/error-component";
+import { DEFAULT_THEME, INITIAL_THEME, THEME_BOOTSTRAP } from "@/lib/theme";
 import appCss from "../styles.css?url";
 
 const APP_NAME = "Tourism Is Life";
@@ -38,18 +39,36 @@ export const Route = createRootRoute({
   }),
   errorComponent: AppErrorComponent,
   notFoundComponent: () => (
-    <div className="container-page py-24">
+    <div className="container-page py-14">
       <p className="text-xs uppercase tracking-[0.2em] text-gold-ink">404</p>
-      <h1 className="mt-2 font-display text-4xl text-brand">This page is not on the map</h1>
+      <h1 className="mt-2 font-display text-4xl text-heading">This page is not on the map</h1>
       <p className="mt-3 text-muted">Try Destinations, Tours, or the home page.</p>
     </div>
   ),
   component: () => (
-    <html lang="en" className="antialiased" suppressHydrationWarning>
+    <html
+      lang="en"
+      className="antialiased"
+      // Rendered server-side so a first-time visitor gets INITIAL_THEME with
+      // zero flash — no cookie/localStorage read is possible at this point,
+      // so this is a static value, not a lookup. THEME_BOOTSTRAP below only
+      // has to correct this for a visitor with a *saved, different* choice;
+      // suppressHydrationWarning covers exactly that expected mismatch.
+      data-theme={INITIAL_THEME === DEFAULT_THEME ? undefined : INITIAL_THEME}
+      suppressHydrationWarning
+    >
       <head>
         <HeadContent />
+        {/* Applies the saved theme before first paint so the page never flashes
+            the default palette. Reads the same zustand-persist record the prefs
+            store writes; the store re-applies it on rehydrate. */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: THEME_BOOTSTRAP,
+          }}
+        />
       </head>
-      <body className="bg-ivory text-ink">
+      <body className="bg-page text-ink">
         <PreviewHostBridge />
         <AuthProvider>
           <SiteShell>

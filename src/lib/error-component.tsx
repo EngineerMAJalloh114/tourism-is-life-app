@@ -3,11 +3,11 @@ import { TriangleAlert } from "lucide-react";
 
 export function AppErrorComponent({ error }: ErrorComponentProps) {
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center gap-3 bg-ivory px-6 text-center text-ink">
+    <main className="flex min-h-screen flex-col items-center justify-center gap-3 bg-page px-6 text-center text-ink">
       <span className="text-danger" aria-hidden="true">
         <TriangleAlert className="size-10" strokeWidth={2} />
       </span>
-      <h1 className="font-display text-2xl text-brand">Something went wrong</h1>
+      <h1 className="font-display text-2xl text-heading">Something went wrong</h1>
       <p className="max-w-md text-sm break-words text-muted">
         {error instanceof Error && error.message
           ? error.message

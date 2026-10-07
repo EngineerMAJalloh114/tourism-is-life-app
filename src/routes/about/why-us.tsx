@@ -1,6 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { PageHero } from "@/components/page-hero";
-import { IMG_FOREST } from "@/data/catalog";
 import { Button } from "@/components/ui/button";
 import { pageHead } from "@/lib/seo";
 
@@ -17,8 +16,8 @@ export const Route = createFileRoute("/about/why-us")({
 function Page() {
   return (
     <>
-      <PageHero kicker="Trust" title="Why travel with us" image={IMG_FOREST} imageAlt="Landscape" />
-      <div className="container-page max-w-2xl py-16">
+      <PageHero kicker="Trust" title="Why travel with us" image="/images/general/karangia-trail.jpg" imageAlt="The Karangia Trail in Outamba-Kilimi National Park, Sierra Leone" />
+      <div className="container-page max-w-2xl py-10">
         <ul className="list-disc space-y-3 pl-5 text-muted">
           <li>Freetown-based, founder-led DMC.</li>
           <li>Published circuits covering east, north, south, and west Sierra Leone.</li>

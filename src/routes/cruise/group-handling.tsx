@@ -1,6 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { PageHero } from "@/components/page-hero";
-import { IMG_CRUISE } from "@/data/catalog";
 import { Button } from "@/components/ui/button";
 import { pageHead } from "@/lib/seo";
 
@@ -17,8 +16,8 @@ export const Route = createFileRoute("/cruise/group-handling")({
 function Page() {
   return (
     <>
-      <PageHero kicker="Cruise" title="Group handling" image={IMG_CRUISE} imageAlt="Ship" />
-      <div className="container-page py-16">
+      <PageHero kicker="Cruise" title="Group handling" image="/images/cities/freetown-aerial.jpg" imageAlt="Freetown seen from above, where cruise groups come ashore" />
+      <div className="container-page py-10">
         <p className="max-w-2xl text-muted">
           Group movements on shore. Maximum simultaneous passengers: confirmed per ship, not published
           as a marketing number.

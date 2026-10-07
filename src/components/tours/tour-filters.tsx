@@ -34,7 +34,7 @@ export function TourFilterBar({
               value={filters.query}
               onChange={(e) => onChange({ ...filters, query: e.target.value })}
               placeholder="Tiwai, Bunce Island, Freetown…"
-              className="min-h-11 w-full rounded-md border border-line bg-ivory pl-9 pr-3 text-sm"
+              className="min-h-11 w-full rounded-md border border-line bg-page pl-9 pr-3 text-sm"
             />
           </div>
         </div>
@@ -47,7 +47,7 @@ export function TourFilterBar({
             id="tour-category"
             value={filters.category}
             onChange={(e) => onChange({ ...filters, category: e.target.value as TourFilters["category"] })}
-            className="min-h-11 w-full rounded-md border border-line bg-ivory px-3 text-sm"
+            className="min-h-11 w-full rounded-md border border-line bg-page px-3 text-sm"
           >
             {CATEGORY_OPTIONS.map((o) => (
               <option key={o.value} value={o.value}>
@@ -65,7 +65,7 @@ export function TourFilterBar({
             id="tour-duration"
             value={filters.duration}
             onChange={(e) => onChange({ ...filters, duration: e.target.value as TourFilters["duration"] })}
-            className="min-h-11 w-full rounded-md border border-line bg-ivory px-3 text-sm"
+            className="min-h-11 w-full rounded-md border border-line bg-page px-3 text-sm"
           >
             {DURATION_OPTIONS.map((o) => (
               <option key={o.value} value={o.value}>
@@ -80,7 +80,7 @@ export function TourFilterBar({
             type="button"
             onClick={() => onChange(EMPTY_FILTERS)}
             disabled={!isFiltered(filters)}
-            className="inline-flex min-h-11 items-center gap-1.5 rounded-md border border-line px-4 text-sm text-brand disabled:cursor-not-allowed disabled:opacity-40"
+            className="inline-flex min-h-11 items-center gap-1.5 rounded-md border border-line px-4 text-sm text-heading disabled:cursor-not-allowed disabled:opacity-40"
           >
             <X className="size-4" aria-hidden /> Clear
           </button>

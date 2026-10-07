@@ -22,12 +22,12 @@ const LINKS = [
 
 function AccountLayout() {
   const { user, isPending } = useCurrentUserState();
-  if (isPending) return <div className="container-page py-24">Loading account…</div>;
+  if (isPending) return <div className="container-page py-14">Loading account…</div>;
   if (!user) return <RedirectToSignIn />;
   return (
     <div className="container-page py-12">
       <p className="text-xs uppercase tracking-[0.16em] text-gold-ink">Account</p>
-      <h1 className="mt-2 font-display text-4xl text-brand">{user.displayName ?? "Traveller"}</h1>
+      <h1 className="mt-2 font-display text-4xl text-heading">{user.displayName ?? "Traveller"}</h1>
       <p className="mt-2 text-sm text-muted">{user.primaryEmail}</p>
       <nav className="mt-8 flex flex-wrap gap-2 border-b border-line pb-3" aria-label="Account">
         {LINKS.map((l) => (

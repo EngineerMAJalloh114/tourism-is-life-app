@@ -1,6 +1,8 @@
 import { TourCard } from "@/components/tour-card";
 import { PageHero } from "@/components/page-hero";
-import { IMG_FOREST, tours, type CountryId } from "@/data/catalog";
+import { tours, type CountryId } from "@/data/catalog";
+
+const HERO_IMAGE = "/images/rainforest/hofstra-trees-hills-299.jpg";
 
 const COPY: Record<CountryId, { title: string; lede: string }> = {
   "sierra-leone": {
@@ -26,7 +28,20 @@ export function CountryToursPage({ country }: { country: CountryId }) {
   const list = tours.filter((t) => t.country === country);
   return (
     <>
-      <PageHero kicker="Tours" title={meta.title} lede={meta.lede} image={IMG_FOREST} imageAlt="West African landscape" />
+      <PageHero
+        kicker="Tours"
+        title={meta.title}
+        lede={meta.lede}
+        image={HERO_IMAGE}
+        imageAlt={
+          country === "sierra-leone"
+            ? "Forested hills in Sierra Leone"
+            : // The only verified photography in the library is Sierra Leonean, and
+              // this page also covers Guinea, Liberia and multi-country circuits.
+              // Say so rather than letting the alt text imply the wrong country.
+              "Forested hills in Sierra Leone, an editorial stand-in for the wider region"
+        }
+      />
       <div className="container-page py-12">
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {list.map((t) => (

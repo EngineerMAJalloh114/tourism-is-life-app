@@ -9,11 +9,11 @@ export function VehicleDetail({ vehicle }: { vehicle: Vehicle }) {
         <div className="container-page grid gap-8 lg:grid-cols-2">
           <div>
             <p className="text-xs uppercase tracking-[0.22em] text-gold-ink">{vehicle.category.replace("-", " ")}</p>
-            <h1 className="mt-2 font-display text-4xl text-brand lg:text-5xl">{vehicle.name}</h1>
+            <h1 className="mt-2 font-display text-4xl text-heading lg:text-5xl">{vehicle.name}</h1>
             <p className="mt-4 text-muted leading-relaxed">{vehicle.description}</p>
             <div className="mt-6 flex flex-wrap gap-3">
               {vehicle.features.map((f) => (
-                <span key={f} className="rounded-full border border-line bg-ivory px-3 py-1.5 text-xs text-muted">{f}</span>
+                <span key={f} className="rounded-full border border-line bg-page px-3 py-1.5 text-xs text-muted">{f}</span>
               ))}
             </div>
             <div className="mt-8 grid grid-cols-2 gap-4 sm:grid-cols-3">
@@ -25,7 +25,7 @@ export function VehicleDetail({ vehicle }: { vehicle: Vehicle }) {
               <Spec label="AC" value={vehicle.ac ? "Yes" : "No"} />
             </div>
             <div className="mt-8">
-              <h2 className="font-display text-2xl text-brand">Rental Conditions</h2>
+              <h2 className="font-display text-2xl text-heading">Rental Conditions</h2>
               <ul className="mt-3 list-disc space-y-1 pl-5 text-sm text-muted">
                 {vehicle.rentalConditions.map((c) => (
                   <li key={c}>{c}</li>
@@ -33,19 +33,19 @@ export function VehicleDetail({ vehicle }: { vehicle: Vehicle }) {
               </ul>
             </div>
             <div className="mt-8">
-              <h2 className="font-display text-2xl text-brand">Available Destinations</h2>
+              <h2 className="font-display text-2xl text-heading">Available Destinations</h2>
               <div className="mt-3 flex flex-wrap gap-2">
                 {vehicle.destinations.map((d) => (
-                  <span key={d} className="rounded-full border border-line bg-ivory px-3 py-1.5 text-xs text-muted">{d.replace(/-/g, " ")}</span>
+                  <span key={d} className="rounded-full border border-line bg-page px-3 py-1.5 text-xs text-muted">{d.replace(/-/g, " ")}</span>
                 ))}
               </div>
             </div>
           </div>
           <div className="lg:sticky lg:top-24 lg:self-start">
-            <div className="rounded-lg border border-line bg-ivory p-6 shadow-[var(--shadow-card)]">
+            <div className="rounded-lg border border-line bg-page p-6 shadow-[var(--shadow-card)]">
               <img src={vehicle.image} alt={vehicle.imageAlt} className="aspect-[4/3] w-full rounded-md object-cover" />
               <div className="mt-6">
-                <p className="font-display text-3xl text-brand">
+                <p className="font-display text-3xl text-heading">
                   From {new Intl.NumberFormat("en-US", { style: "currency", currency: vehicle.pricing.currency, minimumFractionDigits: 0, maximumFractionDigits: 0 }).format((vehicle.pricing.dailyRateCents ?? 0) / 100)}
                   <span className="text-sm font-sans text-muted">/day</span>
                 </p>
@@ -69,7 +69,7 @@ function Spec({ label, value }: { label: string; value: string }) {
   return (
     <div className="rounded-md border border-line bg-surface p-3">
       <p className="text-[10px] uppercase tracking-[0.14em] text-muted">{label}</p>
-      <p className="mt-1 font-medium text-brand">{value}</p>
+      <p className="mt-1 font-medium text-heading">{value}</p>
     </div>
   );
 }

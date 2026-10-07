@@ -49,7 +49,7 @@ export function VehicleGrid({ initialVehicles: _initialVehicles }: { initialVehi
           <select
             value={sortBy}
             onChange={(e) => setSortBy(e.target.value)}
-            className="min-h-10 rounded-md border border-line bg-ivory px-3 text-sm focus-visible:border-gold"
+            className="min-h-10 rounded-md border border-line bg-page px-3 text-sm focus-visible:border-gold"
           >
             {sortOptions.map((opt) => (
               <option key={opt.value} value={opt.value}>{opt.label}</option>
@@ -58,7 +58,7 @@ export function VehicleGrid({ initialVehicles: _initialVehicles }: { initialVehi
         </div>
         {filtered.length === 0 ? (
           <div className="rounded-lg border border-line bg-surface p-12 text-center">
-            <p className="font-display text-2xl text-brand">No vehicles match your search</p>
+            <p className="font-display text-2xl text-heading">No vehicles match your search</p>
             <p className="mt-2 text-sm text-muted">Try adjusting your dates, location, or filters.</p>
             <Button
               variant="outline"
@@ -77,7 +77,7 @@ export function VehicleGrid({ initialVehicles: _initialVehicles }: { initialVehi
             </Button>
           </div>
         ) : (
-          <div className="grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
+          <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
             {filtered.map((v) => (
               <VehicleCard key={v.id} vehicle={v} />
             ))}

@@ -42,11 +42,11 @@ function BookingDetail() {
   return (
     <article>
       <p className="text-sm">
-        <Link to="/account/bookings" className="text-brand hover:text-gold">
+        <Link to="/account/bookings" className="text-heading hover:text-gold-ink">
           All bookings
         </Link>
       </p>
-      <h2 className="mt-2 font-display text-3xl text-brand">{tour?.title ?? booking.tour_slug}</h2>
+      <h2 className="mt-2 font-display text-3xl text-heading">{tour?.title ?? booking.tour_slug}</h2>
       <p className="mt-2 text-sm text-muted">
         {booking.id} · {booking.status} · {booking.travel_date} · {booking.guests} guests
       </p>
@@ -59,12 +59,12 @@ function BookingDetail() {
             void onReview(e.currentTarget);
           }}
         >
-          <h3 className="font-display text-xl text-brand">Leave a review</h3>
+          <h3 className="font-display text-xl text-heading">Leave a review</h3>
           <Label htmlFor="rating">Rating</Label>
           <select
             id="rating"
             name="rating"
-            className="min-h-11 w-full rounded-md border border-line bg-ivory px-3 text-sm"
+            className="min-h-11 w-full rounded-md border border-line bg-page px-3 text-sm"
             defaultValue="5"
           >
             {[5, 4, 3, 2, 1].map((n) => (
