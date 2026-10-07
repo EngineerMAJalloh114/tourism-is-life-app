@@ -17,7 +17,7 @@ function Confirmation() {
 
   if (!ref) {
     return (
-      <div className="container-page py-24">
+      <div className="container-page py-14">
         <div className="mx-auto max-w-xl text-center">
           <h1 className="font-display text-3xl text-heading">No enquiry to show</h1>
           <p className="mt-4 text-muted">
@@ -35,7 +35,7 @@ function Confirmation() {
   }
 
   return (
-    <div className="container-page py-24">
+    <div className="container-page py-14">
       <div className="mx-auto max-w-xl text-center">
         <CheckCircle2 className="mx-auto size-16 text-ok" aria-hidden />
         <h1 className="mt-6 font-display text-4xl text-heading">Enquiry Received</h1>

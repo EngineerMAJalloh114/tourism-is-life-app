@@ -43,7 +43,7 @@ function ResetPassword() {
   }
 
   return (
-    <div className="container-page grid min-h-[70vh] place-items-center py-16">
+    <div className="container-page grid min-h-[70vh] place-items-center py-10">
       <div className="w-full max-w-md rounded-lg border border-line bg-surface p-8 shadow-[var(--shadow-card)]">
         <h1 className="font-display text-3xl text-heading">Set a new password</h1>
         {done ? (

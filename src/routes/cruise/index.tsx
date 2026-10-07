@@ -51,7 +51,7 @@ function Cruise() {
       />
 
       <div className="bg-surface">
-        <div className="container-page py-16">
+        <div className="container-page py-10">
           <div className="grid gap-8 lg:grid-cols-2">
             <div>
               <p className="text-lg leading-relaxed text-ink/80">
@@ -82,7 +82,7 @@ function Cruise() {
 
       <StickySectionNav />
 
-      <div className="container-page py-16 space-y-24">
+      <div className="container-page py-10 space-y-24">
         <section id="overview" className="scroll-mt-32">
           <SectionHeader
             kicker="Overview"

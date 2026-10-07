@@ -7,7 +7,6 @@ import {
   destinations,
   getTour,
   services,
-  IMG_HERO,
 } from "@/data/catalog";
 import { excursions } from "@/data/cruise";
 import { SITE } from "@/lib/site";
@@ -48,12 +47,12 @@ function Brochure() {
         kicker="DMC brochure"
         title="Tourism Is Life, in one document"
         lede="A working DMC brochure for tour operators, cruise lines, and independent travellers: the circuits we run, the shore excursions we handle, and the three-country route through the Mano River basin."
-        image={IMG_HERO}
-        imageAlt="Sierra Leone coastline"
+        image="/images/beaches/tokeh-beach-hero.jpg"
+        imageAlt="Fishing and transport boats drawn up on the sand at Tokeh Beach, Sierra Leone"
       />
 
       {/* 1. Welcome */}
-      <section className="container-page max-w-3xl py-16">
+      <section className="container-page max-w-3xl py-10">
         <Kicker>Welcome to Sierra Leone</Kicker>
         <h1 className="mt-2 font-display text-3xl text-heading sm:text-4xl">
           A small country with an outsized amount to see
@@ -72,7 +71,7 @@ function Brochure() {
       </section>
 
       {/* 2. Why Tourism Is Life */}
-      <section className="border-t border-line bg-surface py-16">
+      <section className="border-t border-line bg-surface py-10">
         <div className="container-page max-w-3xl">
           <SectionHeading kicker="Why Tourism Is Life" title="A local team, not a booking layer" />
           <p className="mt-4 leading-relaxed">
@@ -91,7 +90,7 @@ function Brochure() {
       </section>
 
       {/* 3. Circuits */}
-      <section className="container-page py-16">
+      <section className="container-page py-10">
         <SectionHeading
           kicker="Our destination experiences"
           title="Four circuits, one country"
@@ -121,7 +120,7 @@ function Brochure() {
       </section>
 
       {/* 4. Shore Excursions */}
-      <section id="shore-excursions" className="border-t border-line bg-brand-dark py-16 text-ivory">
+      <section id="shore-excursions" className="border-t border-line bg-brand-dark py-10 text-ivory">
         <div className="container-page">
           <Kicker dark>Shore excursions</Kicker>
           <h2 className="mt-2 max-w-2xl font-display text-3xl sm:text-4xl">
@@ -151,7 +150,7 @@ function Brochure() {
       </section>
 
       {/* 6-9. Themed sections grounded in real brochure content */}
-      <section className="container-page py-16">
+      <section className="container-page py-10">
         <SectionHeading kicker="Culture & history" title="Sites that carry real weight" />
         <div className="mt-6 grid gap-6 sm:grid-cols-2">
           <article>
@@ -174,7 +173,7 @@ function Brochure() {
         </div>
       </section>
 
-      <section className="border-t border-line bg-surface py-16">
+      <section className="border-t border-line bg-surface py-10">
         <div className="container-page">
           <SectionHeading kicker="Nature & wildlife" title="What's actually out there" />
           <div className="mt-6 grid gap-6 sm:grid-cols-3">
@@ -205,7 +204,7 @@ function Brochure() {
         </div>
       </section>
 
-      <section className="container-page py-16">
+      <section className="container-page py-10">
         <SectionHeading kicker="Beaches & islands" title="The coast does a lot of the work" />
         <div className="mt-6 grid gap-6 sm:grid-cols-2">
           <article>
@@ -228,7 +227,7 @@ function Brochure() {
 
       {/* 11-13. Mano River Triangle */}
       {manoRiver ? (
-        <section id="mano-river-triangle" className="border-t border-line bg-brand-dark py-16 text-ivory">
+        <section id="mano-river-triangle" className="border-t border-line bg-brand-dark py-10 text-ivory">
           <div className="container-page">
             <Kicker dark>Mano River Triangle</Kicker>
             <h2 className="mt-2 max-w-2xl font-display text-3xl sm:text-4xl">
@@ -270,7 +269,7 @@ function Brochure() {
       ) : null}
 
       {/* 14. Tailor-made / DMC services */}
-      <section className="container-page py-16">
+      <section className="container-page py-10">
         <SectionHeading
           kicker="Tailor-made"
           title="Ground handling beyond the published catalogue"
@@ -292,7 +291,7 @@ function Brochure() {
       </section>
 
       {/* 15. Destinations quick index */}
-      <section className="border-t border-line bg-surface py-16">
+      <section className="border-t border-line bg-surface py-10">
         <div className="container-page">
           <SectionHeading kicker="Where we go" title="The full destination list" />
           <div className="mt-6 flex flex-wrap gap-2">
@@ -311,7 +310,7 @@ function Brochure() {
       </section>
 
       {/* 16. Contact */}
-      <section className="container-page py-16 text-center">
+      <section className="container-page py-10 text-center">
         <h2 className="font-display text-3xl text-heading sm:text-4xl">Talk to the Freetown desk</h2>
         <p className="mx-auto mt-3 max-w-xl text-muted">
           Guest enquiries, operator ground handling, or a cruise call: the same desk handles all three.

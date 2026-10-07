@@ -18,7 +18,7 @@ function Confirmed() {
   const tour = getTour(slug);
   const checkoutHref = ref ? `/checkout/${ref}/confirmation${t ? `?t=${encodeURIComponent(t)}` : ""}` : null;
   return (
-    <div className="container-page py-20">
+    <div className="container-page py-12">
       <p className="text-xs uppercase tracking-[0.2em] text-gold-ink">Booking</p>
       <h1 className="mt-2 font-display text-4xl text-heading">Continue to confirmation</h1>
       <p className="mt-4 max-w-xl text-muted">

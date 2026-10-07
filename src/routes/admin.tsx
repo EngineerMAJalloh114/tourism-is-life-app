@@ -39,12 +39,12 @@ function AdminLayout() {
       .catch(() => setRole("CUSTOMER"));
   }, [user]);
 
-  if (isPending) return <div className="container-page py-24">Loading operations…</div>;
+  if (isPending) return <div className="container-page py-14">Loading operations…</div>;
   if (!user) return <RedirectToSignIn />;
 
   if (!isStaff(role) && !canBootstrap) {
     return (
-      <div className="container-page py-20">
+      <div className="container-page py-12">
         <h1 className="font-display text-3xl text-heading">Staff only</h1>
         <p className="mt-3 text-muted">This desk is limited to provisioned operations roles.</p>
       </div>
@@ -53,7 +53,7 @@ function AdminLayout() {
 
   if (!isStaff(role) && canBootstrap) {
     return (
-      <div className="container-page py-20">
+      <div className="container-page py-12">
         <h1 className="font-display text-3xl text-heading">Provision operations</h1>
         <p className="mt-3 max-w-xl text-muted">
           No staff roles exist yet. The first signed-in user may claim SUPER_ADMIN. After that, roles are

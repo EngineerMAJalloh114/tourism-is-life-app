@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { TourCard } from "@/components/tour-card";
 import { PageHero } from "@/components/page-hero";
-import { IMG_HERO, tours, type Difficulty, type TourCategory } from "@/data/catalog";
+import { tours, type Difficulty, type TourCategory } from "@/data/catalog";
 import { Input } from "@/components/ui/input";
 import { pageHead } from "@/lib/seo";
 
@@ -54,8 +54,8 @@ function SearchPage() {
         kicker="Search"
         title="Find a tour"
         lede="Filter the published Sierra Leone catalogue. Custom Guinea, Liberia, and multi-country trips remain quote-only."
-        image={IMG_HERO}
-        imageAlt="Coastal search mood"
+        image="/images/islands/banana-island-rainbow.jpg"
+        imageAlt="The Banana Islands seen from the air off the Freetown Peninsula"
       />
       <div className="container-page py-12">
         <div className="grid gap-4 rounded-lg border border-line bg-surface p-4 lg:grid-cols-3">
@@ -119,7 +119,7 @@ function SearchPage() {
         <p className="mt-6 text-sm text-muted" aria-live="polite">
           {results.length} result{results.length === 1 ? "" : "s"}
         </p>
-        <div className="mt-6 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {results.map((t) => (
             <TourCard key={t.slug} tour={t} />
           ))}

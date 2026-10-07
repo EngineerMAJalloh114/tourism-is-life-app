@@ -36,7 +36,7 @@ function BookingPage() {
 
   if (!tour.bookable) {
     return (
-      <div className="container-page py-20">
+      <div className="container-page py-12">
         <h1 className="font-display text-4xl text-heading">Quote-only programme</h1>
         <p className="mt-3 text-muted">This itinerary is not self-serve. Send a quote request instead.</p>
         <div className="mt-8 max-w-lg">

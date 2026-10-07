@@ -2,7 +2,6 @@ import { createFileRoute } from "@tanstack/react-router";
 import { MessageCircle, MessageSquare, Phone } from "lucide-react";
 import { PageHero } from "@/components/page-hero";
 import { EnquiryForm } from "@/components/enquiry-form";
-import { IMG_HERO } from "@/data/catalog";
 import { SITE } from "@/lib/site";
 import { pageHead } from "@/lib/seo";
 
@@ -23,10 +22,10 @@ function Contact() {
         kicker="Contact"
         title="Talk to the Freetown desk"
         lede={`${SITE.address}. Email replies are described as within 24 hours.`}
-        image={IMG_HERO}
-        imageAlt="Coast"
+        image="/images/culture/kings-gate-freetown.jpg"
+        imageAlt="Aberdeen beach road in Freetown, close to the Tourism Is Life desk"
       />
-      <div className="container-page grid gap-10 py-16 lg:grid-cols-2">
+      <div className="container-page grid gap-10 py-10 lg:grid-cols-2">
         <div className="space-y-3 text-sm">
           <p>
             Phone: <a className="text-heading inline-flex items-center gap-1.5" href={SITE.phoneHref}><Phone className="size-3.5" />{SITE.phone}</a>

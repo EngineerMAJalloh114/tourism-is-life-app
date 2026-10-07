@@ -57,7 +57,7 @@ export function CheckoutView({ step }: { step: Step }) {
 
   if (!token) {
     return (
-      <div className="container-page py-20">
+      <div className="container-page py-12">
         <h1 className="font-display text-3xl text-heading">Resume checkout</h1>
         <p className="mt-3 text-muted">
           This hold lives in this browser. Start again from the tour if the link is missing its access token.
@@ -71,7 +71,7 @@ export function CheckoutView({ step }: { step: Step }) {
 
   if (error) {
     return (
-      <div className="container-page py-20">
+      <div className="container-page py-12">
         <h1 className="font-display text-3xl text-heading">Checkout unavailable</h1>
         <p className="mt-3 text-danger">{error}</p>
       </div>
@@ -79,7 +79,7 @@ export function CheckoutView({ step }: { step: Step }) {
   }
 
   if (!booking) {
-    return <div className="container-page py-24 text-muted">Loading reservation…</div>;
+    return <div className="container-page py-14 text-muted">Loading reservation…</div>;
   }
 
   const tour = getTour(booking.tour_slug);

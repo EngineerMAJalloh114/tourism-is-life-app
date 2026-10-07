@@ -1,7 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { PageHero } from "@/components/page-hero";
 import { EnquiryForm } from "@/components/enquiry-form";
-import { IMG_FOREST } from "@/data/catalog";
 import { pageHead } from "@/lib/seo";
 
 export const Route = createFileRoute("/partner")({
@@ -21,10 +20,10 @@ function Partner() {
         kicker="B2B"
         title="Your reliable DMC partner in Sierra Leone & West Africa"
         lede="Ground handling for tour operators, from Freetown days to Mano River overlands."
-        image={IMG_FOREST}
-        imageAlt="Landscape"
+        image="/images/cruise/freetown-port.jpg"
+        imageAlt="Container ships entering the port of Freetown, Sierra Leone"
       />
-      <div className="container-page grid gap-12 py-16 lg:grid-cols-2">
+      <div className="container-page grid gap-12 py-10 lg:grid-cols-2">
         <div className="space-y-4 text-sm leading-relaxed">
           <p>
             Tourism Is Life Tours is a Freetown DMC. The CEO has publicly described the firm as a
@@ -32,7 +31,7 @@ function Partner() {
           </p>
           <p>
             Operators listed on the public journal include Oasis Overland and KE Adventure programmes.
-            Detailed commercial case studies remain [CONTENT REQUIRED] beyond those titles.
+            Detailed commercial case studies are not published beyond those titles.
           </p>
           <ul className="list-disc pl-5">
             <li>Sierra Leone circuits plus Guinea and Liberia on request</li>

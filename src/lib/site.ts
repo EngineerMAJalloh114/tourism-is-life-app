@@ -5,20 +5,29 @@ export const SITE = {
   tagline: "Discover the Heart of West Africa",
   description:
     "Sierra Leone destination management company for tours, cruise shore excursions, and travel services across Sierra Leone, Guinea, Liberia, and West Africa.",
-  phone: "+232 79 616 668",
-  phoneHref: "tel:+23279616668",
-  smsHref: "sms:+23279616668",
-  whatsappHref: "https://wa.me/23279616668",
-  mobile: "+232 76 568 335",
-  mobileHref: "tel:+23276568335",
-  smsMobileHref: "sms:+23276568335",
-  whatsappMobileHref: "https://wa.me/23276568335",
+  // `phone` renders first everywhere both numbers appear together (header
+  // contact bar, footer's emergency block, /contact, the brochure) — this
+  // is the primary/first-in-queue number, not necessarily the office line.
+  phone: "+232 76 568 335",
+  phoneHref: "tel:+23276568335",
+  smsHref: "sms:+23276568335",
+  whatsappHref: "https://wa.me/23276568335",
+  mobile: "+232 79 616 668",
+  mobileHref: "tel:+23279616668",
+  smsMobileHref: "sms:+23279616668",
+  whatsappMobileHref: "https://wa.me/23279616668",
   email: "info@tourismislife.com",
   emailHref: "mailto:info@tourismislife.com",
   address: "State Avenue 232, Freetown, Sierra Leone",
   website: "https://tourismislife.com",
   emergencyNote: "24/7 emergency phone services",
 } as const;
+
+/** Every enquiry notification (a visitor sending a form) goes to both — the
+ * desk inbox and a partner CC — by explicit instruction, not the single
+ * recipient every other outbound email (booking confirmations, enquiry
+ * receipts to the visitor themselves) still uses. */
+export const ENQUIRY_TEAM_EMAILS = [SITE.email, "george@baobabadventure.co.uk"] as const;
 
 export const TIKTOK_URL_PLACEHOLDER = "TIKTOK_URL_PLACEHOLDER";
 
@@ -85,6 +94,7 @@ export const NAV = {
       { label: "Search tours", href: "/tours/search" },
     ],
   },
+  stayDine: { label: "Stay & Dine", href: "/hospitality" },
   cruise: { label: "Cruise Ship Handling", href: "/cruise" },
   services: {
     label: "Services",

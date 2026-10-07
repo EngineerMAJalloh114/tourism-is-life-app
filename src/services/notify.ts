@@ -1,4 +1,4 @@
-import { SITE } from "../lib/site.ts";
+import { ENQUIRY_TEAM_EMAILS, SITE } from "../lib/site.ts";
 import { log } from "../lib/server/logger.ts";
 
 /**
@@ -33,7 +33,7 @@ export function isValidEmail(value: string): boolean {
 const RESEND_TIMEOUT_MS = 8000;
 
 export async function sendEmail(opts: {
-  to: string;
+  to: string | readonly string[];
   subject: string;
   html: string;
   text?: string;
@@ -46,6 +46,7 @@ export async function sendEmail(opts: {
   const from = process.env.RESEND_FROM?.trim() || `Tourism Is Life <${SITE.email}>`;
   const replyTo =
     opts.replyTo && isValidEmail(opts.replyTo) ? sanitizeHeaderValue(opts.replyTo) : undefined;
+  const to = Array.isArray(opts.to) ? opts.to : [opts.to as string];
   let res: Response;
   try {
     res = await fetch("https://api.resend.com/emails", {
@@ -56,7 +57,7 @@ export async function sendEmail(opts: {
       },
       body: JSON.stringify({
         from,
-        to: [opts.to],
+        to,
         subject: sanitizeHeaderValue(opts.subject).slice(0, 200),
         html: opts.html,
         text: opts.text,
@@ -263,7 +264,7 @@ export async function notifyEnquiryTeam(opts: {
     payload: opts.payload,
   });
   const result = await sendEmail({
-    to: SITE.email,
+    to: ENQUIRY_TEAM_EMAILS,
     subject,
     html,
     text,

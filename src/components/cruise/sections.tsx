@@ -1,4 +1,4 @@
-import { CatalogImage } from "@/components/cruise/catalog-image";
+import { StackedCardCarousel, type StackedCardItem } from "@/components/carousel/stacked-card-carousel";
 import { cruiseOverview, cruiseDestinations } from "@/data/cruise";
 import { cn } from "@/lib/utils";
 
@@ -25,21 +25,15 @@ export function SectionHeader({
 }
 
 export function OverviewGrid() {
-  return (
-    <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-      {cruiseOverview.map((item) => (
-        <article key={item.id} className="flex h-full flex-col overflow-hidden rounded-lg border border-line bg-surface shadow-[var(--shadow-card)]">
-          <div className="relative aspect-[16/9] overflow-hidden">
-            <CatalogImage src={item.image} alt={item.imageAlt} className="size-full" />
-          </div>
-          <div className="flex flex-1 flex-col p-5">
-            <h3 className="font-display text-xl text-heading">{item.title}</h3>
-            <p className="mt-2 flex-1 text-sm leading-relaxed text-ink/80">{item.body}</p>
-          </div>
-        </article>
-      ))}
-    </div>
-  );
+  const items: StackedCardItem[] = cruiseOverview.map((item) => ({
+    key: item.id,
+    image: item.image,
+    imageAlt: item.imageAlt,
+    kicker: "Cruise service",
+    title: item.title,
+    summary: item.body,
+  }));
+  return <StackedCardCarousel label="cruise service" items={items} />;
 }
 
 export function WhyTourismIsLife() {
@@ -64,21 +58,15 @@ export function WhyTourismIsLife() {
 }
 
 export function DestinationGrid() {
-  return (
-    <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-      {cruiseDestinations.map((item) => (
-        <article key={item.id} className="flex h-full flex-col overflow-hidden rounded-lg border border-line bg-surface shadow-[var(--shadow-card)]">
-          <div className="relative aspect-[16/9] overflow-hidden">
-            <CatalogImage src={item.image} alt={item.imageAlt} className="size-full" />
-          </div>
-          <div className="flex flex-1 flex-col p-5">
-            <h3 className="font-display text-xl text-heading">{item.name}</h3>
-            <p className="mt-2 flex-1 text-sm leading-relaxed text-ink/80">{item.summary}</p>
-          </div>
-        </article>
-      ))}
-    </div>
-  );
+  const items: StackedCardItem[] = cruiseDestinations.map((item) => ({
+    key: item.id,
+    image: item.image,
+    imageAlt: item.imageAlt,
+    kicker: "Cruise guest destination",
+    title: item.name,
+    summary: item.summary,
+  }));
+  return <StackedCardCarousel label="destination" items={items} />;
 }
 
 export function InfoList({ items }: { items: readonly string[] }) {

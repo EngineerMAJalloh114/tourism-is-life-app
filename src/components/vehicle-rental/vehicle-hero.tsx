@@ -1,6 +1,17 @@
 import { useState } from "react";
 import { VehicleSearchForm } from "./vehicle-search-form";
+import { HeroFrame, HERO_KICKER_CLASS } from "@/components/hero/hero-frame";
+import type { HeroImage } from "@/lib/hero-media";
 import { type BookingSearch } from "@/data/vehicle-rental";
+
+/** Stock motoring photography, not Sierra Leone, and the alt text says so. */
+const HERO_MEDIA: readonly HeroImage[] = [
+  {
+    kind: "image",
+    src: "/images/vehicles/hero-safari-savannah.webp",
+    alt: "4x4 vehicle on a dirt track through grassland, an editorial stand-in for overland travel",
+  },
+];
 
 export function VehicleHero() {
   const [, setQuery] = useState<Partial<BookingSearch>>({});
@@ -12,17 +23,9 @@ export function VehicleHero() {
   }
 
   return (
-    <section className="relative isolate min-h-[70vh] overflow-hidden bg-brand-dark text-ivory">
-      <img
-        src="/images/vehicles/hero-safari-savannah.webp"
-        alt="4x4 vehicle on a dirt track through grassland, an editorial stand-in for overland travel"
-        className="absolute inset-0 size-full object-cover opacity-60"
-      />
-      <div className="absolute inset-0 bg-gradient-to-t from-brand-dark via-brand-dark/60 to-brand-dark/20" />
-      <div className="film-grain pointer-events-none absolute inset-0" />
-      <div className="container-page relative pb-24 pt-28">
+    <HeroFrame media={HERO_MEDIA} height="tall" contentClassName="pb-24 pt-28">
         <div className="max-w-3xl">
-          <p className="text-xs uppercase tracking-[0.28em] text-gold">Tourism Is Life Vehicle Rental</p>
+          <p className={HERO_KICKER_CLASS}>Tourism Is Life Vehicle Rental</p>
           <h1 className="mt-4 font-display text-4xl leading-[1.05] sm:text-5xl lg:text-6xl">
             Explore More. Travel Freely.
           </h1>
@@ -40,7 +43,6 @@ export function VehicleHero() {
         <div className="mt-10 -mx-4 sm:mx-0">
           <VehicleSearchForm onSearch={handleSearch} />
         </div>
-      </div>
-    </section>
+    </HeroFrame>
   );
 }

@@ -1,7 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { MessageCircle, MessageSquare } from "lucide-react";
 import { PageHero } from "@/components/page-hero";
-import { IMG_HERO } from "@/data/catalog";
 import { SITE } from "@/lib/site";
 import { pageHead } from "@/lib/seo";
 
@@ -22,10 +21,10 @@ function Page() {
         kicker="24/7"
         title="Emergency phone"
         lede="Published on the public website as a round-the-clock line."
-        image={IMG_HERO}
-        imageAlt="Coast"
+        image="/images/cities/freetown-aerial.jpg"
+        imageAlt="Freetown seen from above, between the hills and the Atlantic"
       />
-      <div className="container-page py-16">
+      <div className="container-page py-10">
         <a href={SITE.phoneHref} className="font-display text-4xl text-heading">
           {SITE.phone}
         </a>

@@ -37,7 +37,7 @@ export function VehicleBooking() {
 
   if (!vehicle) {
     return (
-      <div className="container-page py-24 text-center">
+      <div className="container-page py-14 text-center">
         <p className="font-display text-2xl text-heading">Vehicle not found</p>
         <Button asChild className="mt-4">
           <Link to="/services/vehicle-rental">Back to search</Link>

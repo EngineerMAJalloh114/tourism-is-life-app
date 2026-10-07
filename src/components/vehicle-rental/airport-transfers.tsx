@@ -48,7 +48,7 @@ const scenarios = [
 
 export function AirportTransfers() {
   return (
-    <section className="container-page py-20">
+    <section className="container-page py-12">
       <p className="text-xs uppercase tracking-[0.22em] text-gold-ink">Tour-Ready Transportation</p>
       <h2 className="mt-2 font-display text-4xl text-heading">Vehicles Made For Your Journey</h2>
       <p className="mt-3 max-w-2xl text-muted">
@@ -73,7 +73,7 @@ export function AirportTransfers() {
             </div>
             <div className="flex flex-1 flex-col p-5">
               <p className="text-sm text-muted leading-relaxed">{item.description}</p>
-              <p className="mt-4 text-sm font-medium text-gold group-hover:text-heading">Learn more</p>
+              <p className="mt-4 text-sm font-medium text-gold-ink group-hover:text-heading">Learn more</p>
             </div>
           </Link>
         ))}

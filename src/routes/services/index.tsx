@@ -1,6 +1,7 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 import { PageHero } from "@/components/page-hero";
-import { IMG_MICE, services } from "@/data/catalog";
+import { StackedCardCarousel, type StackedCardItem } from "@/components/carousel/stacked-card-carousel";
+import { services } from "@/data/catalog";
 import { pageHead } from "@/lib/seo";
 
 export const Route = createFileRoute("/services/")({
@@ -14,26 +15,27 @@ export const Route = createFileRoute("/services/")({
 });
 
 function Page() {
+  const stackItems: StackedCardItem[] = services.map((s) => ({
+    key: s.slug,
+    image: s.image,
+    imageAlt: s.imageAlt,
+    kicker: "Tourism Is Life service",
+    title: s.name,
+    summary: s.summary,
+    cta: "Learn more",
+    href: `/services/${s.slug}`,
+  }));
+
   return (
     <>
       <PageHero
         kicker="DMC services"
         title="Ground handling beyond the tour catalogue"
-        image={IMG_MICE}
-        imageAlt="Professional gathering"
+        image="/images/mice/atlantic-hotel.jpg"
+        imageAlt="The Atlantic Hotel in Freetown, a conference and events venue"
       />
-      <div className="container-page grid gap-5 py-16 sm:grid-cols-2">
-        {services.map((s) => (
-          <Link
-            key={s.slug}
-            to="/services/$slug"
-            params={{ slug: s.slug }}
-            className="rounded-lg border border-line bg-surface p-6 hover:border-gold"
-          >
-            <h2 className="font-display text-2xl text-heading">{s.name}</h2>
-            <p className="mt-2 text-sm text-muted">{s.summary}</p>
-          </Link>
-        ))}
+      <div className="container-page py-10">
+        <StackedCardCarousel label="service" items={stackItems} />
       </div>
     </>
   );

@@ -22,7 +22,7 @@ const LINKS = [
 
 function AccountLayout() {
   const { user, isPending } = useCurrentUserState();
-  if (isPending) return <div className="container-page py-24">Loading account…</div>;
+  if (isPending) return <div className="container-page py-14">Loading account…</div>;
   if (!user) return <RedirectToSignIn />;
   return (
     <div className="container-page py-12">

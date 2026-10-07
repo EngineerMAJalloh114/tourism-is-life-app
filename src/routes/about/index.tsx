@@ -24,7 +24,7 @@ function About() {
         imageAlt="A market vendor selling peppers, Sierra Leone"
         imagePosition="center 12%"
       />
-      <div className="container-page max-w-3xl py-16">
+      <div className="container-page max-w-3xl py-10">
         <p className="text-lg leading-relaxed">
           We help travellers and operators explore Sierra Leone’s cultural heritage and landscapes,
           including Freetown, the peninsula, Gola Rainforest, and Mount Bintumani. The public site

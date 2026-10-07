@@ -1,6 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { PageHero } from "@/components/page-hero";
-import { IMG_CRUISE } from "@/data/catalog";
 import { Button } from "@/components/ui/button";
 import { pageHead } from "@/lib/seo";
 
@@ -21,10 +20,10 @@ function Page() {
         kicker="Cruise"
         title="Shore excursions"
         lede="Half-day and full-day Freetown, peninsula, and history programmes timed to ship schedules."
-        image={IMG_CRUISE}
-        imageAlt="Ship"
+        image="/images/islands/banana-island-rainbow.jpg"
+        imageAlt="The Banana Islands seen from the air, a shore excursion destination"
       />
-      <div className="container-page py-16">
+      <div className="container-page py-10">
         <p className="max-w-2xl text-muted">
           Exact excursion menus are issued per call. Use the quote form with ship name, arrival, and
           passenger count.

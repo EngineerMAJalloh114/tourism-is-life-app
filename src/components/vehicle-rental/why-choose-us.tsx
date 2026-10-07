@@ -25,7 +25,7 @@ const benefits = [
 
 export function WhyChooseUs() {
   return (
-    <section className="bg-surface py-20">
+    <section className="bg-surface py-12">
       <div className="container-page">
         <p className="text-xs uppercase tracking-[0.22em] text-gold-ink">Why Tourism Is Life</p>
         <h2 className="mt-2 font-display text-4xl text-heading">Built for tourism. Driven by local knowledge.</h2>

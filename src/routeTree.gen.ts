@@ -15,12 +15,16 @@ import { Route as AdminRouteImport } from './routes/admin'
 import { Route as BrochureRouteImport } from './routes/brochure'
 import { Route as ComingSoonRouteImport } from './routes/coming-soon'
 import { Route as ContactRouteImport } from './routes/contact'
+import { Route as CookiesRouteImport } from './routes/cookies'
 import { Route as ForgotPasswordRouteImport } from './routes/forgot-password'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as PartnerRouteImport } from './routes/partner'
+import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as RegisterRouteImport } from './routes/register'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
+import { Route as TermsRouteImport } from './routes/terms'
 import { Route as AboutIndexRouteImport } from './routes/about/index'
+import { Route as AboutImageCreditsRouteImport } from './routes/about/image-credits'
 import { Route as AboutSustainabilityRouteImport } from './routes/about/sustainability'
 import { Route as AboutTeamRouteImport } from './routes/about/team'
 import { Route as AboutWhatWeOfferRouteImport } from './routes/about/what-we-offer'
@@ -56,6 +60,7 @@ import { Route as CruiseShoreExcursionsRouteImport } from './routes/cruise/shore
 import { Route as CruiseVipMeetAndGreetRouteImport } from './routes/cruise/vip-meet-and-greet'
 import { Route as DestinationsIndexRouteImport } from './routes/destinations/index'
 import { Route as DestinationsCircuitRouteImport } from './routes/destinations/$circuit'
+import { Route as HospitalityIndexRouteImport } from './routes/hospitality/index'
 import { Route as JournalIndexRouteImport } from './routes/journal/index'
 import { Route as JournalSlugRouteImport } from './routes/journal/$slug'
 import { Route as ServicesIndexRouteImport } from './routes/services/index'
@@ -71,6 +76,7 @@ import { Route as ToursWestAfricaRouteImport } from './routes/tours/west-africa'
 import { Route as AccountBookingsIndexRouteImport } from './routes/account/bookings/index'
 import { Route as AccountBookingsRefRouteImport } from './routes/account/bookings/$ref'
 import { Route as ApiAuthSplatRouteImport } from './routes/api/auth/$'
+import { Route as ApiCronExpireHoldsRouteImport } from './routes/api/cron/expire-holds'
 import { Route as ApiWebhooksMonerooRouteImport } from './routes/api/webhooks/moneroo'
 import { Route as ApiWebhooksStripeRouteImport } from './routes/api/webhooks/stripe'
 import { Route as BookingSlugIndexRouteImport } from './routes/booking/$slug/index'
@@ -87,6 +93,8 @@ import { Route as CheckoutRefReviewRouteImport } from './routes/checkout/$ref/re
 import { Route as CheckoutRefVoucherRouteImport } from './routes/checkout/$ref/voucher'
 import { Route as DestinationsCircuitIndexRouteImport } from './routes/destinations/$circuit/index'
 import { Route as DestinationsCircuitSlugRouteImport } from './routes/destinations/$circuit/$slug'
+import { Route as HospitalityDiningSlugRouteImport } from './routes/hospitality/dining/$slug'
+import { Route as HospitalityStaysSlugRouteImport } from './routes/hospitality/stays/$slug'
 import { Route as JournalCategorySlugRouteImport } from './routes/journal/$category/$slug'
 import { Route as JournalCategoryCategoryRouteImport } from './routes/journal/category/$category'
 import { Route as ServicesVehicleRentalIndexRouteImport } from './routes/services/vehicle-rental/index'
@@ -124,6 +132,11 @@ const ContactRoute = ContactRouteImport.update({
   path: '/contact',
   getParentRoute: () => rootRouteImport,
 } as any)
+const CookiesRoute = CookiesRouteImport.update({
+  id: '/cookies',
+  path: '/cookies',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ForgotPasswordRoute = ForgotPasswordRouteImport.update({
   id: '/forgot-password',
   path: '/forgot-password',
@@ -139,6 +152,11 @@ const PartnerRoute = PartnerRouteImport.update({
   path: '/partner',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PrivacyRoute = PrivacyRouteImport.update({
+  id: '/privacy',
+  path: '/privacy',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const RegisterRoute = RegisterRouteImport.update({
   id: '/register',
   path: '/register',
@@ -149,9 +167,19 @@ const ResetPasswordRoute = ResetPasswordRouteImport.update({
   path: '/reset-password',
   getParentRoute: () => rootRouteImport,
 } as any)
+const TermsRoute = TermsRouteImport.update({
+  id: '/terms',
+  path: '/terms',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AboutIndexRoute = AboutIndexRouteImport.update({
   id: '/about/',
   path: '/about/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AboutImageCreditsRoute = AboutImageCreditsRouteImport.update({
+  id: '/about/image-credits',
+  path: '/about/image-credits',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AboutSustainabilityRoute = AboutSustainabilityRouteImport.update({
@@ -329,6 +357,11 @@ const DestinationsCircuitRoute = DestinationsCircuitRouteImport.update({
   path: '/destinations/$circuit',
   getParentRoute: () => rootRouteImport,
 } as any)
+const HospitalityIndexRoute = HospitalityIndexRouteImport.update({
+  id: '/hospitality/',
+  path: '/hospitality/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const JournalIndexRoute = JournalIndexRouteImport.update({
   id: '/journal/',
   path: '/journal/',
@@ -402,6 +435,11 @@ const AccountBookingsRefRoute = AccountBookingsRefRouteImport.update({
 const ApiAuthSplatRoute = ApiAuthSplatRouteImport.update({
   id: '/api/auth/$',
   path: '/api/auth/$',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiCronExpireHoldsRoute = ApiCronExpireHoldsRouteImport.update({
+  id: '/api/cron/expire-holds',
+  path: '/api/cron/expire-holds',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiWebhooksMonerooRoute = ApiWebhooksMonerooRouteImport.update({
@@ -485,6 +523,16 @@ const DestinationsCircuitSlugRoute = DestinationsCircuitSlugRouteImport.update({
   path: '/$slug',
   getParentRoute: () => DestinationsCircuitRoute,
 } as any)
+const HospitalityDiningSlugRoute = HospitalityDiningSlugRouteImport.update({
+  id: '/hospitality/dining/$slug',
+  path: '/hospitality/dining/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const HospitalityStaysSlugRoute = HospitalityStaysSlugRouteImport.update({
+  id: '/hospitality/stays/$slug',
+  path: '/hospitality/stays/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const JournalCategorySlugRoute = JournalCategorySlugRouteImport.update({
   id: '/journal/$category/$slug',
   path: '/journal/$category/$slug',
@@ -527,11 +575,15 @@ export interface FileRoutesByFullPath {
   '/brochure': typeof BrochureRoute
   '/coming-soon': typeof ComingSoonRoute
   '/contact': typeof ContactRouteWithChildren
+  '/cookies': typeof CookiesRoute
   '/forgot-password': typeof ForgotPasswordRoute
   '/login': typeof LoginRoute
   '/partner': typeof PartnerRoute
+  '/privacy': typeof PrivacyRoute
   '/register': typeof RegisterRoute
   '/reset-password': typeof ResetPasswordRoute
+  '/terms': typeof TermsRoute
+  '/about/image-credits': typeof AboutImageCreditsRoute
   '/about/sustainability': typeof AboutSustainabilityRoute
   '/about/team': typeof AboutTeamRoute
   '/about/what-we-offer': typeof AboutWhatWeOfferRoute
@@ -577,11 +629,13 @@ export interface FileRoutesByFullPath {
   '/contact/': typeof ContactIndexRoute
   '/cruise/': typeof CruiseIndexRoute
   '/destinations/': typeof DestinationsIndexRoute
+  '/hospitality/': typeof HospitalityIndexRoute
   '/journal/': typeof JournalIndexRoute
   '/services/': typeof ServicesIndexRoute
   '/tours/': typeof ToursIndexRoute
   '/account/bookings/$ref': typeof AccountBookingsRefRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
+  '/api/cron/expire-holds': typeof ApiCronExpireHoldsRoute
   '/api/webhooks/moneroo': typeof ApiWebhooksMonerooRoute
   '/api/webhooks/stripe': typeof ApiWebhooksStripeRoute
   '/booking/$slug/confirmed': typeof BookingSlugConfirmedRoute
@@ -595,6 +649,8 @@ export interface FileRoutesByFullPath {
   '/checkout/$ref/review': typeof CheckoutRefReviewRoute
   '/checkout/$ref/voucher': typeof CheckoutRefVoucherRoute
   '/destinations/$circuit/$slug': typeof DestinationsCircuitSlugRoute
+  '/hospitality/dining/$slug': typeof HospitalityDiningSlugRoute
+  '/hospitality/stays/$slug': typeof HospitalityStaysSlugRoute
   '/journal/$category/$slug': typeof JournalCategorySlugRoute
   '/journal/category/$category': typeof JournalCategoryCategoryRoute
   '/account/bookings/': typeof AccountBookingsIndexRoute
@@ -610,11 +666,15 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/brochure': typeof BrochureRoute
   '/coming-soon': typeof ComingSoonRoute
+  '/cookies': typeof CookiesRoute
   '/forgot-password': typeof ForgotPasswordRoute
   '/login': typeof LoginRoute
   '/partner': typeof PartnerRoute
+  '/privacy': typeof PrivacyRoute
   '/register': typeof RegisterRoute
   '/reset-password': typeof ResetPasswordRoute
+  '/terms': typeof TermsRoute
+  '/about/image-credits': typeof AboutImageCreditsRoute
   '/about/sustainability': typeof AboutSustainabilityRoute
   '/about/team': typeof AboutTeamRoute
   '/about/what-we-offer': typeof AboutWhatWeOfferRoute
@@ -656,11 +716,13 @@ export interface FileRoutesByTo {
   '/contact': typeof ContactIndexRoute
   '/cruise': typeof CruiseIndexRoute
   '/destinations': typeof DestinationsIndexRoute
+  '/hospitality': typeof HospitalityIndexRoute
   '/journal': typeof JournalIndexRoute
   '/services': typeof ServicesIndexRoute
   '/tours': typeof ToursIndexRoute
   '/account/bookings/$ref': typeof AccountBookingsRefRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
+  '/api/cron/expire-holds': typeof ApiCronExpireHoldsRoute
   '/api/webhooks/moneroo': typeof ApiWebhooksMonerooRoute
   '/api/webhooks/stripe': typeof ApiWebhooksStripeRoute
   '/booking/$slug/confirmed': typeof BookingSlugConfirmedRoute
@@ -674,6 +736,8 @@ export interface FileRoutesByTo {
   '/checkout/$ref/review': typeof CheckoutRefReviewRoute
   '/checkout/$ref/voucher': typeof CheckoutRefVoucherRoute
   '/destinations/$circuit/$slug': typeof DestinationsCircuitSlugRoute
+  '/hospitality/dining/$slug': typeof HospitalityDiningSlugRoute
+  '/hospitality/stays/$slug': typeof HospitalityStaysSlugRoute
   '/journal/$category/$slug': typeof JournalCategorySlugRoute
   '/journal/category/$category': typeof JournalCategoryCategoryRoute
   '/account/bookings': typeof AccountBookingsIndexRoute
@@ -693,11 +757,15 @@ export interface FileRoutesById {
   '/brochure': typeof BrochureRoute
   '/coming-soon': typeof ComingSoonRoute
   '/contact': typeof ContactRouteWithChildren
+  '/cookies': typeof CookiesRoute
   '/forgot-password': typeof ForgotPasswordRoute
   '/login': typeof LoginRoute
   '/partner': typeof PartnerRoute
+  '/privacy': typeof PrivacyRoute
   '/register': typeof RegisterRoute
   '/reset-password': typeof ResetPasswordRoute
+  '/terms': typeof TermsRoute
+  '/about/image-credits': typeof AboutImageCreditsRoute
   '/about/sustainability': typeof AboutSustainabilityRoute
   '/about/team': typeof AboutTeamRoute
   '/about/what-we-offer': typeof AboutWhatWeOfferRoute
@@ -743,11 +811,13 @@ export interface FileRoutesById {
   '/contact/': typeof ContactIndexRoute
   '/cruise/': typeof CruiseIndexRoute
   '/destinations/': typeof DestinationsIndexRoute
+  '/hospitality/': typeof HospitalityIndexRoute
   '/journal/': typeof JournalIndexRoute
   '/services/': typeof ServicesIndexRoute
   '/tours/': typeof ToursIndexRoute
   '/account/bookings/$ref': typeof AccountBookingsRefRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
+  '/api/cron/expire-holds': typeof ApiCronExpireHoldsRoute
   '/api/webhooks/moneroo': typeof ApiWebhooksMonerooRoute
   '/api/webhooks/stripe': typeof ApiWebhooksStripeRoute
   '/booking/$slug/confirmed': typeof BookingSlugConfirmedRoute
@@ -761,6 +831,8 @@ export interface FileRoutesById {
   '/checkout/$ref/review': typeof CheckoutRefReviewRoute
   '/checkout/$ref/voucher': typeof CheckoutRefVoucherRoute
   '/destinations/$circuit/$slug': typeof DestinationsCircuitSlugRoute
+  '/hospitality/dining/$slug': typeof HospitalityDiningSlugRoute
+  '/hospitality/stays/$slug': typeof HospitalityStaysSlugRoute
   '/journal/$category/$slug': typeof JournalCategorySlugRoute
   '/journal/category/$category': typeof JournalCategoryCategoryRoute
   '/account/bookings/': typeof AccountBookingsIndexRoute
@@ -781,11 +853,15 @@ export interface FileRouteTypes {
     | '/brochure'
     | '/coming-soon'
     | '/contact'
+    | '/cookies'
     | '/forgot-password'
     | '/login'
     | '/partner'
+    | '/privacy'
     | '/register'
     | '/reset-password'
+    | '/terms'
+    | '/about/image-credits'
     | '/about/sustainability'
     | '/about/team'
     | '/about/what-we-offer'
@@ -831,11 +907,13 @@ export interface FileRouteTypes {
     | '/contact/'
     | '/cruise/'
     | '/destinations/'
+    | '/hospitality/'
     | '/journal/'
     | '/services/'
     | '/tours/'
     | '/account/bookings/$ref'
     | '/api/auth/$'
+    | '/api/cron/expire-holds'
     | '/api/webhooks/moneroo'
     | '/api/webhooks/stripe'
     | '/booking/$slug/confirmed'
@@ -849,6 +927,8 @@ export interface FileRouteTypes {
     | '/checkout/$ref/review'
     | '/checkout/$ref/voucher'
     | '/destinations/$circuit/$slug'
+    | '/hospitality/dining/$slug'
+    | '/hospitality/stays/$slug'
     | '/journal/$category/$slug'
     | '/journal/category/$category'
     | '/account/bookings/'
@@ -864,11 +944,15 @@ export interface FileRouteTypes {
     | '/'
     | '/brochure'
     | '/coming-soon'
+    | '/cookies'
     | '/forgot-password'
     | '/login'
     | '/partner'
+    | '/privacy'
     | '/register'
     | '/reset-password'
+    | '/terms'
+    | '/about/image-credits'
     | '/about/sustainability'
     | '/about/team'
     | '/about/what-we-offer'
@@ -910,11 +994,13 @@ export interface FileRouteTypes {
     | '/contact'
     | '/cruise'
     | '/destinations'
+    | '/hospitality'
     | '/journal'
     | '/services'
     | '/tours'
     | '/account/bookings/$ref'
     | '/api/auth/$'
+    | '/api/cron/expire-holds'
     | '/api/webhooks/moneroo'
     | '/api/webhooks/stripe'
     | '/booking/$slug/confirmed'
@@ -928,6 +1014,8 @@ export interface FileRouteTypes {
     | '/checkout/$ref/review'
     | '/checkout/$ref/voucher'
     | '/destinations/$circuit/$slug'
+    | '/hospitality/dining/$slug'
+    | '/hospitality/stays/$slug'
     | '/journal/$category/$slug'
     | '/journal/category/$category'
     | '/account/bookings'
@@ -946,11 +1034,15 @@ export interface FileRouteTypes {
     | '/brochure'
     | '/coming-soon'
     | '/contact'
+    | '/cookies'
     | '/forgot-password'
     | '/login'
     | '/partner'
+    | '/privacy'
     | '/register'
     | '/reset-password'
+    | '/terms'
+    | '/about/image-credits'
     | '/about/sustainability'
     | '/about/team'
     | '/about/what-we-offer'
@@ -996,11 +1088,13 @@ export interface FileRouteTypes {
     | '/contact/'
     | '/cruise/'
     | '/destinations/'
+    | '/hospitality/'
     | '/journal/'
     | '/services/'
     | '/tours/'
     | '/account/bookings/$ref'
     | '/api/auth/$'
+    | '/api/cron/expire-holds'
     | '/api/webhooks/moneroo'
     | '/api/webhooks/stripe'
     | '/booking/$slug/confirmed'
@@ -1014,6 +1108,8 @@ export interface FileRouteTypes {
     | '/checkout/$ref/review'
     | '/checkout/$ref/voucher'
     | '/destinations/$circuit/$slug'
+    | '/hospitality/dining/$slug'
+    | '/hospitality/stays/$slug'
     | '/journal/$category/$slug'
     | '/journal/category/$category'
     | '/account/bookings/'
@@ -1033,11 +1129,15 @@ export interface RootRouteChildren {
   BrochureRoute: typeof BrochureRoute
   ComingSoonRoute: typeof ComingSoonRoute
   ContactRoute: typeof ContactRouteWithChildren
+  CookiesRoute: typeof CookiesRoute
   ForgotPasswordRoute: typeof ForgotPasswordRoute
   LoginRoute: typeof LoginRoute
   PartnerRoute: typeof PartnerRoute
+  PrivacyRoute: typeof PrivacyRoute
   RegisterRoute: typeof RegisterRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
+  TermsRoute: typeof TermsRoute
+  AboutImageCreditsRoute: typeof AboutImageCreditsRoute
   AboutSustainabilityRoute: typeof AboutSustainabilityRoute
   AboutTeamRoute: typeof AboutTeamRoute
   AboutWhatWeOfferRoute: typeof AboutWhatWeOfferRoute
@@ -1063,12 +1163,16 @@ export interface RootRouteChildren {
   AboutIndexRoute: typeof AboutIndexRoute
   CruiseIndexRoute: typeof CruiseIndexRoute
   DestinationsIndexRoute: typeof DestinationsIndexRoute
+  HospitalityIndexRoute: typeof HospitalityIndexRoute
   JournalIndexRoute: typeof JournalIndexRoute
   ServicesIndexRoute: typeof ServicesIndexRoute
   ToursIndexRoute: typeof ToursIndexRoute
   ApiAuthSplatRoute: typeof ApiAuthSplatRoute
+  ApiCronExpireHoldsRoute: typeof ApiCronExpireHoldsRoute
   ApiWebhooksMonerooRoute: typeof ApiWebhooksMonerooRoute
   ApiWebhooksStripeRoute: typeof ApiWebhooksStripeRoute
+  HospitalityDiningSlugRoute: typeof HospitalityDiningSlugRoute
+  HospitalityStaysSlugRoute: typeof HospitalityStaysSlugRoute
   JournalCategorySlugRoute: typeof JournalCategorySlugRoute
   JournalCategoryCategoryRoute: typeof JournalCategoryCategoryRoute
   ServicesVehicleRentalIndexRoute: typeof ServicesVehicleRentalIndexRoute
@@ -1120,6 +1224,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ContactRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/cookies': {
+      id: '/cookies'
+      path: '/cookies'
+      fullPath: '/cookies'
+      preLoaderRoute: typeof CookiesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/forgot-password': {
       id: '/forgot-password'
       path: '/forgot-password'
@@ -1141,6 +1252,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PartnerRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/privacy': {
+      id: '/privacy'
+      path: '/privacy'
+      fullPath: '/privacy'
+      preLoaderRoute: typeof PrivacyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/register': {
       id: '/register'
       path: '/register'
@@ -1155,11 +1273,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ResetPasswordRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/terms': {
+      id: '/terms'
+      path: '/terms'
+      fullPath: '/terms'
+      preLoaderRoute: typeof TermsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/about/': {
       id: '/about/'
       path: '/about'
       fullPath: '/about/'
       preLoaderRoute: typeof AboutIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/about/image-credits': {
+      id: '/about/image-credits'
+      path: '/about/image-credits'
+      fullPath: '/about/image-credits'
+      preLoaderRoute: typeof AboutImageCreditsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/about/sustainability': {
@@ -1407,6 +1539,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DestinationsCircuitRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/hospitality/': {
+      id: '/hospitality/'
+      path: '/hospitality'
+      fullPath: '/hospitality/'
+      preLoaderRoute: typeof HospitalityIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/journal/': {
       id: '/journal/'
       path: '/journal'
@@ -1510,6 +1649,13 @@ declare module '@tanstack/react-router' {
       path: '/api/auth/$'
       fullPath: '/api/auth/$'
       preLoaderRoute: typeof ApiAuthSplatRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/cron/expire-holds': {
+      id: '/api/cron/expire-holds'
+      path: '/api/cron/expire-holds'
+      fullPath: '/api/cron/expire-holds'
+      preLoaderRoute: typeof ApiCronExpireHoldsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/webhooks/moneroo': {
@@ -1623,6 +1769,20 @@ declare module '@tanstack/react-router' {
       fullPath: '/destinations/$circuit/$slug'
       preLoaderRoute: typeof DestinationsCircuitSlugRouteImport
       parentRoute: typeof DestinationsCircuitRoute
+    }
+    '/hospitality/dining/$slug': {
+      id: '/hospitality/dining/$slug'
+      path: '/hospitality/dining/$slug'
+      fullPath: '/hospitality/dining/$slug'
+      preLoaderRoute: typeof HospitalityDiningSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/hospitality/stays/$slug': {
+      id: '/hospitality/stays/$slug'
+      path: '/hospitality/stays/$slug'
+      fullPath: '/hospitality/stays/$slug'
+      preLoaderRoute: typeof HospitalityStaysSlugRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/journal/$category/$slug': {
       id: '/journal/$category/$slug'
@@ -1828,11 +1988,15 @@ const rootRouteChildren: RootRouteChildren = {
   BrochureRoute: BrochureRoute,
   ComingSoonRoute: ComingSoonRoute,
   ContactRoute: ContactRouteWithChildren,
+  CookiesRoute: CookiesRoute,
   ForgotPasswordRoute: ForgotPasswordRoute,
   LoginRoute: LoginRoute,
   PartnerRoute: PartnerRoute,
+  PrivacyRoute: PrivacyRoute,
   RegisterRoute: RegisterRoute,
   ResetPasswordRoute: ResetPasswordRoute,
+  TermsRoute: TermsRoute,
+  AboutImageCreditsRoute: AboutImageCreditsRoute,
   AboutSustainabilityRoute: AboutSustainabilityRoute,
   AboutTeamRoute: AboutTeamRoute,
   AboutWhatWeOfferRoute: AboutWhatWeOfferRoute,
@@ -1858,12 +2022,16 @@ const rootRouteChildren: RootRouteChildren = {
   AboutIndexRoute: AboutIndexRoute,
   CruiseIndexRoute: CruiseIndexRoute,
   DestinationsIndexRoute: DestinationsIndexRoute,
+  HospitalityIndexRoute: HospitalityIndexRoute,
   JournalIndexRoute: JournalIndexRoute,
   ServicesIndexRoute: ServicesIndexRoute,
   ToursIndexRoute: ToursIndexRoute,
   ApiAuthSplatRoute: ApiAuthSplatRoute,
+  ApiCronExpireHoldsRoute: ApiCronExpireHoldsRoute,
   ApiWebhooksMonerooRoute: ApiWebhooksMonerooRoute,
   ApiWebhooksStripeRoute: ApiWebhooksStripeRoute,
+  HospitalityDiningSlugRoute: HospitalityDiningSlugRoute,
+  HospitalityStaysSlugRoute: HospitalityStaysSlugRoute,
   JournalCategorySlugRoute: JournalCategorySlugRoute,
   JournalCategoryCategoryRoute: JournalCategoryCategoryRoute,
   ServicesVehicleRentalIndexRoute: ServicesVehicleRentalIndexRoute,

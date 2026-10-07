@@ -20,7 +20,7 @@ function NestedArticle() {
   const article = getArticle(slug);
   if (!article || article.category !== category) throw notFound();
   return (
-    <article className="container-page max-w-3xl py-16">
+    <article className="container-page max-w-3xl py-10">
       <JsonLd data={articleJsonLd(article)} />
       <p className="text-sm text-muted">
         <Link to="/journal">Journal</Link> /{" "}

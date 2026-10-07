@@ -6,11 +6,20 @@ import { TourCard } from "@/components/tour-card";
 import { EnquiryForm } from "@/components/enquiry-form";
 import { JsonLd } from "@/components/json-ld";
 import { TourFilterBar } from "@/components/tours/tour-filters";
+import { HeroFrame, HERO_KICKER_CLASS } from "@/components/hero/hero-frame";
+import type { HeroImage } from "@/lib/hero-media";
 import { EMPTY_FILTERS, filterTours, type TourFilters } from "@/lib/tour-filters";
 import { getTour, tours } from "@/data/catalog";
 import { organizationJsonLd, pageHead } from "@/lib/seo";
 
-const HERO_IMAGE = "/images/mountains/loma-mountains-hike.jpg";
+const HERO_MEDIA: readonly HeroImage[] = [
+  {
+    kind: "image",
+    src: "/images/mountains/loma-mountains-hike.jpg",
+    alt: "A walker on a forest trail in the Loma Mountains No Hunting Forest Reserve",
+    position: "center 45%",
+  },
+];
 
 /** The three itineraries documented in the official Tourism Is Life tour papers. */
 const FEATURED_SLUGS = [
@@ -59,16 +68,8 @@ function ToursExcursionsPage() {
     <>
       <JsonLd data={organizationJsonLd()} />
 
-      <section className="relative isolate min-h-[68vh] overflow-hidden bg-brand-dark text-ivory">
-        <img
-          src={HERO_IMAGE}
-          alt="A guide crossing a log bridge on a forest trail in Sierra Leone"
-          className="absolute inset-0 size-full object-cover object-[center_45%] opacity-85"
-        />
-        <div className="absolute inset-0 bg-gradient-to-r from-brand-dark via-brand-dark/70 to-brand-dark/15" />
-        <div className="absolute inset-0 bg-gradient-to-t from-brand-dark/80 via-transparent to-transparent" />
-        <div className="container-page relative flex min-h-[68vh] flex-col justify-end pb-16 pt-28">
-          <p className="text-xs uppercase tracking-[0.28em] text-gold">Services</p>
+      <HeroFrame media={HERO_MEDIA} height="tall" contentClassName="pb-16 pt-28">
+          <p className={HERO_KICKER_CLASS}>Services</p>
           <h1 className="mt-4 max-w-3xl font-display text-5xl leading-[1.05] sm:text-6xl">
             Tours &amp; Excursions
           </h1>
@@ -90,11 +91,10 @@ function ToursExcursionsPage() {
               <a href="#all-tours">Browse the catalogue</a>
             </Button>
           </div>
-        </div>
-      </section>
+      </HeroFrame>
 
       {featured.length > 0 ? (
-        <section className="container-page py-16">
+        <section className="container-page py-10">
           <p className="text-xs uppercase tracking-[0.22em] text-gold-ink">Signature itineraries</p>
           <h2 className="mt-2 max-w-2xl font-display text-3xl text-heading sm:text-4xl">
             Three routes we plan end to end
@@ -165,7 +165,7 @@ function ToursExcursionsPage() {
         </section>
       ) : null}
 
-      <section id="all-tours" className="scroll-mt-24 border-t border-line bg-surface py-16">
+      <section id="all-tours" className="scroll-mt-24 border-t border-line bg-surface py-10">
         <div className="container-page">
           <p className="text-xs uppercase tracking-[0.22em] text-gold-ink">The catalogue</p>
           <h2 className="mt-2 font-display text-3xl text-heading sm:text-4xl">Find a tour</h2>
@@ -204,7 +204,7 @@ function ToursExcursionsPage() {
         </div>
       </section>
 
-      <section className="container-page py-16">
+      <section className="container-page py-10">
         <p className="text-xs uppercase tracking-[0.22em] text-gold-ink">How it works</p>
         <h2 className="mt-2 max-w-2xl font-display text-3xl text-heading sm:text-4xl">
           From first message to landing in Freetown
@@ -220,7 +220,7 @@ function ToursExcursionsPage() {
         </ol>
       </section>
 
-      <section className="border-t border-line bg-surface py-16">
+      <section className="border-t border-line bg-surface py-10">
         <div className="container-page grid gap-10 lg:grid-cols-[1fr_minmax(0,28rem)]">
           <div>
             <h2 className="font-display text-3xl text-heading sm:text-4xl">Plan your trip</h2>

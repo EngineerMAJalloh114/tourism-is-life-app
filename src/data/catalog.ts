@@ -87,6 +87,15 @@ export interface ServiceItem {
   summary: string;
   benefits: string[];
   process: string[];
+  /**
+   * Only set for services with a genuine, verified photograph. Three services
+   * (visa facilitation, travel insurance, ticketing) have no natural photo
+   * subject, and hotel-reservations has no lodging photo in the library that
+   * isn't already used for MICE — `ServiceCard` renders an icon treatment for
+   * any service without an image rather than forcing a mismatched photo.
+   */
+  image?: string;
+  imageAlt?: string;
 }
 
 /** Local Wikimedia Commons images stored under public/images/ — see public/images/image-sources.json for licensing */
@@ -1014,6 +1023,8 @@ export const services: ServiceItem[] = [
     summary: "Meetings, incentives, conferences and exhibitions: venue search, ground transport, staffing, and cultural programmes in Sierra Leone.",
     benefits: ["Single in-country coordinator", "Venue and transport shortlists", "Team-building and gala options"],
     process: ["Share dates and headcount", "Receive a proposed programme", "Confirm logistics in writing"],
+    image: "/images/services/mice-conference.jpg",
+    imageAlt: "A team gathered around a conference table with a shared screen, an editorial stand-in for MICE planning",
   },
   {
     slug: "tours-excursions",
@@ -1021,6 +1032,8 @@ export const services: ServiceItem[] = [
     summary: "The same Sierra Leone circuits sold to independent travellers, tailored for groups and business visitors.",
     benefits: ["Half-day and multi-day options", "Licensed guides", "Private or small-group"],
     process: ["Choose a published tour or request a custom itinerary", "Confirm dates", "Receive a quote"],
+    image: "/images/services/tours-excursions.jpg",
+    imageAlt: "Trekkers with backpacks on a mountain trail, an editorial stand-in for guided tours and excursions",
   },
   {
     slug: "visa-facilitation",
@@ -1028,6 +1041,8 @@ export const services: ServiceItem[] = [
     summary: "Invitation letters and practical guidance for Sierra Leone entry, a core DMC service, not a visa guarantee.",
     benefits: ["Invitation letter support", "Document checklist", "Timing guidance"],
     process: ["Send passport details", "Receive requirements", "Letter issued where eligible"],
+    image: "/images/services/visa-facilitation.jpg",
+    imageAlt: "A passport resting on top of travel documents, an editorial stand-in for visa facilitation",
   },
   {
     slug: "travel-insurance",
@@ -1035,6 +1050,8 @@ export const services: ServiceItem[] = [
     summary: "The company has publicly described offering travel insurance and medical-evacuation cover. Policies are arranged case by case.",
     benefits: ["Evacuation options discussed at quote", "Trip context from the DMC"],
     process: ["Describe itinerary", "Receive options", "Purchase through the named insurer"],
+    image: "/images/services/travel-insurance.jpg",
+    imageAlt: "A doctor holding a stethoscope, an editorial stand-in for travel and medical-evacuation insurance",
   },
   {
     slug: "vehicle-rental",
@@ -1042,6 +1059,8 @@ export const services: ServiceItem[] = [
     summary: "Chauffeured and self-drive vehicles for city, peninsula, and overland programmes. From economy cars to 4x4s and group coaches.",
     benefits: ["Driver-guides available", "Airport and port transfers", "Group vehicles on request", "Tour-ready fleet"],
     process: ["Select dates and passenger count", "Choose vehicle class and driver option", "Confirm in writing"],
+    image: "/images/services/vehicle-rental.jpg",
+    imageAlt: "A white SUV parked on rough coastal terrain, an editorial stand-in for vehicle rental",
   },
   {
     slug: "hotel-reservations",
@@ -1049,6 +1068,8 @@ export const services: ServiceItem[] = [
     summary: "Accommodation booking across partner properties in Sierra Leone and, on request, Guinea and Liberia.",
     benefits: ["Local contracting", "Mix of city, beach, and simple bush lodging"],
     process: ["Share dates and budget band", "Receive a shortlist", "Confirm on your say-so"],
+    image: "/images/services/hotel-reservations.jpg",
+    imageAlt: "A bright hotel lobby with a glass atrium ceiling, an editorial stand-in for hotel reservations",
   },
   {
     slug: "ticketing",
@@ -1056,6 +1077,8 @@ export const services: ServiceItem[] = [
     summary: "Domestic and international air ticketing plus event tickets when available.",
     benefits: ["Itinerary-aligned routing", "Group ticketing on request"],
     process: ["Share names and dates", "Receive fare options", "Pay to issue"],
+    image: "/images/services/ticketing.jpg",
+    imageAlt: "An airport departures board, an editorial stand-in for ticketing",
   },
 ];
 
@@ -1117,18 +1140,40 @@ export const articles: Article[] = [
   },
 ];
 
-export const team = [
+export interface TeamMember {
+  slug: string;
+  name: string;
+  role: string;
+  bio: string;
+  /** Only set for people with a genuine, supplied photograph — never a stand-in. */
+  image?: string;
+  imageAlt?: string;
+}
+
+export const team: TeamMember[] = [
   {
     slug: "alieya-alie-kargbo",
     name: "Alieya Alie Kargbo",
     role: "Executive Director & CEO",
     bio: "Founder of Tourism Is Life Tours. In a 2024 Travel And Tour World interview he described the company as a Sierra Leone DMC and a member partner of 1 DCM World.",
+    image: "/images/team/alieya-alie-kargbo.jpg",
+    imageAlt: "Alieya Alie Kargbo, Executive Director and CEO of Tourism Is Life Tours",
   },
   {
     slug: "bassie",
     name: "Peter Momoh Bassie",
     role: "Guide & part-owner",
     bio: "Featured in AFAR Magazine. Leads Freetown tours and expeditions toward Gola Rainforest and Mount Bintumani.",
+    image: "/images/team/peter-momoh-bassie.jpg",
+    imageAlt: "Peter Momoh Bassie, guide and part-owner at Tourism Is Life Tours",
+  },
+  {
+    slug: "isha-bangura",
+    name: "Isha Bangura",
+    role: "Reservation Officer",
+    bio: "Handles reservations, booking coordination, client enquiries, and travel arrangements.",
+    image: "/images/team/isha-bangura.jpg",
+    imageAlt: "Isha Bangura, Reservation Officer at Tourism Is Life Tours",
   },
 ];
 
