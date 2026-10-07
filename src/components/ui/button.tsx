@@ -4,16 +4,16 @@ import type { ButtonHTMLAttributes } from "react";
 import { cn } from "@/lib/utils";
 
 const buttonVariants = cva(
-  "inline-flex items-center justify-center gap-2 rounded-md font-medium tracking-wide transition-colors duration-200 disabled:pointer-events-none disabled:opacity-50 min-h-11 px-5 text-sm",
+  "glass-btn inline-flex items-center justify-center gap-2 rounded-md font-medium tracking-wide transition-colors duration-200 disabled:pointer-events-none disabled:opacity-50 min-h-11 px-5 text-sm",
   {
     variants: {
       variant: {
-        primary: "bg-gold text-brand-dark hover:bg-gold/90",
-        dark: "bg-brand text-ivory hover:bg-brand-dark",
+        primary: "bg-gold/92 text-brand-dark hover:bg-gold/80",
+        dark: "bg-brand/92 text-ivory hover:bg-brand-dark/92",
         outline:
-          "border border-line bg-transparent text-ink hover:border-gold hover:text-heading",
-        ghost: "text-ivory hover:bg-ivory/10",
-        ivory: "bg-page text-heading hover:bg-surface",
+          "glass-btn-tint border border-line text-ink hover:border-gold hover:text-heading",
+        ghost: "bg-ivory/6 text-ivory hover:bg-ivory/16",
+        ivory: "bg-page/92 text-heading hover:bg-surface/92",
       },
       size: {
         default: "min-h-11 px-5",

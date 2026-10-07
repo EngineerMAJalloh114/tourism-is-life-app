@@ -15,7 +15,23 @@ export const THEME_IDS = ["default", "two", "three", "four"] as const;
 
 export type ThemeId = (typeof THEME_IDS)[number];
 
+/**
+ * The theme ID whose colours live unattributed in the base `@theme` block —
+ * not necessarily what a new visitor sees first (see `INITIAL_THEME` for
+ * that). Kept separate on purpose: this id is tied to the CSS architecture
+ * (no `data-theme` attribute means "use the base tokens"), while the
+ * initial experience is a product decision that can change independently.
+ */
 export const DEFAULT_THEME: ThemeId = "default";
+
+/**
+ * What a visitor with no saved preference sees — rendered server-side
+ * directly on `<html data-theme>` in `__root.tsx` (not applied by the
+ * bootstrap script below, which only runs for saved *overrides* of this).
+ * Changing this does not touch `DEFAULT_THEME`: this is "the theme new
+ * visitors get," that is "the one id with no CSS override to apply."
+ */
+export const INITIAL_THEME: ThemeId = "two";
 
 export type ThemeOption = {
   id: ThemeId;
@@ -46,14 +62,14 @@ export const THEMES: ThemeOption[] = [
   {
     id: "three",
     label: "Theme Three",
-    description: "Dark, navy and sky blue",
-    swatch: ["#0b0f1a", "#052747", "#5a94c1"],
+    description: "Dark, sage green and slate blue",
+    swatch: ["#1b2619", "#2b3a47", "#96a7b6"],
   },
   {
     id: "four",
     label: "Theme Four",
-    description: "Dark, coastal slate and teal",
-    swatch: ["#12191a", "#13404d", "#7cadc1"],
+    description: "Light, storm blue and pearl",
+    swatch: ["#f3eee7", "#323942", "#a1acb8"],
   },
 ];
 
@@ -61,23 +77,30 @@ export const THEMES: ThemeOption[] = [
 export const PREFS_KEY = "til-prefs";
 
 /**
- * Inline `<head>` script, run before first paint, that restores the saved theme
- * so the page never flashes the default palette. Kept dependency-free and
- * generated from THEME_IDS so it cannot drift from the list above. Wrapped in
- * try/catch because storage access throws when cookies are blocked.
+ * Inline `<head>` script, run before first paint, that restores a *saved
+ * override* of `INITIAL_THEME` so the page never flashes the wrong palette.
+ * `__root.tsx` already renders `<html data-theme>` for `INITIAL_THEME`
+ * server-side, so this script's job is narrower than "apply the theme": do
+ * nothing when there's no saved choice, or the saved choice already matches
+ * what the server rendered, or the value is corrupt; otherwise correct the
+ * attribute to whatever the visitor actually picked — including switching
+ * it back to `DEFAULT_THEME`'s unattributed state. Kept dependency-free and
+ * generated from THEME_IDS so it cannot drift from the list above. Wrapped
+ * in try/catch because storage access throws when cookies are blocked.
  */
 export const THEME_BOOTSTRAP = `(function(){try{
 var ids=${JSON.stringify(THEME_IDS)};
 var raw=localStorage.getItem(${JSON.stringify(PREFS_KEY)});
 if(!raw)return;
 var t=(JSON.parse(raw)||{}).state&&JSON.parse(raw).state.theme;
-if(ids.indexOf(t)===-1||t===${JSON.stringify(DEFAULT_THEME)})return;
+if(ids.indexOf(t)===-1||t===${JSON.stringify(INITIAL_THEME)})return;
+if(t===${JSON.stringify(DEFAULT_THEME)}){document.documentElement.removeAttribute("data-theme");return;}
 document.documentElement.setAttribute("data-theme",t);
 }catch(e){}})();`;
 
-/** Narrows an unknown stored value to a usable theme, falling back to default. */
+/** Narrows an unknown stored value to a usable theme, falling back to the initial one. */
 export function parseTheme(value: unknown): ThemeId {
-  return THEME_IDS.includes(value as ThemeId) ? (value as ThemeId) : DEFAULT_THEME;
+  return THEME_IDS.includes(value as ThemeId) ? (value as ThemeId) : INITIAL_THEME;
 }
 
 /**

@@ -1,6 +1,6 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-import { applyTheme, DEFAULT_THEME, parseTheme, type ThemeId } from "@/lib/theme";
+import { applyTheme, INITIAL_THEME, parseTheme, type ThemeId } from "@/lib/theme";
 
 interface Prefs {
   theme: ThemeId;
@@ -12,7 +12,7 @@ export const PREFS_STORAGE_KEY = "til-prefs";
 export const usePrefs = create<Prefs>()(
   persist(
     (set) => ({
-      theme: DEFAULT_THEME,
+      theme: INITIAL_THEME,
       setTheme: (theme) => {
         applyTheme(theme);
         set({ theme });

@@ -68,7 +68,14 @@ export function ThemeSwitcher() {
         <div
           role="radiogroup"
           aria-label="Site theme"
-          className="absolute right-0 top-[calc(100%+0.5rem)] z-50 w-60 overflow-hidden rounded-lg border border-line bg-page p-1.5 text-ink shadow-[var(--shadow-lift)]"
+          // left-0, not right-0: this trigger sits near the header's left
+          // edge at every breakpoint (it's the first item in the utility
+          // bar), so right-anchoring a 240px-wide menu pushed it entirely
+          // off-screen to the left — measured at -129px to -188px depending
+          // on viewport width, meaning the menu was unreachable, not just
+          // visually off. Opening rightward keeps it fully on screen from a
+          // 375px phone up.
+          className="absolute left-0 top-[calc(100%+0.5rem)] z-50 w-60 overflow-hidden rounded-lg border border-line bg-page p-1.5 text-ink shadow-[var(--shadow-lift)]"
         >
           {THEMES.map((option) => {
             const selected = option.id === theme;
