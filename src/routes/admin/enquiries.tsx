@@ -20,7 +20,9 @@ function Page() {
     void load().catch(() => setRows([]));
   }, []);
   return (
-    <ul className="space-y-3">
+    <div>
+      <h1 className="font-display text-3xl text-heading">Enquiries</h1>
+      <ul className="mt-6 space-y-3">
       {rows.map((e) => (
         <li key={e.id} className="rounded-md border border-line bg-surface p-4 text-sm">
           <p className="font-medium">
@@ -45,7 +47,8 @@ function Page() {
           ) : null}
         </li>
       ))}
-      {rows.length === 0 ? <p className="text-sm text-muted">No enquiries.</p> : null}
-    </ul>
+      </ul>
+      {rows.length === 0 ? <p className="mt-6 text-sm text-muted">No enquiries.</p> : null}
+    </div>
   );
 }

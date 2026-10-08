@@ -3,7 +3,6 @@ import { after, before, describe, it } from "node:test";
 import { inTransaction } from "@/lib/sql";
 import { audit } from "@/lib/server/audit";
 import { listAudit } from "@/lib/server/audit-log";
-import { moderateReview } from "@/lib/server/commerce-admin";
 import { setEnquiryStatus } from "@/lib/server/enquiries/desk";
 import { changeRole, setStaffStatus } from "@/lib/server/team/staff";
 import { createTestDb, insertStaff, type TestDb } from "@/lib/server/testing/test-db";
@@ -84,14 +83,6 @@ describe("audit log (A2)", () => {
     assert.deepEqual(row.after, { status: "closed" });
     await assert.rejects(setEnquiryStatus(db.sql, owner, { id: "ENQ-NONE", status: "closed" }), (e: { status?: number }) => e.status === 404);
     assert.equal((await rowsFor("ENQ-NONE")).length, 0);
-  });
-
-  it("a review moderation records before and after", async () => {
-    await db.sql`insert into reviews (id, booking_id, tour_slug, rating, body) values ('RV-T1', 'BK-1', 'banana-island', 5, 'Good')`;
-    await moderateReview(db.sql, owner, { id: "RV-T1", status: "approved" });
-    const [row] = await rowsFor("RV-T1");
-    assert.deepEqual(row.before, { status: "pending" });
-    assert.deepEqual(row.after, { status: "approved" });
   });
 
   it("lists newest first, filters by area and action, and pages with a cursor", async () => {

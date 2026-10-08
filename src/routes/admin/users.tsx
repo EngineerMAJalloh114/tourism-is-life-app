@@ -47,7 +47,8 @@ function UsersPage() {
 
   return (
     <div>
-      <p className="text-sm text-muted">
+      <h1 className="font-display text-3xl text-heading">Team accounts</h1>
+      <p className="mt-2 text-sm text-muted">
         {canChangeRoles
           ? "Only a SUPER_ADMIN changes roles or account status. Nobody can change their own account, and the last active SUPER_ADMIN is protected."
           : "You can see the team. Only a SUPER_ADMIN changes roles or account status."}

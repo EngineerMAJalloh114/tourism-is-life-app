@@ -39,11 +39,8 @@ import { Route as AccountSettingsRouteImport } from './routes/account/settings'
 import { Route as AccountVouchersRouteImport } from './routes/account/vouchers'
 import { Route as AdminIndexRouteImport } from './routes/admin/index'
 import { Route as AdminAuditRouteImport } from './routes/admin/audit'
-import { Route as AdminAvailabilityRouteImport } from './routes/admin/availability'
-import { Route as AdminBookingsRouteImport } from './routes/admin/bookings'
 import { Route as AdminEnquiriesRouteImport } from './routes/admin/enquiries'
-import { Route as AdminReviewsRouteImport } from './routes/admin/reviews'
-import { Route as AdminToursRouteImport } from './routes/admin/tours'
+import { Route as AdminSignInsRouteImport } from './routes/admin/sign-ins'
 import { Route as AdminUsersRouteImport } from './routes/admin/users'
 import { Route as BookingSlugRouteImport } from './routes/booking/$slug'
 import { Route as CheckoutRefRouteImport } from './routes/checkout/$ref'
@@ -258,29 +255,14 @@ const AdminAuditRoute = AdminAuditRouteImport.update({
   path: '/audit',
   getParentRoute: () => AdminRoute,
 } as any)
-const AdminAvailabilityRoute = AdminAvailabilityRouteImport.update({
-  id: '/availability',
-  path: '/availability',
-  getParentRoute: () => AdminRoute,
-} as any)
-const AdminBookingsRoute = AdminBookingsRouteImport.update({
-  id: '/bookings',
-  path: '/bookings',
-  getParentRoute: () => AdminRoute,
-} as any)
 const AdminEnquiriesRoute = AdminEnquiriesRouteImport.update({
   id: '/enquiries',
   path: '/enquiries',
   getParentRoute: () => AdminRoute,
 } as any)
-const AdminReviewsRoute = AdminReviewsRouteImport.update({
-  id: '/reviews',
-  path: '/reviews',
-  getParentRoute: () => AdminRoute,
-} as any)
-const AdminToursRoute = AdminToursRouteImport.update({
-  id: '/tours',
-  path: '/tours',
+const AdminSignInsRoute = AdminSignInsRouteImport.update({
+  id: '/sign-ins',
+  path: '/sign-ins',
   getParentRoute: () => AdminRoute,
 } as any)
 const AdminUsersRoute = AdminUsersRouteImport.update({
@@ -632,11 +614,8 @@ export interface FileRoutesByFullPath {
   '/account/settings': typeof AccountSettingsRoute
   '/account/vouchers': typeof AccountVouchersRoute
   '/admin/audit': typeof AdminAuditRoute
-  '/admin/availability': typeof AdminAvailabilityRoute
-  '/admin/bookings': typeof AdminBookingsRoute
   '/admin/enquiries': typeof AdminEnquiriesRoute
-  '/admin/reviews': typeof AdminReviewsRoute
-  '/admin/tours': typeof AdminToursRoute
+  '/admin/sign-ins': typeof AdminSignInsRoute
   '/admin/users': typeof AdminUsersRoute
   '/booking/$slug': typeof BookingSlugRouteWithChildren
   '/checkout/$ref': typeof CheckoutRefRouteWithChildren
@@ -728,11 +707,8 @@ export interface FileRoutesByTo {
   '/account/settings': typeof AccountSettingsRoute
   '/account/vouchers': typeof AccountVouchersRoute
   '/admin/audit': typeof AdminAuditRoute
-  '/admin/availability': typeof AdminAvailabilityRoute
-  '/admin/bookings': typeof AdminBookingsRoute
   '/admin/enquiries': typeof AdminEnquiriesRoute
-  '/admin/reviews': typeof AdminReviewsRoute
-  '/admin/tours': typeof AdminToursRoute
+  '/admin/sign-ins': typeof AdminSignInsRoute
   '/admin/users': typeof AdminUsersRoute
   '/contact/emergency': typeof ContactEmergencyRoute
   '/contact/partner': typeof ContactPartnerRoute
@@ -826,11 +802,8 @@ export interface FileRoutesById {
   '/account/settings': typeof AccountSettingsRoute
   '/account/vouchers': typeof AccountVouchersRoute
   '/admin/audit': typeof AdminAuditRoute
-  '/admin/availability': typeof AdminAvailabilityRoute
-  '/admin/bookings': typeof AdminBookingsRoute
   '/admin/enquiries': typeof AdminEnquiriesRoute
-  '/admin/reviews': typeof AdminReviewsRoute
-  '/admin/tours': typeof AdminToursRoute
+  '/admin/sign-ins': typeof AdminSignInsRoute
   '/admin/users': typeof AdminUsersRoute
   '/booking/$slug': typeof BookingSlugRouteWithChildren
   '/checkout/$ref': typeof CheckoutRefRouteWithChildren
@@ -928,11 +901,8 @@ export interface FileRouteTypes {
     | '/account/settings'
     | '/account/vouchers'
     | '/admin/audit'
-    | '/admin/availability'
-    | '/admin/bookings'
     | '/admin/enquiries'
-    | '/admin/reviews'
-    | '/admin/tours'
+    | '/admin/sign-ins'
     | '/admin/users'
     | '/booking/$slug'
     | '/checkout/$ref'
@@ -1024,11 +994,8 @@ export interface FileRouteTypes {
     | '/account/settings'
     | '/account/vouchers'
     | '/admin/audit'
-    | '/admin/availability'
-    | '/admin/bookings'
     | '/admin/enquiries'
-    | '/admin/reviews'
-    | '/admin/tours'
+    | '/admin/sign-ins'
     | '/admin/users'
     | '/contact/emergency'
     | '/contact/partner'
@@ -1121,11 +1088,8 @@ export interface FileRouteTypes {
     | '/account/settings'
     | '/account/vouchers'
     | '/admin/audit'
-    | '/admin/availability'
-    | '/admin/bookings'
     | '/admin/enquiries'
-    | '/admin/reviews'
-    | '/admin/tours'
+    | '/admin/sign-ins'
     | '/admin/users'
     | '/booking/$slug'
     | '/checkout/$ref'
@@ -1470,20 +1434,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminAuditRouteImport
       parentRoute: typeof AdminRoute
     }
-    '/admin/availability': {
-      id: '/admin/availability'
-      path: '/availability'
-      fullPath: '/admin/availability'
-      preLoaderRoute: typeof AdminAvailabilityRouteImport
-      parentRoute: typeof AdminRoute
-    }
-    '/admin/bookings': {
-      id: '/admin/bookings'
-      path: '/bookings'
-      fullPath: '/admin/bookings'
-      preLoaderRoute: typeof AdminBookingsRouteImport
-      parentRoute: typeof AdminRoute
-    }
     '/admin/enquiries': {
       id: '/admin/enquiries'
       path: '/enquiries'
@@ -1491,18 +1441,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminEnquiriesRouteImport
       parentRoute: typeof AdminRoute
     }
-    '/admin/reviews': {
-      id: '/admin/reviews'
-      path: '/reviews'
-      fullPath: '/admin/reviews'
-      preLoaderRoute: typeof AdminReviewsRouteImport
-      parentRoute: typeof AdminRoute
-    }
-    '/admin/tours': {
-      id: '/admin/tours'
-      path: '/tours'
-      fullPath: '/admin/tours'
-      preLoaderRoute: typeof AdminToursRouteImport
+    '/admin/sign-ins': {
+      id: '/admin/sign-ins'
+      path: '/sign-ins'
+      fullPath: '/admin/sign-ins'
+      preLoaderRoute: typeof AdminSignInsRouteImport
       parentRoute: typeof AdminRoute
     }
     '/admin/users': {
@@ -1990,22 +1933,16 @@ const AccountRouteWithChildren =
 
 interface AdminRouteChildren {
   AdminAuditRoute: typeof AdminAuditRoute
-  AdminAvailabilityRoute: typeof AdminAvailabilityRoute
-  AdminBookingsRoute: typeof AdminBookingsRoute
   AdminEnquiriesRoute: typeof AdminEnquiriesRoute
-  AdminReviewsRoute: typeof AdminReviewsRoute
-  AdminToursRoute: typeof AdminToursRoute
+  AdminSignInsRoute: typeof AdminSignInsRoute
   AdminUsersRoute: typeof AdminUsersRoute
   AdminIndexRoute: typeof AdminIndexRoute
 }
 
 const AdminRouteChildren: AdminRouteChildren = {
   AdminAuditRoute: AdminAuditRoute,
-  AdminAvailabilityRoute: AdminAvailabilityRoute,
-  AdminBookingsRoute: AdminBookingsRoute,
   AdminEnquiriesRoute: AdminEnquiriesRoute,
-  AdminReviewsRoute: AdminReviewsRoute,
-  AdminToursRoute: AdminToursRoute,
+  AdminSignInsRoute: AdminSignInsRoute,
   AdminUsersRoute: AdminUsersRoute,
   AdminIndexRoute: AdminIndexRoute,
 }

@@ -4,9 +4,9 @@ import { can, STAFF_ROLES } from "@/lib/capabilities";
 import { isAdminOperation, type AdminOperation } from "@/lib/server/access";
 import { forbiddenSql } from "@/lib/server/testing/test-db";
 import * as auditLog from "@/lib/server/audit-log";
-import * as commerce from "@/lib/server/commerce-admin";
 import * as dashboard from "@/lib/server/dashboard";
 import * as desk from "@/lib/server/enquiries/desk";
+import * as signInLog from "@/lib/server/team/sign-in-log";
 import * as staff from "@/lib/server/team/staff";
 
 /**
@@ -16,9 +16,9 @@ import * as staff from "@/lib/server/team/staff";
  */
 const OPERATION_MODULES: Record<string, Record<string, unknown>> = {
   "audit-log": auditLog,
-  "commerce-admin": commerce,
   dashboard,
   "enquiries/desk": desk,
+  "team/sign-in-log": signInLog,
   "team/staff": staff,
 };
 
@@ -34,7 +34,7 @@ function operations(): [string, AdminOperation<unknown, unknown>][] {
 
 describe("every admin operation", () => {
   it("is registered (the registry is not empty)", () => {
-    assert.ok(operations().length >= 11, `found ${operations().length}`);
+    assert.ok(operations().length >= 8, `found ${operations().length}`);
   });
 
   for (const [name, op] of operations()) {

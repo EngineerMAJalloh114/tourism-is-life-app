@@ -15,7 +15,7 @@ tests 324 (322 pass, 2 skipped on Windows, 0 fail), `build:dev` OK, `check:asset
 | A1 Capabilities and SEC-6 | GREEN | 373 / 2 / 0 | `0005_capabilities` |
 | A2 Append-only audit log | GREEN | 383 / 2 / 0 | `0006_audit_append_only` |
 | A3 Team sign-in, two-factor, password reset | GREEN | 415 / 2 / 0 | `0007_team_sign_in` |
-| A4 Admin shell | PENDING | | |
+| A4 Admin shell | GREEN | 418 / 2 / 0 | none |
 | A5 Team accounts | PENDING | | |
 | A6 Media library and uploads | PENDING | | |
 | A7 Site settings | PENDING | | |
@@ -115,3 +115,23 @@ tests 324 (322 pass, 2 skipped on Windows, 0 fail), `build:dev` OK, `check:asset
   is 17. Nothing in 0005-0007 differs between them.
 - **Small fix:** `src/lib/auth/pglite-dialect.ts` used TypeScript parameter properties, which
   `node --experimental-strip-types` cannot run; rewritten as plain fields (same behaviour).
+
+### A4 notes
+
+- **Menu from the capability map** (`src/lib/admin-menu.ts`): five groups (Operations,
+  Content, Site, Team, Security); an item shows only for a role holding its capability, and
+  items whose task has not shipped show as "Later". Ten tests check every role's menu, that
+  each live item has a route file whose guard asks for the same capability, and that no item
+  offers booking, payment or availability.
+- **Booking code left the admin.** `/admin/bookings`, `/admin/availability`, `/admin/tours`
+  and `/admin/reviews` are removed with their server functions (`commerce.functions.ts`,
+  `commerce-admin.ts`); the URLs now 404 even when signed in. The dormant booking tables and
+  services are untouched. The dashboard shows counts only (open enquiries, last 7 days, tours
+  in the catalogue, and active team accounts for `users.view`).
+- **Sign-in log** (`/admin/sign-ins`, `audit.view`) lists `sign_in_attempts`, filterable by
+  email. Every admin page now has its own heading; the account bar shows the email, role and
+  a Sign out button.
+- **Checked in Edge with Playwright** as the local SUPER_ADMIN: menu, active item, all five
+  pages, removed URLs 404, collapsible menu at 390 px that closes on navigation, no
+  horizontal overflow at 390 px, `noindex,nofollow`, sign out returns `/admin` to sign-in.
+  Per-role menus in the browser follow in A5, which creates the other accounts.

@@ -11,6 +11,8 @@ import { loadStaffProfile } from "@/lib/server/team/staff";
 
 export type AccessSummary = {
   signedIn: boolean;
+  /** The caller's own email (shown in the admin header). */
+  email: string | null;
   role: StaffRole | null;
   status: StaffStatus | null;
   capabilities: Capability[];
@@ -22,6 +24,7 @@ export type AccessSummary = {
 
 export const SIGNED_OUT: AccessSummary = {
   signedIn: false,
+  email: null,
   role: null,
   status: null,
   capabilities: [],
@@ -42,6 +45,7 @@ export async function summarizeAccess(
   const active = profile?.status === "active";
   return {
     signedIn: true,
+    email: user.email,
     role: profile?.role ?? null,
     status: profile?.status ?? null,
     capabilities: active ? capabilitiesOf(profile?.role) : [],

@@ -58,7 +58,8 @@ function Page() {
 
   return (
     <div>
-      <p className="text-sm text-muted">
+      <h1 className="font-display text-3xl text-heading">Audit log</h1>
+      <p className="mt-2 text-sm text-muted">
         Every change made in the admin, with who made it and the value before and after. Entries cannot be edited
         or deleted.
       </p>
