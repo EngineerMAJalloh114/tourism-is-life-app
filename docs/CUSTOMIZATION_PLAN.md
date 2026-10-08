@@ -624,7 +624,7 @@ changes are the sign-in redirects, device-local "Save tour" and the footer link 
 | A3 | **Team sign-in, two-factor, password reset** (section 9). Grok gate plugin removed; sign-up closed; `/team/*` pages; redirects; footer link; robots and `noindex`; "Save tour" device-local; local test SUPER_ADMIN seed. | `0007_team_sign_in`: two-factor table and `user.twoFactorEnabled` (from the plugin's schema), `rate_limit_counters`, `sign_in_attempts` | PGLite tests with a mocked Resend: sign-up refused; sign-in requires TOTP (computed in the test with `node:crypto`); a recovery code works once and the stored value is not the code; reset link sets a new password and revokes sessions; the 6th attempt per email and IP and the 21st per IP in 15 minutes are refused with the generic message; every attempt logged; disabled and non-staff accounts refused; a 12-hour-old session refused; the local seed refuses when `DATABASE_URL` is set; gate plugin absent. The report states whether `RESEND_API_KEY` and `RESEND_FROM` exist in Vercel Production (names only, from `vercel env ls`). **Milestone A is not ready to merge without both**, because password reset and account invitations depend on them. |
 | A4 | **Admin shell.** Sidebar (Operations, Content, Site, Team, Security) built from capabilities, server-side guard, dashboard counts; bookings, availability, reviews and tours pages removed. | none | Each role sees only its items (test on the menu builder); removed admin URLs return 404; Playwright at 1440 and 390 px shows no horizontal overflow; screenshots per role in the report. |
 | A5 | **Team accounts.** Create (name, email, role; "set your password" email), disable, re-enable (sessions deleted on disable), remove, change role, send reset, reset two-factor; list with status, role, two-factor and last sign-in. | none (0005 holds the columns) | SUPER_ADMIN flows pass; ADMIN gets 403 on every one; nobody acts on themselves; last SUPER_ADMIN protected; a disabled member's next request is 401; after a two-factor reset the member must enrol again. |
-| A6 | **Media library and uploads.** Storage interface (put, get, range, head, delete, upload ticket; every call has a timeout), in-memory fake for tests, local file driver for `dev:local`, the owner's provider once chosen (section 13); signed direct upload to `incoming/`, then server checks (size up to 15 MB, file signature JPEG, PNG or WebP, decode with `sharp`, orientation fixed, metadata and GPS stripped, longest side 2400 px), WebP variants 480/960/1600 plus a JPEG fallback and the analysis raster; database row written after the uploads, never with a network call inside the transaction; replaced files deleted only after the update commits and only when no draft, published or kept version uses them; provenance form; usage list. | `0008_media` (+ seed: one row per `public/images` file with today's provenance) | With the fake: oversize, wrong type and spoofed signature refused; a failed database write deletes the uploaded objects; replace keeps the old file when the update fails; delete refused while referenced; a timeout surfaces as an error; seed equals `image-sources.json`. Production uploads stay switched off with a clear message until storage keys exist. |
+| A6 | **Media library and uploads.** Storage interface (put, get, range, head, delete, upload ticket; every call has a timeout), in-memory fake for tests, local file driver for `dev:local`, and the Supabase Storage driver over plain `fetch` (section 13); a server-created signed upload URL into the private incoming bucket, then server checks (size up to 15 MB, file signature JPEG, PNG or WebP, decode with `sharp`, orientation fixed, metadata and GPS stripped, longest side 2400 px), WebP variants 480/960/1600 plus a JPEG fallback and the analysis raster; database row written after the uploads, never with a network call inside the transaction; replaced files deleted only after the update commits and only when no draft, published or kept version uses them; provenance form; usage list. | `0008_media` (+ seed: one row per `public/images` file with today's provenance) | With the fake: oversize, wrong type and spoofed signature refused; a failed database write deletes the uploaded objects; replace keeps the old file when the update fails; delete refused while referenced; a timeout surfaces as an error; seed equals `image-sources.json`. Production uploads stay switched off with a clear message until storage keys exist. |
 | A7 | **Site settings.** Business, contact, addresses, WhatsApp and SMS per number, social, default SEO, enquiry recipients (OPS-9; `notifyEnquiryTeam` reads the published list, falling back to `ENQUIRY_TEAM_EMAILS`), interface text, 404 and error text, documents (policy URL). Seed generator introduced. | `0009_site_settings` (+ seed) | Generated seed equals the code constants byte for byte; seed twice changes nothing; the seeded numbers and email are exactly the approved three and `+232 80 343 826` appears nowhere; recipients drive `notifyEnquiryTeam` (mocked Resend); invalid email, phone or URL refused; settings pages 403 below ADMIN. |
 | A8 | **Collections I: circuits, destinations, tours** (itinerary, requirements, inclusions, gallery as media, FAQ groups with the shared tour set). List, search, reorder, edit, hide, publish, delete to trash, restore; slug change writes a redirect; delete refused while referenced (curated lists, other records, dormant booking, availability, saved-tour and review rows). Claims inside records are stored as claim fields (section 11). | `0010_collections` (`collection_items`, versions, `content_refs`, `redirects`) + seed | Seed equals `catalog.ts` (deep equality after applying to PGLite, claim fields compared by their text); seed twice no change; a hidden tour leaves published queries; a referenced tour cannot be deleted; slug change creates a redirect; CONTENT_MANAGER edits and publishes but cannot delete; STAFF and BOOKING_MANAGER 403. |
 | A9 | **Collections II:** services, cruise overview, excursions and destinations, vehicles and categories (the availability field is kept but never shown), journal posts and categories, testimonials (source link and date to publish), team profiles (photo kept, consent fields empty), Stay & Dine samples (status locked). | `0011_collections_seed` | Seeds equal their constants; a testimonial without source cannot publish; the render helper never returns a team photo without recorded consent; the sample status cannot change; capability refusals as above. |
@@ -653,17 +653,51 @@ comparison result; what the owner must supply; test counts; CI result; PR number
 
 ---
 
-## 13. Image storage (owner decides; unchanged from the first version)
+## 13. Image storage: Supabase Storage (owner decision, 8 October 2026)
 
 Uploaded images cannot go in `public/` (the deployment is read-only and rebuilt on every
-push). All options are used through the one storage interface, so switching later is a
-configuration change.
+push). The owner chose **Supabase Storage**, which replaces the options listed in the first
+version (Vercel Blob, Cloudflare R2, Neon Object Storage).
 
-| Option | Fit | Cost and limits | Owner setup | Risks |
-|---|---|---|---|---|
-| **Vercel Blob** (recommended) | Native to the host; signed client uploads; CDN | Billed on the Vercel plan (Hobby is non-commercial; check the `softcodes1` plan) | Create a Blob store; the token is injected | One dependency (`@vercel/blob`); ties images to Vercel |
-| Cloudflare R2 | S3-compatible; `storage.ts` already names `R2_*` variables | No egress fees | Account, bucket, token; a custom domain needs a DNS record (owner's DNS) | Request signing written in-house (no dependency) |
-| Neon Object Storage | Same provider as the database; branches with it | Pricing not confirmed | Enable on the project | Public beta; free plan |
+- **Two buckets.** One **private** bucket for incoming uploads (nothing in it is ever
+  served) and one **public** bucket that holds only the published, processed variants.
+- **Signed upload URLs created on the server.** The browser asks the server for an upload
+  slot. The server checks the capability and the declared size and type, then creates a
+  signed upload URL for one object path in the private bucket. The browser uploads straight
+  to that URL, so the photo never passes through a Vercel function and the 4.5 MB request
+  limit does not apply. The server then reads the object back, runs the checks and
+  processing in A6, writes the variants to the public bucket, and deletes the incoming object.
+- **The service key stays on the server.** It is read only in server modules, is never
+  prefixed `VITE_`, and is never sent to the browser. A test fails if any `VITE_SUPABASE_*`
+  name appears or if a client bundle contains the key's variable name.
+- **Plain `fetch` against the Storage REST API**, no SDK: create a signed upload URL, read an
+  object, write an object, delete objects, and build public URLs. Every call has a timeout,
+  and none runs inside a database transaction. The exact request shapes are confirmed in A6
+  against Supabase's Storage API reference before the code is written, and listed in the A6
+  report. No dependency is added unless that check shows one cannot be avoided; if so, it is
+  listed with the reason.
+- **Tests** use the in-memory storage fake. `dev:local` uses the local file driver. Real
+  Supabase is exercised once on a preview deployment, against separate test buckets, after
+  the owner adds the keys.
+- **New environment variables** (empty in `.env.example`, named in the deployment notes):
+  `SUPABASE_URL`, `SUPABASE_SERVICE_KEY` (the project's secret key, server only),
+  `SUPABASE_PUBLIC_BUCKET`, `SUPABASE_INCOMING_BUCKET`.
+
+**Can free-plan pausing take images offline? Yes.** Supabase pauses Free Plan projects that
+show low activity over a 7-day period, judged by user database activity
+([Project Pausing](https://supabase.com/docs/guides/platform/free-project-pausing)). A paused
+project answers every request with status 540 and "cannot process requests until it is
+un-paused by the owner"
+([HTTP status codes](https://supabase.com/docs/guides/troubleshooting/http-status-codes)).
+The Storage page does not mention the 540 code by name, but public image URLs are requests
+to the same project. This site's database is on Neon, so the Supabase project would see
+almost no database activity of its own and is likely to be paused. Uploaded images would
+then fail to load until the owner restores the project. Images already in `public/images`
+are unaffected because Vercel serves them. Paid projects are never paused, and paused
+Free Plan projects can be restored for up to a year (both from the Project Pausing page).
+**Recommendation: put the Supabase project on a paid plan before the first real upload**
+(owner item O5). A keep-alive job that makes artificial database requests would also work,
+but it relies on behaviour Supabase can change, so it is not proposed.
 
 ---
 
@@ -675,7 +709,7 @@ configuration change.
   preview deployment in A6; if it cannot run in the Vercel function, A6 falls back to
   resizing in the browser before upload and the server still checks signature, size and
   dimensions.
-- `@vercel/blob` only if the owner picks Vercel Blob.
+- No storage SDK: Supabase Storage is called with plain `fetch` (section 13).
 - A QR encoder: the Project Nayuki QR Code generator (MIT, one TypeScript file, widely
   reviewed) vendored under `src/lib/vendor/`, so the two-factor secret never leaves the
   server. Listed here because it is third-party code even though it is not an npm package.
@@ -685,8 +719,8 @@ configuration change.
 
 **New environment variables** (added to `.env.example` as empty placeholders and to the
 deployment notes, names only): `LOCAL_SUPER_ADMIN_EMAIL`, `LOCAL_SUPER_ADMIN_PASSWORD` (local
-only, never in Vercel); storage, depending on the choice: `BLOB_READ_WRITE_TOKEN`, or
-`R2_ACCOUNT_ID`, `R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY`, `R2_BUCKET`, `R2_PUBLIC_BASE`.
+only, never in Vercel); storage: `SUPABASE_URL`, `SUPABASE_SERVICE_KEY` (server only),
+`SUPABASE_PUBLIC_BUCKET`, `SUPABASE_INCOMING_BUCKET`.
 Existing variables relied on: `BOOTSTRAP_ADMIN_EMAIL`, `RESEND_API_KEY`, `RESEND_FROM`,
 `BETTER_AUTH_URL`, `BETTER_AUTH_SECRET`, `DATABASE_URL`.
 
@@ -715,8 +749,14 @@ updated in the last task of each milestone (admin, content model, routing, the 1
   `main` so a merge needs the CI check (CI-1).
 - **O4.** Create a Neon development branch (QA-OPS-1) and take a branch or snapshot of
   production before each milestone is merged (6-hour history today, OPS-3).
-- **O5.** Choose image storage (section 13) and add its keys in Vercel. A6 completes without
-  them; production uploads stay off until they exist.
+- **O5.** Storage decided: Supabase Storage (section 13). Owner to do: create the Supabase
+  project on a **paid plan** (a free project pauses after 7 days of low activity and its
+  images stop loading), create the private incoming bucket and the public bucket, and add
+  `SUPABASE_URL`, `SUPABASE_SERVICE_KEY`, `SUPABASE_PUBLIC_BUCKET` and
+  `SUPABASE_INCOMING_BUCKET` in Vercel Production (never paste values in chat). For the one
+  preview check, use a separate pair of test buckets in the Preview scope, because preview
+  builds are permissive (OPS-18). A6 completes without any of this; production uploads stay
+  off until the keys exist.
 
 **Decisions with a default (the default applies unless you say otherwise)**
 
