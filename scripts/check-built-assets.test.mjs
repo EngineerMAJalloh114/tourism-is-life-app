@@ -3,7 +3,7 @@ import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { describe, it } from "node:test";
-import { checkBuiltAssets, findAssetRefs, missingAssets } from "./check-built-assets.mjs";
+import { checkBuiltAssets, findAssetRefs, findServerSecrets, missingAssets } from "./check-built-assets.mjs";
 
 describe("findAssetRefs", () => {
   it("finds distinct stylesheet and script references", () => {
@@ -66,9 +66,39 @@ describe("checkBuiltAssets", () => {
     }
   });
 
+  it("fails when a browser file names the Supabase service key or holds a secret key", () => {
+    for (const leak of ["const k = process.env.SUPABASE_SERVICE_KEY", "apikey:\"sb_secret_abc\""]) {
+      const dir = fixture('const css="/assets/styles-SAME.css"', ["styles-SAME.css"]);
+      try {
+        writeFileSync(join(dir, "static", "assets", "admin-XYZ.js"), leak);
+        const r = checkBuiltAssets(dir);
+        assert.equal(r.ok, false, leak);
+        assert.equal(r.leaks.length, 1);
+      } finally {
+        rmSync(dir, { recursive: true, force: true });
+      }
+    }
+  });
+
+  it("does not flag the server bundle, which may read the key", () => {
+    const dir = fixture('const css="/assets/styles-SAME.css"; process.env.SUPABASE_SERVICE_KEY', ["styles-SAME.css"]);
+    try {
+      assert.equal(checkBuiltAssets(dir).ok, true);
+    } finally {
+      rmSync(dir, { recursive: true, force: true });
+    }
+  });
+
   it("reports a missing build instead of passing", () => {
     const r = checkBuiltAssets(join(tmpdir(), "definitely-not-a-build-dir-xyz"));
     assert.equal(r.ok, false);
     assert.match(r.error, /No build output/);
+  });
+});
+
+describe("findServerSecrets", () => {
+  it("finds the service key name and the secret key shape, nothing else", () => {
+    assert.deepEqual(findServerSecrets("SUPABASE_URL SUPABASE_PUBLIC_BUCKET"), []);
+    assert.deepEqual(findServerSecrets("x SUPABASE_SERVICE_KEY y sb_secret_123"), ["SUPABASE_SERVICE_KEY", "sb_secret_"]);
   });
 });

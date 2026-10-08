@@ -24,7 +24,7 @@
     "preview:stop": "node scripts/preview.mjs stop",
     "typecheck": "tsc --noEmit",
     "check:auth": "node scripts/check-auth-invariant.mjs",
-    "test": "node --test \"scripts/**/*.test.mjs\" && node --import ./scripts/register-alias.mjs --experimental-strip-types --test src/lib/env.server.test.ts src/lib/app-data/app-data.test.ts src/lib/app-data/readiness-schedule.test.ts src/lib/auth/gate-identity.test.ts src/lib/auth/sign-in-gate.test.ts src/lib/server/booking-state.test.ts src/lib/server/cron-auth.test.ts src/lib/server/payments.test.ts src/services/notify.test.ts src/services/payments.test.ts src/services/reservations.test.ts src/services/webhook-settlement.test.ts src/lib/hospitality/search.test.ts src/lib/capabilities.test.ts src/lib/server/team/staff.test.ts src/lib/server/admin/operations.test.ts src/lib/server/admin/structure.test.ts src/lib/server/audit.test.ts src/lib/qr-svg.test.ts src/lib/auth/team-auth.test.ts src/lib/auth/local-seed.test.ts src/lib/auth/team-structure.test.ts src/lib/team-auth-ui.test.ts src/lib/admin-menu.test.ts src/lib/server/team/accounts.test.ts",
+    "test": "node --test \"scripts/**/*.test.mjs\" && node --import ./scripts/register-alias.mjs --experimental-strip-types --test src/lib/env.server.test.ts src/lib/app-data/app-data.test.ts src/lib/app-data/readiness-schedule.test.ts src/lib/auth/gate-identity.test.ts src/lib/auth/sign-in-gate.test.ts src/lib/server/booking-state.test.ts src/lib/server/cron-auth.test.ts src/lib/server/payments.test.ts src/services/notify.test.ts src/services/payments.test.ts src/services/reservations.test.ts src/services/webhook-settlement.test.ts src/lib/hospitality/search.test.ts src/lib/capabilities.test.ts src/lib/server/team/staff.test.ts src/lib/server/admin/operations.test.ts src/lib/server/admin/structure.test.ts src/lib/server/audit.test.ts src/lib/qr-svg.test.ts src/lib/auth/team-auth.test.ts src/lib/auth/local-seed.test.ts src/lib/auth/team-structure.test.ts src/lib/team-auth-ui.test.ts src/lib/admin-menu.test.ts src/lib/server/team/accounts.test.ts src/lib/server/media/image.test.ts src/lib/server/media/storage.test.ts src/lib/server/media/library.test.ts src/lib/server/media/media-seed.test.ts src/lib/server/media/secrets.test.ts",
     "lint": "eslint .",
     "format": "prettier --write ."
   },
@@ -75,6 +75,7 @@
     "react-hook-form": "^7.54.0",
     "react-resizable-panels": "^4.6.5",
     "recharts": "^2.13.0",
+    "sharp": "^0.35.4",
     "sonner": "^2.0.7",
     "tailwind-merge": "^3.5.0",
     "tailwindcss": "^4.3.0",
@@ -100,7 +101,6 @@
     "nitro": "3.0.260610-beta",
     "playwright": "^1.62.0",
     "prettier": "^3.4.0",
-    "sharp": "^0.35.4",
     "typescript": "^5.7.0",
     "typescript-eslint": "^8.56.1",
     "vite": "^8.2.0"

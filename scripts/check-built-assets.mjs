@@ -10,6 +10,10 @@
  * failure: the server and client builds hashed the stylesheet differently, so
  * every page linked a CSS file that returned 404 and rendered unstyled.
  *
+ * It also fails if any file the browser can download (static/) names a
+ * server-only secret: the Supabase service key variable, or a value shaped
+ * like a Supabase secret key (task A6, docs/CUSTOMIZATION_PLAN.md section 13).
+ *
  * Usage: node scripts/check-built-assets.mjs [outputDir]   (default .vercel/output)
  */
 import { existsSync, readdirSync, readFileSync, statSync } from "node:fs";
@@ -25,6 +29,14 @@ const TEXT_FILE = /\.(?:m?js|cjs|json|html)$/;
 /** Every distinct /assets/*.css|js reference found in the given text. */
 export function findAssetRefs(text) {
   return [...new Set(text.match(ASSET_REF) ?? [])].sort();
+}
+
+/** Names and value shapes that must never appear in a file served to browsers. */
+export const SERVER_ONLY_MARKERS = ["SUPABASE_SERVICE_KEY", "sb_secret_"];
+
+/** The server-only markers found in client text. Pure, for tests. */
+export function findServerSecrets(text) {
+  return SERVER_ONLY_MARKERS.filter((m) => text.includes(m));
 }
 
 /** References whose file is not in the emitted set. Pure, for tests. */
@@ -60,7 +72,19 @@ export function checkBuiltAssets(outputDir) {
   const all = [...refs].sort();
   const missing = missingAssets(all, emitted);
   const cssRefs = all.filter((r) => r.endsWith(".css"));
-  return { ok: missing.length === 0 && cssRefs.length > 0, refs: all, cssRefs, missing, where, emittedCount: emitted.length };
+  const leaks = [];
+  for (const file of walk(join(outputDir, "static"))) {
+    for (const marker of findServerSecrets(readFileSync(file, "utf8"))) leaks.push({ marker, file: relative(outputDir, file) });
+  }
+  return {
+    ok: missing.length === 0 && cssRefs.length > 0 && leaks.length === 0,
+    refs: all,
+    cssRefs,
+    missing,
+    leaks,
+    where,
+    emittedCount: emitted.length,
+  };
 }
 
 if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) {
@@ -79,5 +103,10 @@ if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) {
     for (const m of r.missing) console.error(`  ${m}  (referenced in ${r.where.get(m)})`);
     process.exit(1);
   }
-  console.log(`[check-built-assets] OK: ${r.refs.length} referenced assets (${r.cssRefs.length} stylesheets) all exist among ${r.emittedCount} emitted files.`);
+  if (r.leaks.length > 0) {
+    console.error(`[check-built-assets] ${r.leaks.length} browser file(s) name a server-only secret:`);
+    for (const l of r.leaks) console.error(`  ${l.marker} in ${l.file}`);
+    process.exit(1);
+  }
+  console.log(`[check-built-assets] OK: no server-only secret in browser files; ${r.refs.length} referenced assets (${r.cssRefs.length} stylesheets) all exist among ${r.emittedCount} emitted files.`);
 }

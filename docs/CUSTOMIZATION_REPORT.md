@@ -17,7 +17,7 @@ tests 324 (322 pass, 2 skipped on Windows, 0 fail), `build:dev` OK, `check:asset
 | A3 Team sign-in, two-factor, password reset | GREEN | 415 / 2 / 0 | `0007_team_sign_in` |
 | A4 Admin shell | GREEN | 418 / 2 / 0 | none |
 | A5 Team accounts | GREEN | 442 / 2 / 0 | none (0005 holds the columns) |
-| A6 Media library and uploads | PENDING | | |
+| A6 Media library and uploads | GREEN | 500 / 2 / 0 | `0008_media` (+ seed, 86 rows) |
 | A7 Site settings | PENDING | | |
 | A8 Collections I | PENDING | | |
 | A9 Collections II | PENDING | | |
@@ -160,3 +160,49 @@ tests 324 (322 pass, 2 skipped on Windows, 0 fail), `build:dev` OK, `check:asset
   on the next request; a two-factor reset sent the member to `/team/enrol` at the next
   sign-in; a role change changed the member's menu at once; remove signed the member out.
   Team page has no horizontal overflow at 390 px.
+
+### A6 notes
+
+- **Supabase Storage over plain `fetch`, no SDK, no new dependency.** Request shapes confirmed
+  on 8 October 2026 against Supabase's own client source (`storage-js` `StorageFileApi.ts`
+  and `lib/common/fetch.ts`) and the API keys guide, and pinned by a test with a recording
+  `fetch`: signed upload URL `POST /storage/v1/object/upload/sign/{bucket}/{key}` (answer
+  `{url}` with `?token=`); browser upload `PUT` to that URL with `x-upsert: false`; upload
+  `POST /storage/v1/object/{bucket}/{key}`; download and range `GET` the same path; `HEAD`;
+  delete `DELETE /storage/v1/object/{bucket}` with `{"prefixes": [...]}`; public URL
+  `/storage/v1/object/public/{bucket}/{key}`. A new secret key goes only in `apikey` (it is
+  not a JWT); a legacy `service_role` JWT also goes in `Authorization`. 540 (paused) is
+  reported as such. Every call has a 15 s timeout; none runs inside a transaction.
+- **One upload path:** the server checks size and type and creates a signed slot for one
+  object in the private bucket; the browser sends the file there; the server checks size and
+  signature on the first 16 bytes before downloading, decodes with `sharp` (pixel limit,
+  still frames only), fixes orientation, drops all metadata including GPS, caps the long side
+  at 2400 px, writes WebP 480/960/1600, a JPEG at 1600 and a raw RGB raster (320 px wide,
+  private bucket), and only then writes the row and audit entry. A failed row deletes the
+  objects; the upload is always deleted. Tickets are signed, tied to the account, 30 minutes.
+- **Replace and delete:** a replace writes the new objects, switches in one transaction, and
+  deletes the old objects after the commit unless a kept version pins them (`media_usage.
+  file_id`); a failed replace keeps the old file. Delete is refused while the photo is used
+  anywhere, and for the 86 photos that ship with the site.
+- **Provenance:** alt text, source, verified licence and confirmed place are required to
+  publish (also a database CHECK); only a published photo may be placed (from B). The seed
+  copies each `image-sources.json` record verbatim: 86 files, 43 complete and published,
+  43 incomplete (36 with `license_verification_required`, the "unconfirmed" places, and two
+  files with no record: `heritage/bunce-tasso-national-parks.jpg`, `misc/og-image.jpg`). The
+  record `heritage/bunce-island-cannon.jpg` has no file and is not seeded.
+- **`sharp` moved to `dependencies`** (lockfile: only its `dev` flags changed). It is loaded
+  with a dynamic `import()` only when a photo is processed (checked in the server bundle), so
+  a public page never loads it. It is traced into the Vercel function; whether it runs there
+  is checked on the first preview with storage keys (owner item).
+- **Drivers:** in-memory fake (tests), local files in `.local-media/` (gitignored) only under
+  `npm run dev:local` on PGLite and never on Vercel, Supabase when all four `SUPABASE_*`
+  variables exist; otherwise uploads are off with a message naming what is missing. Env names
+  in `.env.example` and `docs/DEPLOYMENT_NOTES.md`. A test fails on any `VITE_SUPABASE_*`
+  name, and `check:assets` fails if a browser file names `SUPABASE_SERVICE_KEY` or holds
+  an `sb_secret_` value.
+- **Checked in Edge** through the local driver: a PNG named `.jpg` refused; a real upload
+  made four copies with no EXIF; publish refused until provenance was complete; replace
+  swapped all four files; delete removed them; the audit log holds every step; 390 px has no
+  overflow. Real Supabase was not exercised: no keys exist yet (owner item O5).
+- **Pausing:** yes, free-plan pausing takes uploaded photos offline (sources in the plan,
+  section 13, and `docs/DEPLOYMENT_NOTES.md`). Recommendation: a paid plan before real uploads.

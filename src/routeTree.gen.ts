@@ -40,6 +40,7 @@ import { Route as AccountVouchersRouteImport } from './routes/account/vouchers'
 import { Route as AdminIndexRouteImport } from './routes/admin/index'
 import { Route as AdminAuditRouteImport } from './routes/admin/audit'
 import { Route as AdminEnquiriesRouteImport } from './routes/admin/enquiries'
+import { Route as AdminMediaRouteImport } from './routes/admin/media'
 import { Route as AdminSignInsRouteImport } from './routes/admin/sign-ins'
 import { Route as AdminUsersRouteImport } from './routes/admin/users'
 import { Route as BookingSlugRouteImport } from './routes/booking/$slug'
@@ -101,6 +102,7 @@ import { Route as HospitalityStaysSlugRouteImport } from './routes/hospitality/s
 import { Route as JournalCategorySlugRouteImport } from './routes/journal/$category/$slug'
 import { Route as JournalCategoryCategoryRouteImport } from './routes/journal/category/$category'
 import { Route as ServicesVehicleRentalIndexRouteImport } from './routes/services/vehicle-rental/index'
+import { Route as ApiMediaLocalSplatRouteImport } from './routes/api/media/local/$'
 import { Route as ServicesVehicleRentalBookVehicleIdRouteImport } from './routes/services/vehicle-rental/book/$vehicleId'
 import { Route as ServicesVehicleRentalVehiclesVehicleIdRouteImport } from './routes/services/vehicle-rental/vehicles/$vehicleId'
 import { Route as ServicesVehicleRentalBookVehicleIdConfirmationRouteImport } from './routes/services/vehicle-rental/book/$vehicleId/confirmation'
@@ -258,6 +260,11 @@ const AdminAuditRoute = AdminAuditRouteImport.update({
 const AdminEnquiriesRoute = AdminEnquiriesRouteImport.update({
   id: '/enquiries',
   path: '/enquiries',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminMediaRoute = AdminMediaRouteImport.update({
+  id: '/media',
+  path: '/media',
   getParentRoute: () => AdminRoute,
 } as any)
 const AdminSignInsRoute = AdminSignInsRouteImport.update({
@@ -567,6 +574,11 @@ const ServicesVehicleRentalIndexRoute =
     path: '/services/vehicle-rental/',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ApiMediaLocalSplatRoute = ApiMediaLocalSplatRouteImport.update({
+  id: '/api/media/local/$',
+  path: '/api/media/local/$',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ServicesVehicleRentalBookVehicleIdRoute =
   ServicesVehicleRentalBookVehicleIdRouteImport.update({
     id: '/services/vehicle-rental/book/$vehicleId',
@@ -615,6 +627,7 @@ export interface FileRoutesByFullPath {
   '/account/vouchers': typeof AccountVouchersRoute
   '/admin/audit': typeof AdminAuditRoute
   '/admin/enquiries': typeof AdminEnquiriesRoute
+  '/admin/media': typeof AdminMediaRoute
   '/admin/sign-ins': typeof AdminSignInsRoute
   '/admin/users': typeof AdminUsersRoute
   '/booking/$slug': typeof BookingSlugRouteWithChildren
@@ -679,6 +692,7 @@ export interface FileRoutesByFullPath {
   '/checkout/$ref/': typeof CheckoutRefIndexRoute
   '/destinations/$circuit/': typeof DestinationsCircuitIndexRoute
   '/services/vehicle-rental/': typeof ServicesVehicleRentalIndexRoute
+  '/api/media/local/$': typeof ApiMediaLocalSplatRoute
   '/services/vehicle-rental/book/$vehicleId': typeof ServicesVehicleRentalBookVehicleIdRouteWithChildren
   '/services/vehicle-rental/vehicles/$vehicleId': typeof ServicesVehicleRentalVehiclesVehicleIdRoute
   '/services/vehicle-rental/book/$vehicleId/confirmation': typeof ServicesVehicleRentalBookVehicleIdConfirmationRoute
@@ -708,6 +722,7 @@ export interface FileRoutesByTo {
   '/account/vouchers': typeof AccountVouchersRoute
   '/admin/audit': typeof AdminAuditRoute
   '/admin/enquiries': typeof AdminEnquiriesRoute
+  '/admin/media': typeof AdminMediaRoute
   '/admin/sign-ins': typeof AdminSignInsRoute
   '/admin/users': typeof AdminUsersRoute
   '/contact/emergency': typeof ContactEmergencyRoute
@@ -769,6 +784,7 @@ export interface FileRoutesByTo {
   '/checkout/$ref': typeof CheckoutRefIndexRoute
   '/destinations/$circuit': typeof DestinationsCircuitIndexRoute
   '/services/vehicle-rental': typeof ServicesVehicleRentalIndexRoute
+  '/api/media/local/$': typeof ApiMediaLocalSplatRoute
   '/services/vehicle-rental/book/$vehicleId': typeof ServicesVehicleRentalBookVehicleIdRouteWithChildren
   '/services/vehicle-rental/vehicles/$vehicleId': typeof ServicesVehicleRentalVehiclesVehicleIdRoute
   '/services/vehicle-rental/book/$vehicleId/confirmation': typeof ServicesVehicleRentalBookVehicleIdConfirmationRoute
@@ -803,6 +819,7 @@ export interface FileRoutesById {
   '/account/vouchers': typeof AccountVouchersRoute
   '/admin/audit': typeof AdminAuditRoute
   '/admin/enquiries': typeof AdminEnquiriesRoute
+  '/admin/media': typeof AdminMediaRoute
   '/admin/sign-ins': typeof AdminSignInsRoute
   '/admin/users': typeof AdminUsersRoute
   '/booking/$slug': typeof BookingSlugRouteWithChildren
@@ -867,6 +884,7 @@ export interface FileRoutesById {
   '/checkout/$ref/': typeof CheckoutRefIndexRoute
   '/destinations/$circuit/': typeof DestinationsCircuitIndexRoute
   '/services/vehicle-rental/': typeof ServicesVehicleRentalIndexRoute
+  '/api/media/local/$': typeof ApiMediaLocalSplatRoute
   '/services/vehicle-rental/book/$vehicleId': typeof ServicesVehicleRentalBookVehicleIdRouteWithChildren
   '/services/vehicle-rental/vehicles/$vehicleId': typeof ServicesVehicleRentalVehiclesVehicleIdRoute
   '/services/vehicle-rental/book/$vehicleId/confirmation': typeof ServicesVehicleRentalBookVehicleIdConfirmationRoute
@@ -902,6 +920,7 @@ export interface FileRouteTypes {
     | '/account/vouchers'
     | '/admin/audit'
     | '/admin/enquiries'
+    | '/admin/media'
     | '/admin/sign-ins'
     | '/admin/users'
     | '/booking/$slug'
@@ -966,6 +985,7 @@ export interface FileRouteTypes {
     | '/checkout/$ref/'
     | '/destinations/$circuit/'
     | '/services/vehicle-rental/'
+    | '/api/media/local/$'
     | '/services/vehicle-rental/book/$vehicleId'
     | '/services/vehicle-rental/vehicles/$vehicleId'
     | '/services/vehicle-rental/book/$vehicleId/confirmation'
@@ -995,6 +1015,7 @@ export interface FileRouteTypes {
     | '/account/vouchers'
     | '/admin/audit'
     | '/admin/enquiries'
+    | '/admin/media'
     | '/admin/sign-ins'
     | '/admin/users'
     | '/contact/emergency'
@@ -1056,6 +1077,7 @@ export interface FileRouteTypes {
     | '/checkout/$ref'
     | '/destinations/$circuit'
     | '/services/vehicle-rental'
+    | '/api/media/local/$'
     | '/services/vehicle-rental/book/$vehicleId'
     | '/services/vehicle-rental/vehicles/$vehicleId'
     | '/services/vehicle-rental/book/$vehicleId/confirmation'
@@ -1089,6 +1111,7 @@ export interface FileRouteTypes {
     | '/account/vouchers'
     | '/admin/audit'
     | '/admin/enquiries'
+    | '/admin/media'
     | '/admin/sign-ins'
     | '/admin/users'
     | '/booking/$slug'
@@ -1153,6 +1176,7 @@ export interface FileRouteTypes {
     | '/checkout/$ref/'
     | '/destinations/$circuit/'
     | '/services/vehicle-rental/'
+    | '/api/media/local/$'
     | '/services/vehicle-rental/book/$vehicleId'
     | '/services/vehicle-rental/vehicles/$vehicleId'
     | '/services/vehicle-rental/book/$vehicleId/confirmation'
@@ -1218,6 +1242,7 @@ export interface RootRouteChildren {
   JournalCategorySlugRoute: typeof JournalCategorySlugRoute
   JournalCategoryCategoryRoute: typeof JournalCategoryCategoryRoute
   ServicesVehicleRentalIndexRoute: typeof ServicesVehicleRentalIndexRoute
+  ApiMediaLocalSplatRoute: typeof ApiMediaLocalSplatRoute
   ServicesVehicleRentalBookVehicleIdRoute: typeof ServicesVehicleRentalBookVehicleIdRouteWithChildren
   ServicesVehicleRentalVehiclesVehicleIdRoute: typeof ServicesVehicleRentalVehiclesVehicleIdRoute
 }
@@ -1439,6 +1464,13 @@ declare module '@tanstack/react-router' {
       path: '/enquiries'
       fullPath: '/admin/enquiries'
       preLoaderRoute: typeof AdminEnquiriesRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/media': {
+      id: '/admin/media'
+      path: '/media'
+      fullPath: '/admin/media'
+      preLoaderRoute: typeof AdminMediaRouteImport
       parentRoute: typeof AdminRoute
     }
     '/admin/sign-ins': {
@@ -1868,6 +1900,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ServicesVehicleRentalIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/media/local/$': {
+      id: '/api/media/local/$'
+      path: '/api/media/local/$'
+      fullPath: '/api/media/local/$'
+      preLoaderRoute: typeof ApiMediaLocalSplatRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/services/vehicle-rental/book/$vehicleId': {
       id: '/services/vehicle-rental/book/$vehicleId'
       path: '/services/vehicle-rental/book/$vehicleId'
@@ -1934,6 +1973,7 @@ const AccountRouteWithChildren =
 interface AdminRouteChildren {
   AdminAuditRoute: typeof AdminAuditRoute
   AdminEnquiriesRoute: typeof AdminEnquiriesRoute
+  AdminMediaRoute: typeof AdminMediaRoute
   AdminSignInsRoute: typeof AdminSignInsRoute
   AdminUsersRoute: typeof AdminUsersRoute
   AdminIndexRoute: typeof AdminIndexRoute
@@ -1942,6 +1982,7 @@ interface AdminRouteChildren {
 const AdminRouteChildren: AdminRouteChildren = {
   AdminAuditRoute: AdminAuditRoute,
   AdminEnquiriesRoute: AdminEnquiriesRoute,
+  AdminMediaRoute: AdminMediaRoute,
   AdminSignInsRoute: AdminSignInsRoute,
   AdminUsersRoute: AdminUsersRoute,
   AdminIndexRoute: AdminIndexRoute,
@@ -2098,6 +2139,7 @@ const rootRouteChildren: RootRouteChildren = {
   JournalCategorySlugRoute: JournalCategorySlugRoute,
   JournalCategoryCategoryRoute: JournalCategoryCategoryRoute,
   ServicesVehicleRentalIndexRoute: ServicesVehicleRentalIndexRoute,
+  ApiMediaLocalSplatRoute: ApiMediaLocalSplatRoute,
   ServicesVehicleRentalBookVehicleIdRoute:
     ServicesVehicleRentalBookVehicleIdRouteWithChildren,
   ServicesVehicleRentalVehiclesVehicleIdRoute:
