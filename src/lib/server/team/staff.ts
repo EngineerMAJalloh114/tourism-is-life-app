@@ -15,7 +15,7 @@
 import { STAFF_ROLES, isStaffRole, type StaffRole } from "@/lib/capabilities";
 import { inTransaction, type Sql, type TxSql } from "@/lib/sql";
 import { adminOperation, type StaffStatus } from "@/lib/server/access";
-import { writeAudit } from "@/lib/server/audit";
+import { audit } from "@/lib/server/audit";
 import { ConflictError, InvalidRequestError, NotFoundError } from "@/lib/server/errors";
 
 /** The advisory lock key every account change takes first. */
@@ -122,7 +122,14 @@ export const changeRole = adminOperation(
         on conflict (user_id) do update
           set role = ${input.role}, updated_at = now(), updated_by = ${actor.userId}
       `;
-      await writeAudit(tx, actor.userId, "staff.role", "staff_profiles", input.userId, input.role);
+      await audit(tx, {
+        actor,
+        action: "staff.role",
+        entity: "staff_profiles",
+        entityId: input.userId,
+        before: current ? { role: current.role, status: current.status } : null,
+        after: { role: input.role, status: current?.status ?? "active" },
+      });
       return { userId: input.userId, role: input.role, previousRole: current?.role ?? null };
     });
   },
@@ -158,7 +165,14 @@ export const setStaffStatus = adminOperation(
         where user_id = ${input.userId}
       `;
       if (leaving) await tx`delete from "session" where "userId" = ${input.userId}`;
-      await writeAudit(tx, actor.userId, `staff.${input.status}`, "staff_profiles", input.userId, current.status);
+      await audit(tx, {
+        actor,
+        action: `staff.${input.status}`,
+        entity: "staff_profiles",
+        entityId: input.userId,
+        before: { role: current.role, status: current.status },
+        after: { role: current.role, status: input.status, sessionsEnded: leaving },
+      });
       return { userId: input.userId, status: input.status, previousStatus: current.status };
     });
   },

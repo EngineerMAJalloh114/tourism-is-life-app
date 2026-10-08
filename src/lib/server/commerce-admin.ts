@@ -5,7 +5,7 @@
  */
 import { inTransaction } from "@/lib/sql";
 import { adminOperation } from "@/lib/server/access";
-import { writeAudit } from "@/lib/server/audit";
+import { audit } from "@/lib/server/audit";
 import { BOOKING_SELECT, expireHolds, type BookingRow } from "@/lib/server/booking-engine";
 import { NotFoundError } from "@/lib/server/errors";
 
@@ -39,11 +39,19 @@ export const moderateReview = adminOperation(
   "enquiries.manage",
   async (sql, actor, input: { id: string; status: "approved" | "rejected" }) => {
     return inTransaction(sql, async (tx) => {
-      const updated = await tx<{ id: string }>`
-        update reviews set status = ${input.status} where id = ${input.id} returning id
+      const current = await tx<{ status: string }>`
+        select status from reviews where id = ${input.id} for update
       `;
-      if (!updated[0]) throw new NotFoundError("That review does not exist.");
-      await writeAudit(tx, actor.userId, "review.moderate", "review", input.id, input.status);
+      if (!current[0]) throw new NotFoundError("That review does not exist.");
+      await tx`update reviews set status = ${input.status} where id = ${input.id}`;
+      await audit(tx, {
+        actor,
+        action: "review.moderate",
+        entity: "reviews",
+        entityId: input.id,
+        before: { status: current[0].status },
+        after: { status: input.status },
+      });
       return { ok: true as const };
     });
   },

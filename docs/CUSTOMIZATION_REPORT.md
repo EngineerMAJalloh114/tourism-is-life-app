@@ -13,7 +13,7 @@ tests 324 (322 pass, 2 skipped on Windows, 0 fail), `build:dev` OK, `check:asset
 | Task | Status | Tests (total / skipped / failed) | Migration |
 |---|---|---|---|
 | A1 Capabilities and SEC-6 | GREEN | 373 / 2 / 0 | `0005_capabilities` |
-| A2 Append-only audit log | PENDING | | |
+| A2 Append-only audit log | GREEN | 383 / 2 / 0 | `0006_audit_append_only` |
 | A3 Team sign-in, two-factor, password reset | PENDING | | |
 | A4 Admin shell | PENDING | | |
 | A5 Team accounts | PENDING | | |
@@ -50,3 +50,22 @@ tests 324 (322 pass, 2 skipped on Windows, 0 fail), `build:dev` OK, `check:asset
 - **`check:migrations`** (new, also in `npm test` and CI): fresh PGLite, upgrade from main's
   schema with fixture rows, and every file run twice with no table change.
 - **Tooling.** `.claude/launch.json` gains a `dev-local` entry (`npm run dev:local`).
+
+### A2 notes
+
+- `audit(tx, entry)` takes a `TxSql`, which only `inTransaction()` produces, so every audit
+  row commits or rolls back with its change (tested: a transaction that fails after
+  writing its audit row leaves none). Every admin write now records actor, role, request
+  IP, and the value before and after: role changes, status changes, enquiry status, review
+  moderation and the SUPER_ADMIN claim.
+- `0006` adds `before`, `after`, `actor_role`, `ip` and two indexes, plus triggers that
+  refuse `UPDATE`, `DELETE` and `TRUNCATE` (tested on PGLite). Uses `create or replace
+  trigger` (Postgres 14+), so re-running it changes nothing.
+- The audit page is read-only for `audit.view`: filter by area and action, cursor
+  pagination on the full-precision timestamp, before/after per entry.
+- **Bug found and fixed while verifying in the browser:** a repeat SUPER_ADMIN claim by the
+  account that already owned it was accepted again and wrote a second audit row (behaviour
+  carried over from the original code). The claim is now `claimBootstrap()`: a repeat is a
+  no-op, anyone else gets 409, and a test pins it.
+- The dormant booking engine keeps the old `writeAudit()` (marked deprecated); it is not
+  admin code and is not changed by this work.

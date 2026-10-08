@@ -4,7 +4,7 @@
  */
 import { inTransaction } from "@/lib/sql";
 import { adminOperation } from "@/lib/server/access";
-import { writeAudit } from "@/lib/server/audit";
+import { audit } from "@/lib/server/audit";
 import { NotFoundError } from "@/lib/server/errors";
 
 export type EnquiryRow = {
@@ -30,11 +30,19 @@ export const setEnquiryStatus = adminOperation(
   "enquiries.manage",
   async (sql, actor, input: { id: string; status: "open" | "closed" }) => {
     return inTransaction(sql, async (tx) => {
-      const updated = await tx<{ id: string }>`
-        update enquiries set status = ${input.status} where id = ${input.id} returning id
+      const current = await tx<{ status: string }>`
+        select status from enquiries where id = ${input.id} for update
       `;
-      if (!updated[0]) throw new NotFoundError("That enquiry does not exist.");
-      await writeAudit(tx, actor.userId, "enquiry.status", "enquiry", input.id, input.status);
+      if (!current[0]) throw new NotFoundError("That enquiry does not exist.");
+      await tx`update enquiries set status = ${input.status} where id = ${input.id}`;
+      await audit(tx, {
+        actor,
+        action: "enquiry.status",
+        entity: "enquiries",
+        entityId: input.id,
+        before: { status: current[0].status },
+        after: { status: input.status },
+      });
       return { ok: true as const };
     });
   },

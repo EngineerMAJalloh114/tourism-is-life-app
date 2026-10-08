@@ -21,6 +21,8 @@ export type Actor = {
   userId: string;
   email: string | null;
   role: StaffRole;
+  /** The request's client IP (first `x-forwarded-for` entry on Vercel), for the audit log. */
+  ip?: string | null;
 };
 
 /** Throws 401 when there is no actor and 403 when the actor lacks `capability`. */

@@ -33,7 +33,16 @@ export async function resolveActor(bearerToken?: string): Promise<Actor> {
     await sql`delete from "session" where "userId" = ${user.id}`;
     throw new AuthRequiredError("This team account is not active.");
   }
-  return { userId: user.id, email: user.email, role: profile.role };
+  return { userId: user.id, email: user.email, role: profile.role, ip: requestIp() };
+}
+
+/** The client IP as Vercel's edge reports it (first `x-forwarded-for` entry), or null. */
+export function requestIp(): string | null {
+  const request = getRequest();
+  const forwarded = request?.headers.get("x-forwarded-for")?.split(",")[0]?.trim();
+  const real = request?.headers.get("x-real-ip")?.trim();
+  const ip = forwarded || real || null;
+  return ip ? ip.slice(0, 64) : null;
 }
 
 /** The verified session user (cookie cache bypassed), or null when signed out. */
