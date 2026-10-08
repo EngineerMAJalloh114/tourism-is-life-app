@@ -675,8 +675,8 @@ Existing variables relied on: `BOOTSTRAP_ADMIN_EMAIL`, `RESEND_API_KEY`, `RESEND
 
 **Tests:** every new `*.test.ts` is added to the explicit list in the `package.json` `test`
 script (CLAUDE.md: unlisted files never run). New scripts: `check:migrations`,
-`content:seed` (generator), `screenshots` (compare). CI gains `check:migrations`. CI still
-cannot run until GitHub billing is fixed (owner item O3).
+`content:seed` (generator), `screenshots` (compare). CI gains `check:migrations`. CI runs
+again: it passed on `main` at `55eb69a` and on this PR.
 
 **Docs:** `docs/CUSTOMIZATION_REPORT.md` (progress), `docs/OWNER_GUIDE.md` (B10), CLAUDE.md
 updated in the last task of each milestone (admin, content model, routing, the 18 pairs).
@@ -689,7 +689,8 @@ updated in the last task of each milestone (admin, content model, routing, the 1
 - **O1.** Approve this plan, or mark what to change.
 - **O2.** Confirm `BOOTSTRAP_ADMIN_EMAIL` is set in Vercel Production and whether SUPER_ADMIN is
   already claimed. If not, claim it after A3 ships through `/team/setup` (email-verified).
-- **O3.** Fix GitHub billing so CI runs ("recent account payments have failed").
+- **O3.** Done: GitHub billing is fixed and CI passed on `main` at `55eb69a`. Next, protect
+  `main` so a merge needs the CI check (CI-1).
 - **O4.** Create a Neon development branch (QA-OPS-1) and take a branch or snapshot of
   production before each milestone is merged (6-hour history today, OPS-3).
 - **O5.** Choose image storage (section 13) and add its keys in Vercel. A6 completes without
