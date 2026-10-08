@@ -57,6 +57,14 @@ export class ConflictError extends HttpError {
   }
 }
 
+/** 429: too many attempts in the current window. */
+export class TooManyRequestsError extends HttpError {
+  constructor(message = "Too many attempts. Wait 15 minutes, then try again.") {
+    super(429, "TOO_MANY_REQUESTS", message);
+    this.name = "TooManyRequestsError";
+  }
+}
+
 export function isHttpError(err: unknown): err is HttpError {
   return err instanceof HttpError;
 }

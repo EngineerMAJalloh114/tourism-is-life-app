@@ -36,11 +36,14 @@ import { getCookie } from "@tanstack/react-start/server";
 import { randomBytes } from "node:crypto";
 import { Pool } from "pg";
 import { isWorkspacePreview, vercelEnv } from "../env.server";
-import { ensureDbReady, getPglite } from "../db";
+import { dbSource, ensureDbReady, getPglite, getSql } from "../db";
 import { log } from "../server/logger";
+import { bootstrapEmailAllowed } from "../server/config";
+import { sendEmail } from "../../services/notify";
 import { emailAndPasswordEnabled } from "./email-password";
-import { GATE_PROVIDER_ID, gateIdentitySessions } from "./gate-session.server";
+import { localSeedDecision, seedLocalSuperAdmin } from "./local-seed";
 import { GROK_PROVIDERS } from "./providers";
+import { teamAuthOptions } from "./team-auth";
 import { pgliteDialect } from "./pglite-dialect";
 import {
   GROK_ISSUER_DEFAULT,
@@ -229,11 +232,30 @@ function resolveAuthSecret(): string {
   return previewAuthSecret();
 }
 
+const authSecret = resolveAuthSecret();
+
+/**
+ * Team sign-in rules (task A3): sign-up closed, team accounts only, TOTP
+ * two-factor with hashed recovery codes, Postgres rate limits, every attempt
+ * logged, 12-hour sessions, working password reset through Resend. See
+ * `./team-auth.ts` and docs/CUSTOMIZATION_PLAN.md section 9.
+ */
+const team = teamAuthOptions({
+  getSql,
+  sendEmail: (m) => sendEmail(m),
+  secret: authSecret,
+  bootstrapEmailAllowed,
+  // Only on in-memory PGLite (local dev, preview builds with no database): there
+  // is no real mailbox to protect, and without Resend the link would be lost.
+  onUndeliveredLink:
+    dbSource === "pglite" ? (email, url) => log.info("team.link.not_emailed", { email, url }) : undefined,
+});
+
 export const auth = betterAuth({
   baseURL,
   // Deployed apps inject BETTER_AUTH_SECRET. Preview: process-stable secret on
   // globalThis so HMR doesn't invalidate PGLite-backed sessions (see above).
-  secret: resolveAuthSecret(),
+  secret: authSecret,
   database,
 
   // CSRF / origin check for credentialed auth POSTs (email sign-up/sign-in, …).
@@ -251,24 +273,26 @@ export const auth = betterAuth({
     encryptOAuthTokens: true,
     accountLinking: {
       enabled: true,
-      trustedProviders: [
-        ...GROK_PROVIDERS.map((p) => p.providerId),
-        GATE_PROVIDER_ID,
-      ],
+      trustedProviders: GROK_PROVIDERS.map((p) => p.providerId),
       // X's synthetic email is never "verified", so don't gate linking on the
       // local user's email-verified state.
       requireLocalEmailVerified: false,
     },
   },
 
-  // Cache the session in the short-lived signed `session_data` cookie so reads
-  // (incl. the client's `/get-session`) skip the DB — this shrinks the "loading"
-  // window and reduces auth flicker. See the `auth` skill for the full
-  // flicker-prevention guidance (gate on `isPending`; SSR the session).
-  session: { cookieCache: { enabled: true, maxAge: 300 } },
+  // 12-hour sessions, never extended. The signed `session_data` cookie cache
+  // still serves the public site; every admin check bypasses it
+  // (`src/lib/server/actor.server.ts`), so a revoked session stops at once there.
+  session: team.session,
 
-  // Local email/password — toggled only via `./email-password` (not a plugin).
-  ...(emailAndPasswordEnabled ? { emailAndPassword: { enabled: true } } : {}),
+  // Team email/password: sign-up closed, reset through Resend (`./team-auth.ts`).
+  ...(emailAndPasswordEnabled ? { emailAndPassword: team.emailAndPassword } : {}),
+
+  // Only active team accounts may hold a session (and the owner before the claim).
+  databaseHooks: team.databaseHooks,
+
+  // Rate limits, attempt log, one message for failed sign-ins, recovery-code hashing.
+  hooks: team.hooks,
 
   // `__Host-` prefixed cookies: the browser REFUSES any same-named cookie that
   // carries a `Domain` attribute, so a sibling `*.grok.me` app cannot "toss" a
@@ -289,19 +313,20 @@ export const auth = betterAuth({
   },
 
   plugins: [
-    gateIdentitySessions(),
+    // TOTP two-factor for every team account.
+    team.twoFactorPlugin,
 
     // One genericOAuth provider per upstream (when auth is on), all federating
     // to the broker with the SAME client and differing only by the `idp` hint.
+    // Registered only in the Grok workspace preview (see `grokOAuthActive`).
     ...(grokOAuthPlugin ? [grokOAuthPlugin] : []),
 
-    // Accept `Authorization: Bearer <session-token>` as an alternative to the
-    // cookie. Needed for the LIVE PREVIEW: the app runs in an embedded iframe
-    // where cookies are partitioned, so after popup sign-in it authenticates with
-    // a bearer token instead (see `client.ts` / the `auth` skill). The hook only
-    // fires when an Authorization header is present, so the cookie path
-    // (deployed apps) is unaffected.
-    bearer(),
+    // `Authorization: Bearer <session-token>` instead of the cookie, needed only
+    // inside the Grok workspace preview iframe (partitioned cookies). Not
+    // registered on a real deployment. The always-on Grok gate session plugin
+    // that used to sit here was removed in task A3: nothing the business uses
+    // depends on it, and it trusted tokens from two fixed Grok issuers.
+    ...(isWorkspacePreview() ? [bearer()] : []),
 
     // Bridges Better Auth's Set-Cookie into TanStack Start responses. MUST be
     // last so it runs after every other plugin's hooks.
@@ -316,3 +341,24 @@ export function readSessionToken(): string | null {
 // Re-exported for convenience; the array lives in the dependency-free
 // `providers.ts` so the client can import it too.
 export { GROK_PROVIDERS } from "./providers";
+
+// Local-only test SUPER_ADMIN (`npm run dev:local`, in-memory PGLite). Every
+// guard is in `localSeedDecision`; on a real database this only logs why it
+// did nothing.
+if (dbSource === "pglite") {
+  const decision = localSeedDecision(process.env, dbSource);
+  if (decision.seed) {
+    void (async () => {
+      try {
+        await ensureDbReady();
+        const ctx = await auth.$context;
+        await seedLocalSuperAdmin(ctx, await getSql(), decision.email, decision.password);
+        log.info("team.local_seed", { email: decision.email });
+      } catch (err) {
+        log.error("team.local_seed_failed", { message: err instanceof Error ? err.message : String(err) });
+      }
+    })();
+  } else if (process.env.LOCAL_SUPER_ADMIN_EMAIL) {
+    log.info("team.local_seed_skipped", { reason: decision.reason });
+  }
+}

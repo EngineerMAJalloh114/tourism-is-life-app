@@ -9,12 +9,12 @@ import { sqlFromPglite, type Sql } from "@/lib/sql";
 import type { StaffRole } from "@/lib/capabilities";
 import type { Actor, StaffStatus } from "@/lib/server/access";
 
-export type TestDb = { sql: Sql; close: () => Promise<void> };
+export type TestDb = { sql: Sql; pg: Awaited<ReturnType<typeof createPglite>>; close: () => Promise<void> };
 
 export async function createTestDb(): Promise<TestDb> {
   const pg = await createPglite();
   await applyMigrations(pg, await listMigrations());
-  return { sql: sqlFromPglite(pg), close: () => pg.close() };
+  return { sql: sqlFromPglite(pg), pg, close: () => pg.close() };
 }
 
 /** Insert a Better Auth user row (no password) and return its id. */

@@ -12,9 +12,12 @@ export const Route = createFileRoute("/admin")({
   // Runs on the server for the first load and on the client for navigation.
   // Signed-out visitors never see the shell; every child page checks its own
   // capability, and every server function checks again.
-  beforeLoad: async () => {
+  beforeLoad: async ({ location }) => {
     const access = await getAdminAccess();
-    if (!access.signedIn) throw redirect({ to: SIGN_IN_PATH });
+    if (!access.signedIn) throw redirect({ to: SIGN_IN_PATH, search: { next: location.href } });
+    // Every team account enrols two-factor before any admin page opens. The
+    // one exception is the owner making the single SUPER_ADMIN claim.
+    if (access.capabilities.length > 0 && !access.twoFactorEnabled) throw redirect({ to: "/team/enrol" });
     return { access };
   },
   component: AdminLayout,

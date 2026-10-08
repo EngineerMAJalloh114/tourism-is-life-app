@@ -33,6 +33,9 @@ export async function resolveActor(bearerToken?: string): Promise<Actor> {
     await sql`delete from "session" where "userId" = ${user.id}`;
     throw new AuthRequiredError("This team account is not active.");
   }
+  if (!user.twoFactorEnabled) {
+    throw new ForbiddenError("Set up two-factor sign-in to continue.", "TWO_FACTOR_REQUIRED");
+  }
   return { userId: user.id, email: user.email, role: profile.role, ip: requestIp() };
 }
 
@@ -46,7 +49,9 @@ export function requestIp(): string | null {
 }
 
 /** The verified session user (cookie cache bypassed), or null when signed out. */
-export async function resolveSessionUser(bearerToken?: string): Promise<{ id: string; email: string | null } | null> {
+export async function resolveSessionUser(
+  bearerToken?: string,
+): Promise<{ id: string; email: string | null; twoFactorEnabled: boolean } | null> {
   assertSameSiteRequest();
   if (!authConfigured && !gateIdentityEnabled()) return null;
   const request = getRequest();
@@ -58,7 +63,11 @@ export async function resolveSessionUser(bearerToken?: string): Promise<{ id: st
   }
   const session = await auth.api.getSession({ headers, query: { disableCookieCache: true } });
   if (!session?.user) return null;
-  return { id: session.user.id, email: session.user.email ?? null };
+  return {
+    id: session.user.id,
+    email: session.user.email ?? null,
+    twoFactorEnabled: Boolean((session.user as { twoFactorEnabled?: boolean | null }).twoFactorEnabled),
+  };
 }
 
 /** Run `fn`; a typed error sets the matching HTTP status before it propagates. */

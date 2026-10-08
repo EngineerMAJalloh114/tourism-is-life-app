@@ -14,7 +14,7 @@ tests 324 (322 pass, 2 skipped on Windows, 0 fail), `build:dev` OK, `check:asset
 |---|---|---|---|
 | A1 Capabilities and SEC-6 | GREEN | 373 / 2 / 0 | `0005_capabilities` |
 | A2 Append-only audit log | GREEN | 383 / 2 / 0 | `0006_audit_append_only` |
-| A3 Team sign-in, two-factor, password reset | PENDING | | |
+| A3 Team sign-in, two-factor, password reset | GREEN | 415 / 2 / 0 | `0007_team_sign_in` |
 | A4 Admin shell | PENDING | | |
 | A5 Team accounts | PENDING | | |
 | A6 Media library and uploads | PENDING | | |
@@ -69,3 +69,49 @@ tests 324 (322 pass, 2 skipped on Windows, 0 fail), `build:dev` OK, `check:asset
   no-op, anyone else gets 409, and a test pins it.
 - The dormant booking engine keeps the old `writeAudit()` (marked deprecated); it is not
   admin code and is not changed by this work.
+
+### A3 notes
+
+- **Resend in Production (required before merge): present.** `vercel env ls` (names only,
+  8 October 2026) shows `RESEND_API_KEY` and `RESEND_FROM` in Production. It also shows
+  `DATABASE_URL` in **Production only** (not Preview), so preview builds of these branches
+  cannot migrate the live database, and `BOOTSTRAP_ADMIN_EMAIL` **is not set** in
+  Production, so the claim is locked as owner item O2 intends.
+- **Rules** (`src/lib/auth/team-auth.ts`, one function used by the app and by the tests):
+  public sign-up closed; only active team accounts may hold a session (database hook), plus
+  the owner before the claim with a verified bootstrap address; TOTP two-factor through the
+  installed plugin, required before any admin page or server function; recovery codes stored
+  as HMAC hashes (stored column checked to hold no plain code; a code works once); "trust
+  this device" never honoured; members cannot switch two-factor off or re-enrol over it;
+  Postgres rate limits 5 per email and IP, 20 per IP, per 15 minutes on sign-in, code checks,
+  reset requests and setup; every attempt logged in `sign_in_attempts`; one message for any
+  failed sign-in; 12-hour absolute sessions; reset links last 60 minutes and end every
+  session; following a reset or invite link verifies the email.
+- **Tested** with the real Better Auth on PGLite (14 tests, TOTP computed from the
+  `otpauth://` URI with `node:crypto`, as an authenticator app does), and **in the running
+  app** with Playwright in Edge: sign-in, generic wrong-password message, forced enrolment,
+  QR drawn locally, 10 recovery codes, a real code enabling two-factor, the second sign-in
+  through the code page (wrong code refused, right code accepted), a recovery code, the
+  footer link, and every `/team` page at 390 px with no overflow and `noindex,nofollow`.
+- **Redirects:** `/login` and `/register` 301 to `/team/sign-in`, `/forgot-password` to
+  `/team/forgot-password`, `/reset-password` to `/team/reset-password` keeping the token;
+  signed-out `/admin` 307 to `/team/sign-in?next=/admin`. `robots.txt` disallows `/admin`,
+  `/team` and `/api`.
+- **First-time setup** (`/team/setup`) is open only while there is no team account and no
+  claim, accepts only the bootstrap address, and answers every request the same way; the
+  emailed link verifies the mailbox, which closes SEC-1. The claim itself stays at `/admin`.
+- **Grok:** the always-on gate session plugin is removed; `bearer()` is registered only in the
+  Grok workspace preview.
+- **"Save tour"** now saves on the device (`til-saved-tours`), the Stay & Dine pattern; the
+  cookies page lists it and the existing `til-saved-places` (LEG-16) and says the sign-in
+  cookie is for team members, with its own "last updated" date (8 October 2026).
+- **QR encoder:** the Project Nayuki QR Code generator (MIT) is vendored at
+  `src/lib/vendor/qrcodegen.ts`, adapted to an ES module only. Checked identical to the
+  original compiled with `tsc` on 15 cases; two fingerprints pinned in a test.
+- **Local test SUPER_ADMIN:** `LOCAL_SUPER_ADMIN_EMAIL` and `LOCAL_SUPER_ADMIN_PASSWORD` in
+  `.env.example`; seeded only when `scripts/local-db.mjs` set `TIL_LOCAL_SEED=1`, both database
+  URLs are blank and the backend is PGLite (6 tests).
+- **Postgres version:** production is Postgres 18 (Neon project metadata, read-only); PGLite
+  is 17. Nothing in 0005-0007 differs between them.
+- **Small fix:** `src/lib/auth/pglite-dialect.ts` used TypeScript parameter properties, which
+  `node --experimental-strip-types` cannot run; rewritten as plain fields (same behaviour).

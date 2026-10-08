@@ -1,4 +1,7 @@
 User-agent: *
 Allow: /
+Disallow: /admin
+Disallow: /team
+Disallow: /api
 
 Sitemap: https://tourismislife.com/sitemap.xml

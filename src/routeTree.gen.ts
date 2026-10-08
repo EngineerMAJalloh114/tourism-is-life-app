@@ -66,6 +66,12 @@ import { Route as JournalSlugRouteImport } from './routes/journal/$slug'
 import { Route as ServicesIndexRouteImport } from './routes/services/index'
 import { Route as ServicesSlugRouteImport } from './routes/services/$slug'
 import { Route as ServicesToursExcursionsRouteImport } from './routes/services/tours-excursions'
+import { Route as TeamEnrolRouteImport } from './routes/team/enrol'
+import { Route as TeamForgotPasswordRouteImport } from './routes/team/forgot-password'
+import { Route as TeamResetPasswordRouteImport } from './routes/team/reset-password'
+import { Route as TeamSetupRouteImport } from './routes/team/setup'
+import { Route as TeamSignInRouteImport } from './routes/team/sign-in'
+import { Route as TeamTwoFactorRouteImport } from './routes/team/two-factor'
 import { Route as ToursIndexRouteImport } from './routes/tours/index'
 import { Route as ToursSlugRouteImport } from './routes/tours/$slug'
 import { Route as ToursGuineaRouteImport } from './routes/tours/guinea'
@@ -387,6 +393,36 @@ const ServicesToursExcursionsRoute = ServicesToursExcursionsRouteImport.update({
   path: '/services/tours-excursions',
   getParentRoute: () => rootRouteImport,
 } as any)
+const TeamEnrolRoute = TeamEnrolRouteImport.update({
+  id: '/team/enrol',
+  path: '/team/enrol',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TeamForgotPasswordRoute = TeamForgotPasswordRouteImport.update({
+  id: '/team/forgot-password',
+  path: '/team/forgot-password',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TeamResetPasswordRoute = TeamResetPasswordRouteImport.update({
+  id: '/team/reset-password',
+  path: '/team/reset-password',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TeamSetupRoute = TeamSetupRouteImport.update({
+  id: '/team/setup',
+  path: '/team/setup',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TeamSignInRoute = TeamSignInRouteImport.update({
+  id: '/team/sign-in',
+  path: '/team/sign-in',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TeamTwoFactorRoute = TeamTwoFactorRouteImport.update({
+  id: '/team/two-factor',
+  path: '/team/two-factor',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ToursIndexRoute = ToursIndexRouteImport.update({
   id: '/tours/',
   path: '/tours/',
@@ -617,6 +653,12 @@ export interface FileRoutesByFullPath {
   '/journal/$slug': typeof JournalSlugRoute
   '/services/$slug': typeof ServicesSlugRoute
   '/services/tours-excursions': typeof ServicesToursExcursionsRoute
+  '/team/enrol': typeof TeamEnrolRoute
+  '/team/forgot-password': typeof TeamForgotPasswordRoute
+  '/team/reset-password': typeof TeamResetPasswordRoute
+  '/team/setup': typeof TeamSetupRoute
+  '/team/sign-in': typeof TeamSignInRoute
+  '/team/two-factor': typeof TeamTwoFactorRoute
   '/tours/$slug': typeof ToursSlugRoute
   '/tours/guinea': typeof ToursGuineaRoute
   '/tours/liberia': typeof ToursLiberiaRoute
@@ -704,6 +746,12 @@ export interface FileRoutesByTo {
   '/journal/$slug': typeof JournalSlugRoute
   '/services/$slug': typeof ServicesSlugRoute
   '/services/tours-excursions': typeof ServicesToursExcursionsRoute
+  '/team/enrol': typeof TeamEnrolRoute
+  '/team/forgot-password': typeof TeamForgotPasswordRoute
+  '/team/reset-password': typeof TeamResetPasswordRoute
+  '/team/setup': typeof TeamSetupRoute
+  '/team/sign-in': typeof TeamSignInRoute
+  '/team/two-factor': typeof TeamTwoFactorRoute
   '/tours/$slug': typeof ToursSlugRoute
   '/tours/guinea': typeof ToursGuineaRoute
   '/tours/liberia': typeof ToursLiberiaRoute
@@ -799,6 +847,12 @@ export interface FileRoutesById {
   '/journal/$slug': typeof JournalSlugRoute
   '/services/$slug': typeof ServicesSlugRoute
   '/services/tours-excursions': typeof ServicesToursExcursionsRoute
+  '/team/enrol': typeof TeamEnrolRoute
+  '/team/forgot-password': typeof TeamForgotPasswordRoute
+  '/team/reset-password': typeof TeamResetPasswordRoute
+  '/team/setup': typeof TeamSetupRoute
+  '/team/sign-in': typeof TeamSignInRoute
+  '/team/two-factor': typeof TeamTwoFactorRoute
   '/tours/$slug': typeof ToursSlugRoute
   '/tours/guinea': typeof ToursGuineaRoute
   '/tours/liberia': typeof ToursLiberiaRoute
@@ -895,6 +949,12 @@ export interface FileRouteTypes {
     | '/journal/$slug'
     | '/services/$slug'
     | '/services/tours-excursions'
+    | '/team/enrol'
+    | '/team/forgot-password'
+    | '/team/reset-password'
+    | '/team/setup'
+    | '/team/sign-in'
+    | '/team/two-factor'
     | '/tours/$slug'
     | '/tours/guinea'
     | '/tours/liberia'
@@ -982,6 +1042,12 @@ export interface FileRouteTypes {
     | '/journal/$slug'
     | '/services/$slug'
     | '/services/tours-excursions'
+    | '/team/enrol'
+    | '/team/forgot-password'
+    | '/team/reset-password'
+    | '/team/setup'
+    | '/team/sign-in'
+    | '/team/two-factor'
     | '/tours/$slug'
     | '/tours/guinea'
     | '/tours/liberia'
@@ -1076,6 +1142,12 @@ export interface FileRouteTypes {
     | '/journal/$slug'
     | '/services/$slug'
     | '/services/tours-excursions'
+    | '/team/enrol'
+    | '/team/forgot-password'
+    | '/team/reset-password'
+    | '/team/setup'
+    | '/team/sign-in'
+    | '/team/two-factor'
     | '/tours/$slug'
     | '/tours/guinea'
     | '/tours/liberia'
@@ -1154,6 +1226,12 @@ export interface RootRouteChildren {
   JournalSlugRoute: typeof JournalSlugRoute
   ServicesSlugRoute: typeof ServicesSlugRoute
   ServicesToursExcursionsRoute: typeof ServicesToursExcursionsRoute
+  TeamEnrolRoute: typeof TeamEnrolRoute
+  TeamForgotPasswordRoute: typeof TeamForgotPasswordRoute
+  TeamResetPasswordRoute: typeof TeamResetPasswordRoute
+  TeamSetupRoute: typeof TeamSetupRoute
+  TeamSignInRoute: typeof TeamSignInRoute
+  TeamTwoFactorRoute: typeof TeamTwoFactorRoute
   ToursSlugRoute: typeof ToursSlugRoute
   ToursGuineaRoute: typeof ToursGuineaRoute
   ToursLiberiaRoute: typeof ToursLiberiaRoute
@@ -1579,6 +1657,48 @@ declare module '@tanstack/react-router' {
       path: '/services/tours-excursions'
       fullPath: '/services/tours-excursions'
       preLoaderRoute: typeof ServicesToursExcursionsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/team/enrol': {
+      id: '/team/enrol'
+      path: '/team/enrol'
+      fullPath: '/team/enrol'
+      preLoaderRoute: typeof TeamEnrolRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/team/forgot-password': {
+      id: '/team/forgot-password'
+      path: '/team/forgot-password'
+      fullPath: '/team/forgot-password'
+      preLoaderRoute: typeof TeamForgotPasswordRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/team/reset-password': {
+      id: '/team/reset-password'
+      path: '/team/reset-password'
+      fullPath: '/team/reset-password'
+      preLoaderRoute: typeof TeamResetPasswordRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/team/setup': {
+      id: '/team/setup'
+      path: '/team/setup'
+      fullPath: '/team/setup'
+      preLoaderRoute: typeof TeamSetupRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/team/sign-in': {
+      id: '/team/sign-in'
+      path: '/team/sign-in'
+      fullPath: '/team/sign-in'
+      preLoaderRoute: typeof TeamSignInRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/team/two-factor': {
+      id: '/team/two-factor'
+      path: '/team/two-factor'
+      fullPath: '/team/two-factor'
+      preLoaderRoute: typeof TeamTwoFactorRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/tours/': {
@@ -2013,6 +2133,12 @@ const rootRouteChildren: RootRouteChildren = {
   JournalSlugRoute: JournalSlugRoute,
   ServicesSlugRoute: ServicesSlugRoute,
   ServicesToursExcursionsRoute: ServicesToursExcursionsRoute,
+  TeamEnrolRoute: TeamEnrolRoute,
+  TeamForgotPasswordRoute: TeamForgotPasswordRoute,
+  TeamResetPasswordRoute: TeamResetPasswordRoute,
+  TeamSetupRoute: TeamSetupRoute,
+  TeamSignInRoute: TeamSignInRoute,
+  TeamTwoFactorRoute: TeamTwoFactorRoute,
   ToursSlugRoute: ToursSlugRoute,
   ToursGuineaRoute: ToursGuineaRoute,
   ToursLiberiaRoute: ToursLiberiaRoute,

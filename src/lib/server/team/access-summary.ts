@@ -14,6 +14,8 @@ export type AccessSummary = {
   role: StaffRole | null;
   status: StaffStatus | null;
   capabilities: Capability[];
+  /** Team accounts must enrol two-factor before any admin page opens. */
+  twoFactorEnabled: boolean;
   canBootstrap: boolean;
   bootstrapLocked: boolean;
 };
@@ -23,13 +25,14 @@ export const SIGNED_OUT: AccessSummary = {
   role: null,
   status: null,
   capabilities: [],
+  twoFactorEnabled: false,
   canBootstrap: false,
   bootstrapLocked: false,
 };
 
 export async function summarizeAccess(
   sql: Sql,
-  user: { id: string; email: string | null } | null,
+  user: { id: string; email: string | null; twoFactorEnabled?: boolean } | null,
   bootstrap: { emailAllowed: (email: string | null) => boolean; deployed: boolean },
 ): Promise<AccessSummary> {
   if (!user) return SIGNED_OUT;
@@ -42,6 +45,7 @@ export async function summarizeAccess(
     role: profile?.role ?? null,
     status: profile?.status ?? null,
     capabilities: active ? capabilitiesOf(profile?.role) : [],
+    twoFactorEnabled: Boolean(user.twoFactorEnabled),
     canBootstrap: empty && bootstrap.emailAllowed(user.email),
     bootstrapLocked: empty && bootstrap.deployed && !bootstrap.emailAllowed(user.email),
   };
