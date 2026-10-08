@@ -31,8 +31,13 @@ export function requireCapability(actor: Actor | null | undefined, capability: C
   if (!can(actor.role, capability)) throw new ForbiddenError();
 }
 
-/** An admin operation: `(sql, actor, input) => result`, with its capability attached. */
-export type AdminOperation<I, O> = ((sql: Sql, actor: Actor | null, input: I) => Promise<O>) & {
+/**
+ * An admin operation: `(sql, actor, input, deps?) => result`, with its
+ * capability attached. `deps` carries services an operation calls after its
+ * transaction (for example the email that sends a password link), so tests
+ * pass a fake and nothing here imports a server module.
+ */
+export type AdminOperation<I, O, D = never> = ((sql: Sql, actor: Actor | null, input: I, deps?: D) => Promise<O>) & {
   readonly capability: Capability;
 };
 
@@ -40,13 +45,13 @@ export type AdminOperation<I, O> = ((sql: Sql, actor: Actor | null, input: I) =>
  * Build an admin operation. The capability check runs first, before any query,
  * so a refused caller never touches the database.
  */
-export function adminOperation<I, O>(
+export function adminOperation<I, O, D = never>(
   capability: Capability,
-  fn: (sql: Sql, actor: Actor, input: I) => Promise<O>,
-): AdminOperation<I, O> {
-  const op = async (sql: Sql, actor: Actor | null, input: I) => {
+  fn: (sql: Sql, actor: Actor, input: I, deps: D | undefined) => Promise<O>,
+): AdminOperation<I, O, D> {
+  const op = async (sql: Sql, actor: Actor | null, input: I, deps?: D) => {
     requireCapability(actor, capability);
-    return fn(sql, actor, input);
+    return fn(sql, actor, input, deps);
   };
   return Object.assign(op, { capability });
 }

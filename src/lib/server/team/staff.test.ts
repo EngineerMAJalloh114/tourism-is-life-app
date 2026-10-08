@@ -49,11 +49,44 @@ describe("team accounts (SEC-6)", () => {
     assert.deepEqual(audit, [{ action: "staff.role", actor_id: "owner" }]);
   });
 
-  it("a SUPER_ADMIN can make a plain account a team member", async () => {
+  it("a plain account cannot be given a role directly; only createTeamAccount makes a team account", async () => {
     const owner = await insertStaff(db.sql, "owner", "SUPER_ADMIN");
     await insertUser(db.sql, "newbie");
-    await changeRole(db.sql, owner, { userId: "newbie", role: "CONTENT_MANAGER" });
-    assert.equal((await loadStaffProfile(db.sql, "newbie"))?.role, "CONTENT_MANAGER");
+    await assert.rejects(changeRole(db.sql, owner, { userId: "newbie", role: "CONTENT_MANAGER" }), rejectsWith(404));
+    assert.equal(await loadStaffProfile(db.sql, "newbie"), null);
+  });
+
+  it("removing an account deletes its password, two-factor, sessions and open links, and is final", async () => {
+    const owner = await insertStaff(db.sql, "owner", "SUPER_ADMIN");
+    await insertStaff(db.sql, "desk", "STAFF");
+    await db.sql`insert into "account" (id, "accountId", "providerId", "userId", password, "createdAt", "updatedAt")
+      values ('a1', 'desk', 'credential', 'desk', 'hash', now(), now())`;
+    await db.sql`insert into "twoFactor" (id, secret, "backupCodes", "userId") values ('t1', 'secret', '[]', 'desk')`;
+    await db.sql`update "user" set "twoFactorEnabled" = true where id = 'desk'`;
+    await db.sql`insert into "session" (id, "expiresAt", token, "createdAt", "updatedAt", "userId")
+      values ('s1', now() + interval '1 day', 't1', now(), now(), 'desk')`;
+    await db.sql`insert into "verification" (id, identifier, value, "expiresAt", "createdAt", "updatedAt")
+      values ('v1', 'reset-password:abc', 'desk', now() + interval '1 hour', now(), now())`;
+    await setStaffStatus(db.sql, owner, { userId: "desk", status: "removed" });
+    for (const [table, column] of [["account", "userId"], ["twoFactor", "userId"], ["session", "userId"], ["verification", "value"]]) {
+      const rows = await db.sql.query(`select 1 from "${table}" where "${column}" = $1`, ["desk"]);
+      assert.equal(rows.length, 0, `${table} still has a row`);
+    }
+    const user = await db.sql<{ enabled: boolean }>`select "twoFactorEnabled" as enabled from "user" where id = 'desk'`;
+    assert.equal(user[0].enabled, false);
+    await assert.rejects(setStaffStatus(db.sql, owner, { userId: "desk", status: "active" }), rejectsWith(409, "REMOVED"));
+    await assert.rejects(changeRole(db.sql, owner, { userId: "desk", role: "ADMIN" }), rejectsWith(409, "REMOVED"));
+  });
+
+  it("disabling ends open password links as well as sessions", async () => {
+    const owner = await insertStaff(db.sql, "owner", "SUPER_ADMIN");
+    await insertStaff(db.sql, "desk", "STAFF");
+    await db.sql`insert into "verification" (id, identifier, value, "expiresAt", "createdAt", "updatedAt")
+      values ('v1', 'reset-password:abc', 'desk', now() + interval '1 hour', now(), now()),
+             ('v2', 'something-else', 'desk', now() + interval '1 hour', now(), now())`;
+    await setStaffStatus(db.sql, owner, { userId: "desk", status: "disabled" });
+    const left = await db.sql<{ identifier: string }>`select identifier from "verification" where value = 'desk'`;
+    assert.deepEqual(left.map((r) => r.identifier), ["something-else"]);
   });
 
   it("an ADMIN is refused (403) on every account change, including demoting a SUPER_ADMIN", async () => {

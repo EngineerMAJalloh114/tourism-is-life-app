@@ -32,7 +32,7 @@
 import { betterAuth } from "better-auth";
 import { bearer, genericOAuth } from "better-auth/plugins";
 import { tanstackStartCookies } from "better-auth/tanstack-start";
-import { getCookie } from "@tanstack/react-start/server";
+import { getCookie, getRequest } from "@tanstack/react-start/server";
 import { randomBytes } from "node:crypto";
 import { Pool } from "pg";
 import { isWorkspacePreview, vercelEnv } from "../env.server";
@@ -44,6 +44,7 @@ import { emailAndPasswordEnabled } from "./email-password";
 import { localSeedDecision, seedLocalSuperAdmin } from "./local-seed";
 import { GROK_PROVIDERS } from "./providers";
 import { teamAuthOptions } from "./team-auth";
+import { passwordLinkSender } from "./team-links";
 import { pgliteDialect } from "./pglite-dialect";
 import {
   GROK_ISSUER_DEFAULT,
@@ -332,6 +333,25 @@ export const auth = betterAuth({
     // last so it runs after every other plugin's hooks.
     tanstackStartCookies(),
   ],
+});
+
+/**
+ * "Set your password" and reset links a SUPER_ADMIN sends from the team page
+ * (task A5): the same link as Better Auth's reset flow, so the desk can say
+ * whether the email went (`./team-links.ts`).
+ */
+export const teamPasswordLinks = passwordLinkSender({
+  context: () => auth.$context,
+  // Deployments always have BETTER_AUTH_URL (checked above). Local and Grok
+  // preview builds use the origin of the request that is sending the link.
+  authBaseURL: () => {
+    const request = explicitBaseURL ? null : getRequest();
+    const origin = new URL(explicitBaseURL ?? request?.url ?? "http://localhost:8080").origin;
+    return `${origin}/api/auth`;
+  },
+  sendEmail: (m) => sendEmail(m),
+  onUndeliveredLink:
+    dbSource === "pglite" ? (email, url) => log.info("team.link.not_emailed", { email, url }) : undefined,
 });
 
 export function readSessionToken(): string | null {

@@ -16,7 +16,7 @@ tests 324 (322 pass, 2 skipped on Windows, 0 fail), `build:dev` OK, `check:asset
 | A2 Append-only audit log | GREEN | 383 / 2 / 0 | `0006_audit_append_only` |
 | A3 Team sign-in, two-factor, password reset | GREEN | 415 / 2 / 0 | `0007_team_sign_in` |
 | A4 Admin shell | GREEN | 418 / 2 / 0 | none |
-| A5 Team accounts | PENDING | | |
+| A5 Team accounts | GREEN | 442 / 2 / 0 | none (0005 holds the columns) |
 | A6 Media library and uploads | PENDING | | |
 | A7 Site settings | PENDING | | |
 | A8 Collections I | PENDING | | |
@@ -135,3 +135,28 @@ tests 324 (322 pass, 2 skipped on Windows, 0 fail), `build:dev` OK, `check:asset
   pages, removed URLs 404, collapsible menu at 390 px that closes on navigation, no
   horizontal overflow at 390 px, `noindex,nofollow`, sign out returns `/admin` to sign-in.
   Per-role menus in the browser follow in A5, which creates the other accounts.
+
+### A5 notes
+
+- **Operations** (`src/lib/server/team/accounts.ts`, `staff.ts`): create (name, email, role;
+  no password until the member follows the link), send password link, reset two-factor,
+  disable, re-enable, remove, change role; the list shows status, role, password set,
+  two-factor and last sign-in. All SUPER_ADMIN only (ADMIN 403), never on one's own account,
+  the last active SUPER_ADMIN protected, every change audited with before and after, and
+  the email sent after the transaction commits (a test proves the order on PGLite).
+- **Links:** built the way Better Auth's reset flow builds them (`src/lib/auth/team-links.ts`)
+  so the desk can say whether the email went; pinned by a test that sets a password through
+  the installed `resetPassword`. The base URL comes from `BETTER_AUTH_URL`, which deployments
+  require; the first browser run caught a relative link on the local build, now fixed and
+  tested (the link in the email must be absolute).
+- **Tighter than A1:** a role change now needs an existing team account. A plain account
+  becomes one only through create, which first deletes its old password, other sign-in
+  methods, two-factor and sessions, so an old customer sign-up under a team member's address
+  cannot be used to get in. Remove deletes the password and two-factor and is final; the
+  address can be invited again as a new account. Disable also ends open password links.
+- **Checked in Edge** with four real members (one per role) created from the page: each
+  link set a password, each member enrolled, each menu matched its role, lower roles saw
+  "No access" on `/admin/users`, ADMIN saw the list read-only. Disable signed the member out
+  on the next request; a two-factor reset sent the member to `/team/enrol` at the next
+  sign-in; a role change changed the member's menu at once; remove signed the member out.
+  Team page has no horizontal overflow at 390 px.

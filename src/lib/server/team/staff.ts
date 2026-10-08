@@ -6,6 +6,12 @@
  *     (`roles.manage`, `users.manage`); an ADMIN gets 403.
  *   - Nobody changes their own role, or disables or removes themselves.
  *   - The last active SUPER_ADMIN can never be demoted, disabled or removed.
+ *   - Disabling ends every session and open password link; removing also
+ *     deletes the password, other sign-in methods and two-factor, and is final
+ *     (the address can be invited again as a fresh account).
+ *   - Only an existing team account changes role. A plain account becomes a
+ *     team account only through `createTeamAccount`, which clears its old
+ *     password first.
  *
  * Every change runs in one transaction that first takes a transaction-scoped
  * advisory lock (one fixed key for all account changes) and then locks the
@@ -33,6 +39,10 @@ export type TeamMember = {
   name: string | null;
   createdAt: string;
   disabledAt: string | null;
+  twoFactorEnabled: boolean;
+  /** False until the member follows their "set your password" link. */
+  passwordSet: boolean;
+  lastSignInAt: string | null;
 };
 
 /** The staff profile for `userId`, or null when there is none or the role is unknown. */
@@ -46,7 +56,7 @@ export async function loadStaffProfile(sql: Sql, userId: string): Promise<StaffP
   return { userId, role: row.role, status };
 }
 
-async function lockStaffChanges(tx: TxSql): Promise<string[]> {
+export async function lockStaffChanges(tx: TxSql): Promise<string[]> {
   await tx`select pg_advisory_xact_lock(${STAFF_CHANGE_LOCK_KEY})`;
   const supers = await tx<{ user_id: string }>`
     select user_id from staff_profiles
@@ -56,7 +66,7 @@ async function lockStaffChanges(tx: TxSql): Promise<string[]> {
   return supers.map((r) => r.user_id);
 }
 
-function assertNotSelf(actorId: string, targetId: string, what: string) {
+export function assertNotSelf(actorId: string, targetId: string, what: string) {
   if (actorId === targetId) {
     throw new ConflictError(`You cannot ${what} your own account. Ask another SUPER_ADMIN.`, "SELF_CHANGE");
   }
@@ -71,6 +81,20 @@ function assertAnotherActiveSuper(activeSupers: string[], targetId: string) {
   }
 }
 
+/** End every session and every open password link of an account. */
+export async function endAccess(tx: TxSql, userId: string) {
+  await tx`delete from "session" where "userId" = ${userId}`;
+  await tx`delete from "verification" where identifier like ${"reset-password:%"} and value = ${userId}`;
+}
+
+/** Wipe every way into an account: password and other sign-in methods, two-factor, sessions, open links. */
+export async function clearCredentials(tx: TxSql, userId: string) {
+  await tx`delete from "account" where "userId" = ${userId}`;
+  await tx`delete from "twoFactor" where "userId" = ${userId}`;
+  await tx`update "user" set "twoFactorEnabled" = false, "updatedAt" = now() where id = ${userId}`;
+  await endAccess(tx, userId);
+}
+
 /** The team list: every account with a staff profile, oldest first. */
 export const listTeam = adminOperation("users.view", async (sql): Promise<TeamMember[]> => {
   const rows = await sql<{
@@ -81,8 +105,15 @@ export const listTeam = adminOperation("users.view", async (sql): Promise<TeamMe
     name: string | null;
     created_at: string;
     disabled_at: string | null;
+    two_factor: boolean | null;
+    password_set: boolean;
+    last_sign_in: string | null;
   }>`
-    select s.user_id, s.role, s.status, u.email, u.name, s.created_at, s.disabled_at
+    select s.user_id, s.role, s.status, u.email, u.name, s.created_at, s.disabled_at,
+      u."twoFactorEnabled" as two_factor,
+      exists (select 1 from "account" a where a."userId" = s.user_id and a."providerId" = ${"credential"}) as password_set,
+      (select max(a.created_at)::text from sign_in_attempts a
+        where a.user_id = s.user_id and a.outcome in (${"signed-in"}, ${"two-factor-ok"})) as last_sign_in
     from staff_profiles s
     left join "user" u on u.id = s.user_id
     order by s.created_at asc
@@ -97,6 +128,9 @@ export const listTeam = adminOperation("users.view", async (sql): Promise<TeamMe
       name: r.name,
       createdAt: String(r.created_at),
       disabledAt: r.disabled_at ? String(r.disabled_at) : null,
+      twoFactorEnabled: r.two_factor === true,
+      passwordSet: r.password_set === true,
+      lastSignInAt: r.last_sign_in,
     }));
 });
 
@@ -110,27 +144,25 @@ export const changeRole = adminOperation(
     assertNotSelf(actor.userId, input.userId, "change the role of");
     return inTransaction(sql, async (tx) => {
       const activeSupers = await lockStaffChanges(tx);
-      const user = await tx<{ id: string }>`select id from "user" where id = ${input.userId} limit 1`;
-      if (!user[0]) throw new NotFoundError("That account does not exist.");
       const current = await loadStaffProfile(tx, input.userId);
-      if (current?.role === "SUPER_ADMIN" && current.status === "active" && input.role !== "SUPER_ADMIN") {
+      if (!current) throw new NotFoundError("That account is not a team account. Create it from the team page.");
+      if (current.status === "removed") throw new ConflictError("This account was removed.", "REMOVED");
+      if (current.role === "SUPER_ADMIN" && current.status === "active" && input.role !== "SUPER_ADMIN") {
         assertAnotherActiveSuper(activeSupers, input.userId);
       }
       await tx`
-        insert into staff_profiles (user_id, role, updated_by)
-        values (${input.userId}, ${input.role}, ${actor.userId})
-        on conflict (user_id) do update
-          set role = ${input.role}, updated_at = now(), updated_by = ${actor.userId}
+        update staff_profiles set role = ${input.role}, updated_at = now(), updated_by = ${actor.userId}
+        where user_id = ${input.userId}
       `;
       await audit(tx, {
         actor,
         action: "staff.role",
         entity: "staff_profiles",
         entityId: input.userId,
-        before: current ? { role: current.role, status: current.status } : null,
-        after: { role: input.role, status: current?.status ?? "active" },
+        before: { role: current.role, status: current.status },
+        after: { role: input.role, status: current.status },
       });
-      return { userId: input.userId, role: input.role, previousRole: current?.role ?? null };
+      return { userId: input.userId, role: input.role, previousRole: current.role };
     });
   },
 );
@@ -138,7 +170,8 @@ export const changeRole = adminOperation(
 /**
  * Disable, re-enable or remove another account. SUPER_ADMIN only. Disabling or
  * removing deletes every session of that account in the same transaction, so
- * its next request is signed out.
+ * its next request is signed out. Removing also deletes its password and
+ * two-factor, and cannot be undone here.
  */
 export const setStaffStatus = adminOperation(
   "users.manage",
@@ -151,6 +184,9 @@ export const setStaffStatus = adminOperation(
       const activeSupers = await lockStaffChanges(tx);
       const current = await loadStaffProfile(tx, input.userId);
       if (!current) throw new NotFoundError("That account is not a team account.");
+      if (current.status === "removed") {
+        throw new ConflictError("A removed account stays removed. Create the account again to invite this person.", "REMOVED");
+      }
       if (current.role === "SUPER_ADMIN" && input.status !== "active") {
         assertAnotherActiveSuper(activeSupers, input.userId);
       }
@@ -164,7 +200,8 @@ export const setStaffStatus = adminOperation(
             updated_by = ${actor.userId}
         where user_id = ${input.userId}
       `;
-      if (leaving) await tx`delete from "session" where "userId" = ${input.userId}`;
+      if (input.status === "removed") await clearCredentials(tx, input.userId);
+      else if (leaving) await endAccess(tx, input.userId);
       await audit(tx, {
         actor,
         action: `staff.${input.status}`,
