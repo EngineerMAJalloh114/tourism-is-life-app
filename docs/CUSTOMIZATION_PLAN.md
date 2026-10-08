@@ -277,12 +277,29 @@ and its section versions), and the published collection records the page's secti
 template need. It is built from CTEs over the published tables, so it is one round trip.
 There is **no cache**: an edit shows on the next request on every instance.
 
-**Fallback.** The statement has a 2 s timeout. On failure or timeout the page renders from
-`src/content/defaults/`, the same modules the seed migrations are generated from, and logs
-`content.fallback`. A page created in the admin has no code fallback; it answers `503` with
-the fallback contact details. The fallback reflects the content as seeded, so it ages as the
-team edits; an "Export fallback snapshot" button (ADMIN) produces the file a developer
-commits to refresh it (owner item O22).
+**Fallback, in this order.** When the statement fails or times out:
+
+1. **Last good copy in instance memory.** Every successful read stores the published site
+   bundle and that page's document in the serverless instance's memory, keyed by path. This
+   is never served while the database answers, so it is not a cache and freshness is
+   unaffected. It is only the answer when the database does not respond. It holds what this
+   instance last saw (possibly newer than the seed) and is lost when the instance is
+   recycled.
+2. **`src/content/defaults/`**, the same modules the seed migrations are generated from.
+
+Each fallback render logs `content.fallback` with `source: "memory"` or
+`source: "defaults"`, the path, and the error class, so the logs show which one served the
+visitor. A page created in the admin has no code default. If it is not in memory either, it
+answers `503` with the fallback contact details. The defaults reflect the content as seeded,
+so they age as the team edits; an "Export fallback snapshot" button (ADMIN) produces the
+file a developer commits to refresh them (owner item O22).
+
+**Timeout.** The statement's timeout is not fixed in advance. In B5, the first-request time
+is measured on a Vercel preview against a **suspended** Neon compute (a Neon development
+branch, never production), cold and warm, several runs each. The report gives the
+measurements and proposes the timeout from them, long enough that a normal cold start is
+not mistaken for an outage. Until that measurement exists the code uses a provisional
+value, named as such in the report.
 
 ---
 
@@ -604,7 +621,7 @@ changes are the sign-in redirects, device-local "Save tour" and the footer link 
 |---|---|---|---|
 | A1 | **Capabilities and SEC-6.** `capabilities.ts`, `requireCapability`, `adminFn`; every existing admin function moved onto it; route `beforeLoad` guards; enquiry and booking personal data only for `enquiries.read`; account rules in one locked transaction; `check:migrations` script and CI step. | `0005_capabilities`: `staff_profiles.status`, `disabled_at`, `disabled_by`; FK to `user` and role CHECK, both `NOT VALID` so existing rows are untouched | Matrix test for all six roles; every admin function answers 401 signed out and 403 without the capability; ADMIN refused on every account change; self-change refused; last active SUPER_ADMIN cannot be demoted, disabled or removed; lock asserted; structural test passes. |
 | A2 | **Append-only audit log.** `before`/`after`, actor role, IP; `audit(tx, …)` helper; existing `writeAudit` calls moved inside their transactions; read-only audit page. | `0006_audit_append_only` (columns, trigger) | `UPDATE`, `DELETE` and `TRUNCATE` on `audit_logs` raise; every admin write test asserts its row with before and after; a failed write leaves no row; audit page 403 for STAFF, BOOKING_MANAGER, CONTENT_MANAGER. |
-| A3 | **Team sign-in, two-factor, password reset** (section 9). Grok gate plugin removed; sign-up closed; `/team/*` pages; redirects; footer link; robots and `noindex`; "Save tour" device-local; local test SUPER_ADMIN seed. | `0007_team_sign_in`: two-factor table and `user.twoFactorEnabled` (from the plugin's schema), `rate_limit_counters`, `sign_in_attempts` | PGLite tests with a mocked Resend: sign-up refused; sign-in requires TOTP (computed in the test with `node:crypto`); a recovery code works once and the stored value is not the code; reset link sets a new password and revokes sessions; the 6th attempt per email and IP and the 21st per IP in 15 minutes are refused with the generic message; every attempt logged; disabled and non-staff accounts refused; a 12-hour-old session refused; the local seed refuses when `DATABASE_URL` is set; gate plugin absent. |
+| A3 | **Team sign-in, two-factor, password reset** (section 9). Grok gate plugin removed; sign-up closed; `/team/*` pages; redirects; footer link; robots and `noindex`; "Save tour" device-local; local test SUPER_ADMIN seed. | `0007_team_sign_in`: two-factor table and `user.twoFactorEnabled` (from the plugin's schema), `rate_limit_counters`, `sign_in_attempts` | PGLite tests with a mocked Resend: sign-up refused; sign-in requires TOTP (computed in the test with `node:crypto`); a recovery code works once and the stored value is not the code; reset link sets a new password and revokes sessions; the 6th attempt per email and IP and the 21st per IP in 15 minutes are refused with the generic message; every attempt logged; disabled and non-staff accounts refused; a 12-hour-old session refused; the local seed refuses when `DATABASE_URL` is set; gate plugin absent. The report states whether `RESEND_API_KEY` and `RESEND_FROM` exist in Vercel Production (names only, from `vercel env ls`). **Milestone A is not ready to merge without both**, because password reset and account invitations depend on them. |
 | A4 | **Admin shell.** Sidebar (Operations, Content, Site, Team, Security) built from capabilities, server-side guard, dashboard counts; bookings, availability, reviews and tours pages removed. | none | Each role sees only its items (test on the menu builder); removed admin URLs return 404; Playwright at 1440 and 390 px shows no horizontal overflow; screenshots per role in the report. |
 | A5 | **Team accounts.** Create (name, email, role; "set your password" email), disable, re-enable (sessions deleted on disable), remove, change role, send reset, reset two-factor; list with status, role, two-factor and last sign-in. | none (0005 holds the columns) | SUPER_ADMIN flows pass; ADMIN gets 403 on every one; nobody acts on themselves; last SUPER_ADMIN protected; a disabled member's next request is 401; after a two-factor reset the member must enrol again. |
 | A6 | **Media library and uploads.** Storage interface (put, get, range, head, delete, upload ticket; every call has a timeout), in-memory fake for tests, local file driver for `dev:local`, the owner's provider once chosen (section 13); signed direct upload to `incoming/`, then server checks (size up to 15 MB, file signature JPEG, PNG or WebP, decode with `sharp`, orientation fixed, metadata and GPS stripped, longest side 2400 px), WebP variants 480/960/1600 plus a JPEG fallback and the analysis raster; database row written after the uploads, never with a network call inside the transaction; replaced files deleted only after the update commits and only when no draft, published or kept version uses them; provenance form; usage list. | `0008_media` (+ seed: one row per `public/images` file with today's provenance) | With the fake: oversize, wrong type and spoofed signature refused; a failed database write deletes the uploaded objects; replace keeps the old file when the update fails; delete refused while referenced; a timeout surfaces as an error; seed equals `image-sources.json`. Production uploads stay switched off with a clear message until storage keys exist. |
@@ -623,7 +640,7 @@ changes are the sign-in redirects, device-local "Save tour" and the footer link 
 | B2 | **Content store** for pages, sections, versions, navigation, theme, trash; path rules. | `0015_pages` | Repository functions (create, duplicate, rename, change path, hide, delete, restore, publish, restore version, prune to 30) pass on PGLite with audit rows; path tests (reserved, under a parameter route, format, duplicates). |
 | B3 | **Section library and extraction.** Types, schemas, renderers, field types (rich text parser, links, images, icons, tokens); every inline string moved to `src/content/defaults/`; every page rendered through `<SectionList>` from the defaults. | none | **Zero differing pixels** against the B1 baseline at 1440 and 390 px on all 133 URLs; every default validates; `<script>` and `javascript:` refused or escaped; no `dangerouslySetInnerHTML` in section code (the JSON-LD helper escapes `<`, SEC-15). |
 | B4 | **Seed for pages, sections, navigation and theme** from the defaults. | `0016_seed_pages` | Byte-for-byte generator test; applied rows equal the defaults; seed twice no change. |
-| B5 | **The public site reads the database**: one statement per request, 2 s timeout, fallback to defaults, splat route, redirects, loader-based 404s, chrome and announcements from the site bundle, generated sitemap and robots, manifest from settings. | none | Zero differing pixels with the seeded database, and again with the database forced to fail (fallback); an instrumented SQL handle sees exactly one statement per page render; a database edit shows on the next request; unknown paths return 404; old paths return 301. |
+| B5 | **The public site reads the database**: one statement per request, fallback first to the last good copy in instance memory and then to the defaults (section 6.1), splat route, redirects, loader-based 404s, chrome and announcements from the site bundle, generated sitemap and robots, manifest from settings. | none | Zero differing pixels with the seeded database, and again with the database forced to fail (both fallback sources, each logged with its `source`); an instrumented SQL handle sees exactly one statement per page render; a database edit shows on the next request; unknown paths return 404; old paths return 301; the report gives the measured first-request time against a suspended Neon compute on a preview and the timeout proposed from it. |
 | B6 | **Page and section editor.** Pages list, create, duplicate, rename, path, SEO, share image; sections add (library picker filtered by `allowedOn`), edit (forms from the schema), reorder (drag and arrows), hide, duplicate, delete; draft saves with `rev`. | none | Each action tested on PGLite with audit rows; CONTENT_MANAGER does every draft action and gets 403 on publish and delete; Playwright at 1440 and 390 px. |
 | B7 | **Preview, publish, history, restore, trash, publish checks** (section 7), including the photo contrast checker and its validation. | none | Preview shows drafts only to editors; publish refused for missing provenance, missing source, broken link or contrast below 4.5:1; checker passes its known-bad, known-good and calibration tests; every seeded TOI section checked (result in the report); restore makes a new version that shows on the next request; 30 kept; trash purge after 30 days (fixed clock); delete refused while referenced. |
 | B8 | **Navigation editor**: header items, short labels, one level of children, header button, footer text, columns, legal links, copyright tokens, footer claim. | none | A published menu item shows on the next request; a second nesting level is refused; a link to a deleted page is refused; CONTENT_MANAGER edits, publish needs ADMIN or SUPER_ADMIN. |
@@ -686,9 +703,14 @@ updated in the last task of each milestone (admin, content model, routing, the 1
 ## 15. What needs the owner
 
 **Before Stage 2 starts**
-- **O1.** Approve this plan, or mark what to change.
-- **O2.** Confirm `BOOTSTRAP_ADMIN_EMAIL` is set in Vercel Production and whether SUPER_ADMIN is
-  already claimed. If not, claim it after A3 ships through `/team/setup` (email-verified).
+- **O1.** Done for Milestone A (approved 8 October 2026, with the changes to sections 6.1,
+  12 and O2). Milestone B waits for a separate approval.
+- **O2.** The owner **removes `BOOTSTRAP_ADMIN_EMAIL` from Vercel Production now**, which
+  locks the single-use claim on the live site (`bootstrapEmailAllowed` refuses every address
+  when it is unset on a deployed runtime). The owner **sets it again when A3 ships**, then
+  claims SUPER_ADMIN through `/team/setup` (email-verified) and the existing claim at
+  `/admin`. If SUPER_ADMIN was already claimed, the claim stays closed by `bootstrap_lock`
+  and the variable can stay unset.
 - **O3.** Done: GitHub billing is fixed and CI passed on `main` at `55eb69a`. Next, protect
   `main` so a merge needs the CI check (CI-1).
 - **O4.** Create a Neon development branch (QA-OPS-1) and take a branch or snapshot of
@@ -697,6 +719,9 @@ updated in the last task of each milestone (admin, content model, routing, the 1
   them; production uploads stay off until they exist.
 
 **Decisions with a default (the default applies unless you say otherwise)**
+
+The owner accepted the defaults for O9 to O23 on 8 October 2026. O6 to O8 belong to
+Milestone B and are decided with its approval.
 - **O6.** Enquiry-only tour CTAs on all 22 tours (BK-1). Default: yes, as section 11.1.
 - **O7.** Sources that keep figures visible after B1. Default: hidden until supplied. Needed:
   tour ratings (platform, link, date per tour); vehicle rate card (amount, currency, unit,
@@ -722,7 +747,8 @@ updated in the last task of each milestone (admin, content model, routing, the 1
   Default: yes; nothing is deleted.
 - **O16.** Who gets which role, and an authenticator app on each team member's phone.
 - **O17.** Confirm `RESEND_API_KEY` and `RESEND_FROM` are set in Production (password reset and
-  account invitations depend on them).
+  account invitations depend on them). The A3 report states what `vercel env ls` shows (names
+  only); Milestone A is not ready to merge without both.
 - **O18.** How long to keep sign-in attempt logs. Default: 90 days.
 - **O19.** Analytics is not built: it needs a cookie-consent decision and changes to the
   privacy and cookies pages.
