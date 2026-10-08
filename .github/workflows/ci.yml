@@ -37,6 +37,10 @@ jobs:
       - name: Test
         run: npm test
 
+      # Every migration applies to a fresh PGLite, to main's schema with data, and twice.
+      - name: Check migrations
+        run: npm run check:migrations
+
       # `build:dev`, not `build`: `build` also runs `db:migrate`, which needs a real DATABASE_URL.
       - name: Build
         run: npm run build:dev

@@ -1,8 +1,8 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { listMyBookings, listMyEnquiries, listSavedTours, getMyRole } from "@/lib/server/ops";
+import { listMyBookings, listMyEnquiries, listSavedTours } from "@/lib/server/ops";
+import { getAdminAccess } from "@/lib/server/admin-access.functions";
 import { getTour } from "@/data/catalog";
-import { isStaff } from "@/lib/roles";
 
 export const Route = createFileRoute("/account/")({ component: AccountHome });
 
@@ -18,8 +18,8 @@ function AccountHome() {
     void listSavedTours()
       .then((rows) => setSaved(rows.map((r) => r.tour_slug)))
       .catch(() => setSaved([]));
-    void getMyRole()
-      .then((r) => setStaff(isStaff(r.role) || r.canBootstrap))
+    void getAdminAccess()
+      .then((r) => setStaff(r.capabilities.length > 0 || r.canBootstrap))
       .catch(() => setStaff(false));
   }, []);
 

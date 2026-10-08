@@ -4,6 +4,7 @@ import { accessTokenMatches, bookingRef, publicId, randomToken, sha256Hex } from
 import { HOLD_MS, assertTransition, parseStatus } from "@/lib/server/booking-state";
 import { quoteForSlug } from "@/lib/server/pricing";
 import { log } from "@/lib/server/logger";
+import { writeAudit } from "@/lib/server/audit";
 import { acquireHoldLock, releaseHoldLock } from "@/services/reservations";
 
 export type BookingRow = {
@@ -177,20 +178,6 @@ export async function loadBookingAuthorized(
     currency: booking.currency || "USD",
     created_at: booking.created_at,
   };
-}
-
-async function writeAudit(
-  sql: Sql,
-  actorId: string | null,
-  action: string,
-  entity: string,
-  entityId: string,
-  detail?: string,
-) {
-  await sql`
-    insert into audit_logs (id, actor_id, action, entity, entity_id, detail)
-    values (${publicId()}, ${actorId}, ${action}, ${entity}, ${entityId}, ${detail ?? null})
-  `;
 }
 
 export async function settleBookingTx(

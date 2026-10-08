@@ -1,4 +1,17 @@
 import { pendingMigrations } from "../../scripts/migration-plan.mjs";
+import {
+  OID_DATE,
+  OID_INT8,
+  OID_INTERVAL,
+  PGLITE_PARSERS,
+  identity,
+  sqlFromPglite,
+  toSql,
+  type Run,
+  type Sql,
+} from "./sql";
+
+export type { Sql, TxSql } from "./sql";
 
 /** Which database backend is active. */
 export type DbSource = "neon" | "pglite";
@@ -19,27 +32,6 @@ const databaseUrl =
 export const dbSource: DbSource = databaseUrl ? "neon" : "pglite";
 
 /**
- * Minimal shared SQL surface, satisfied by both Neon and PGLite. Both the
- * tagged-template and `.query()` forms resolve to an array of row objects:
- *
- *   const sql = await getSql();
- *   const rows = await sql`select * from todos where id = ${id}`; // parameterized
- *   const rows2 = await sql.query("select * from todos where id = $1", [id]);
- */
-export interface Sql {
-  <T = Record<string, unknown>>(
-    strings: TemplateStringsArray,
-    ...values: unknown[]
-  ): Promise<T[]>;
-  query<T = Record<string, unknown>>(
-    text: string,
-    params?: unknown[],
-  ): Promise<T[]>;
-  /** Run `fn` in a single connection transaction. Nested calls reuse the same tx. */
-  transaction<T>(fn: (tx: Sql) => Promise<T>): Promise<T>;
-}
-
-/**
  * Init state lives on globalThis as promises: dev HMR creates new instances of
  * this module, and two instances racing module-level state would open a second
  * pool or run two concurrent PGLite migration passes (whose duplicate
@@ -52,50 +44,6 @@ const globalRef = globalThis as typeof globalThis & {
   __pgliteInstance__?: Promise<import("@electric-sql/pglite").PGlite>;
   __pgliteMigrateChain__?: Promise<void>;
 };
-
-/**
- * Result-type parity: Postgres sends every value as text plus a type OID — the
- * JS value is the DRIVER's parsing choice, and pg and PGLite disagree (pg:
- * int8 -> string, date -> local-midnight Date; PGLite: int8 -> BigInt, which
- * JSON.stringify rejects, date -> UTC Date). Normalize both so preview and
- * production return identical, JSON-safe shapes:
- *   int8/bigint (incl. count(*)) -> number (past 2^53 loses precision — cast
- *                                   `::text` if you ever need huge integers)
- *   date                         -> 'YYYY-MM-DD' string
- *   interval                     -> Postgres interval text
- * numeric already comes back as a string on both (arbitrary precision).
- */
-const OID_INT8 = 20;
-const OID_DATE = 1082;
-const OID_INTERVAL = 1186;
-const identity = (v: string) => v;
-
-type Run = <T>(text: string, params: unknown[]) => Promise<T[]>;
-
-function attachTransaction(sql: Sql, begin: (fn: (tx: Sql) => Promise<unknown>) => Promise<unknown>): Sql {
-  sql.transaction = async <T>(fn: (tx: Sql) => Promise<T>) => (await begin(fn)) as T;
-  return sql;
-}
-
-/** Wrap a query runner in the tagged-template + `.query()` `Sql` surface. */
-function toSql(run: Run, begin?: (fn: (tx: Sql) => Promise<unknown>) => Promise<unknown>): Sql {
-  const sql = (async <T = Record<string, unknown>>(
-    strings: TemplateStringsArray,
-    ...values: unknown[]
-  ): Promise<T[]> => {
-    // Rebuild with $1, $2, … placeholders so values stay parameterized.
-    let text = strings[0];
-    for (let i = 0; i < values.length; i += 1) text += `$${i + 1}${strings[i + 1]}`;
-    return run<T>(text, values);
-  }) as unknown as Sql;
-  sql.query = <T = Record<string, unknown>>(text: string, params: unknown[] = []) =>
-    run<T>(text, params);
-  if (begin) attachTransaction(sql, begin);
-  else {
-    sql.transaction = async (fn) => fn(sql);
-  }
-  return sql;
-}
 
 function createNeonSql(): Promise<Sql> {
   globalRef.__pgSqlPromise__ ??= (async () => {
@@ -147,13 +95,7 @@ async function createPgliteSql(): Promise<Sql> {
   // data survives source edits (it resets on dev-server restart).
   globalRef.__pgliteInstance__ ??= (async () => {
     const { PGlite } = await import("@electric-sql/pglite");
-    const pg = new PGlite({
-      parsers: {
-        [OID_INT8]: Number,
-        [OID_DATE]: identity,
-        [OID_INTERVAL]: identity,
-      },
-    });
+    const pg = new PGlite({ parsers: PGLITE_PARSERS });
     await pg.waitReady;
     await pg.exec(
       "create table if not exists _migrations (name text primary key, applied_at timestamptz not null default now())",
@@ -197,22 +139,7 @@ async function createPgliteSql(): Promise<Sql> {
   globalRef.__pgliteMigrateChain__ = pass;
   await pass;
 
-  return toSql(
-    async <T>(text: string, params: unknown[]) => {
-      const result = await pg.query<T>(text, params);
-      return result.rows;
-    },
-    async (fn) => {
-      return pg.transaction(async (tx) => {
-        const txRun: Run = async <T>(text: string, params: unknown[]) => {
-          const result = await tx.query<T>(text, params);
-          return result.rows;
-        };
-        const txSql = toSql(txRun, (inner) => inner(txSql));
-        return fn(txSql);
-      });
-    },
-  );
+  return sqlFromPglite(pg);
 }
 
 let sqlPromise: Promise<Sql> | null = null;

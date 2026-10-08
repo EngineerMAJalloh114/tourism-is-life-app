@@ -1,7 +1,13 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { requirePageCapability } from "@/lib/admin-access";
+import { AdminRouteError } from "@/components/admin/admin-route-error";
 import { tours } from "@/data/catalog";
 
-export const Route = createFileRoute("/admin/tours")({ component: Page });
+export const Route = createFileRoute("/admin/tours")({
+  beforeLoad: ({ context }) => requirePageCapability(context.access, "collections.edit"),
+  errorComponent: AdminRouteError,
+  component: Page,
+});
 
 function Page() {
   return (

@@ -1,34 +1,45 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { adminListStaff, adminSetRole } from "@/lib/server/ops";
+import { requirePageCapability, hasCapability } from "@/lib/admin-access";
+import { AdminRouteError } from "@/components/admin/admin-route-error";
+import { STAFF_ROLES, type StaffRole } from "@/lib/capabilities";
+import { adminChangeRole, adminListTeam, adminSetStaffStatus } from "@/lib/server/admin/team.functions";
 import { Button } from "@/components/ui/button";
-import { ROLES, type Role } from "@/lib/roles";
 
-export const Route = createFileRoute("/admin/users")({ component: UsersPage });
+export const Route = createFileRoute("/admin/users")({
+  beforeLoad: ({ context }) => requirePageCapability(context.access, "users.view"),
+  errorComponent: AdminRouteError,
+  component: UsersPage,
+});
+
+type Member = Awaited<ReturnType<typeof adminListTeam>>[number];
 
 function UsersPage() {
-  const [rows, setRows] = useState<Awaited<ReturnType<typeof adminListStaff>>>([]);
+  const { access } = Route.useRouteContext();
+  const canChangeRoles = hasCapability(access, "roles.manage");
+  const canManageAccounts = hasCapability(access, "users.manage");
+  const [rows, setRows] = useState<Member[]>([]);
   const [err, setErr] = useState<string | null>(null);
   const [busy, setBusy] = useState<string | null>(null);
 
   function load() {
-    void adminListStaff()
+    void adminListTeam()
       .then(setRows)
-      .catch((e) => setErr(e instanceof Error ? e.message : "Could not load staff"));
+      .catch((e) => setErr(e instanceof Error ? e.message : "Could not load the team."));
   }
 
   useEffect(() => {
     load();
   }, []);
 
-  async function change(userId: string, role: Role) {
+  async function run(userId: string, action: () => Promise<unknown>) {
     setBusy(userId);
     setErr(null);
     try {
-      await adminSetRole({ data: { userId, role } });
+      await action();
       load();
     } catch (e) {
-      setErr(e instanceof Error ? e.message : "Could not update role");
+      setErr(e instanceof Error ? e.message : "That change was not saved.");
     } finally {
       setBusy(null);
     }
@@ -37,39 +48,68 @@ function UsersPage() {
   return (
     <div>
       <p className="text-sm text-muted">
-        Server-side RBAC. Changing roles requires ADMIN or SUPER_ADMIN. Authorization is not “hide the
-        link”.
+        {canChangeRoles
+          ? "Only a SUPER_ADMIN changes roles or account status. Nobody can change their own account, and the last active SUPER_ADMIN is protected."
+          : "You can see the team. Only a SUPER_ADMIN changes roles or account status."}
       </p>
-      {err ? <p className="mt-3 text-sm text-danger">{err}</p> : null}
+      {err ? (
+        <p role="alert" className="mt-3 text-sm text-danger">
+          {err}
+        </p>
+      ) : null}
       <ul className="mt-6 space-y-3">
         {rows.map((r) => (
           <li
-            key={r.user_id}
+            key={r.userId}
             className="flex flex-wrap items-center justify-between gap-3 rounded-md border border-line bg-surface px-4 py-3"
           >
-            <div>
-              <p className="font-medium">{r.name || r.email || r.user_id}</p>
-              <p className="text-xs text-muted">{r.email}</p>
+            <div className="min-w-0">
+              <p className="font-medium">{r.name || r.email || r.userId}</p>
+              <p className="break-all text-xs text-muted">
+                {r.email} · {r.status}
+              </p>
             </div>
-            <label className="text-sm">
-              Role
-              <select
-                className="ml-2 min-h-10 rounded-md border border-line bg-page px-2"
-                value={r.role}
-                disabled={busy === r.user_id}
-                onChange={(e) => void change(r.user_id, e.target.value as Role)}
-              >
-                {ROLES.filter((role) => role !== "CUSTOMER").map((role) => (
-                  <option key={role} value={role}>
-                    {role}
-                  </option>
-                ))}
-              </select>
-            </label>
+            <div className="flex flex-wrap items-center gap-2">
+              <label className="text-sm">
+                Role
+                <select
+                  className="ml-2 min-h-10 rounded-md border border-line bg-page px-2"
+                  value={r.role}
+                  disabled={!canChangeRoles || busy === r.userId}
+                  onChange={(e) => {
+                    const role = e.target.value as StaffRole;
+                    void run(r.userId, () => adminChangeRole({ data: { userId: r.userId, role } }));
+                  }}
+                >
+                  {STAFF_ROLES.map((role) => (
+                    <option key={role} value={role}>
+                      {role}
+                    </option>
+                  ))}
+                </select>
+              </label>
+              {canManageAccounts ? (
+                <Button
+                  type="button"
+                  size="sm"
+                  variant="outline"
+                  disabled={busy === r.userId}
+                  onClick={() =>
+                    void run(r.userId, () =>
+                      adminSetStaffStatus({
+                        data: { userId: r.userId, status: r.status === "active" ? "disabled" : "active" },
+                      }),
+                    )
+                  }
+                >
+                  {r.status === "active" ? "Disable" : "Re-enable"}
+                </Button>
+              ) : null}
+            </div>
           </li>
         ))}
       </ul>
-      {rows.length === 0 ? <p className="mt-4 text-muted">No staff rows yet.</p> : null}
+      {rows.length === 0 ? <p className="mt-4 text-muted">No team accounts yet.</p> : null}
       <Button type="button" variant="outline" className="mt-6" onClick={() => load()}>
         Refresh
       </Button>

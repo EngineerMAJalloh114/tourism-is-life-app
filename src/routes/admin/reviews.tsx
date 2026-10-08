@@ -1,10 +1,16 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { requirePageCapability } from "@/lib/admin-access";
+import { AdminRouteError } from "@/components/admin/admin-route-error";
 import { useEffect, useState } from "react";
-import { adminListReviews, adminModerateReview } from "@/lib/server/ops";
+import { adminListReviews, adminModerateReview } from "@/lib/server/admin/commerce.functions";
 import { getTour } from "@/data/catalog";
 import { Button } from "@/components/ui/button";
 
-export const Route = createFileRoute("/admin/reviews")({ component: Page });
+export const Route = createFileRoute("/admin/reviews")({
+  beforeLoad: ({ context }) => requirePageCapability(context.access, "enquiries.manage"),
+  errorComponent: AdminRouteError,
+  component: Page,
+});
 
 function Page() {
   const [rows, setRows] = useState<Awaited<ReturnType<typeof adminListReviews>>>([]);

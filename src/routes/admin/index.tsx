@@ -1,9 +1,15 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { requirePageCapability } from "@/lib/admin-access";
+import { AdminRouteError } from "@/components/admin/admin-route-error";
 import { useEffect, useState } from "react";
-import { adminSnapshot } from "@/lib/server/ops";
+import { adminSnapshot } from "@/lib/server/admin/dashboard.functions";
 import { getTour } from "@/data/catalog";
 
-export const Route = createFileRoute("/admin/")({ component: Dashboard });
+export const Route = createFileRoute("/admin/")({
+  beforeLoad: ({ context }) => requirePageCapability(context.access, "dashboard.view"),
+  errorComponent: AdminRouteError,
+  component: Dashboard,
+});
 
 function Dashboard() {
   const [data, setData] = useState<Awaited<ReturnType<typeof adminSnapshot>> | null>(null);

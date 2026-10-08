@@ -1,9 +1,15 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { requirePageCapability } from "@/lib/admin-access";
+import { AdminRouteError } from "@/components/admin/admin-route-error";
 import { useEffect, useState } from "react";
-import { adminListAvailability } from "@/lib/server/ops";
+import { adminListAvailability } from "@/lib/server/admin/commerce.functions";
 import { getTour } from "@/data/catalog";
 
-export const Route = createFileRoute("/admin/availability")({ component: Page });
+export const Route = createFileRoute("/admin/availability")({
+  beforeLoad: ({ context }) => requirePageCapability(context.access, "enquiries.read"),
+  errorComponent: AdminRouteError,
+  component: Page,
+});
 
 function Page() {
   const [rows, setRows] = useState<Awaited<ReturnType<typeof adminListAvailability>>>([]);
