@@ -108,8 +108,37 @@ export async function collectionsSeedII() {
   };
 }
 
+/** Rates and ratings (task A10), every one a draft. */
+export async function ratesSeed() {
+  const { rateDefaults } = await import("../../src/content/defaults/rates.ts");
+  const { collectionItemId, uuidV5 } = await import("../../src/lib/server/content-ids.ts");
+  const { rates, ratings } = rateDefaults();
+  const rateRows = rates.map(
+    (r) =>
+      `  (${sqlText(uuidV5(`rate:${r.subjectCollection}:${r.subjectKey}:${r.label}`))}, ${sqlText(r.subjectCollection)}, ` +
+      `${sqlText(collectionItemId(r.subjectCollection, r.subjectKey))}, ${sqlText(r.label)}, ${sqlText(r.currency)}, ${r.amountMinor}, ` +
+      `${sqlText(r.unit)}, ${sqlText(r.sourceNote)}, 'draft')`,
+  );
+  const ratingRows = ratings.map(
+    (r) => `  (${sqlText(uuidV5(`rating:${r.tourKey}`))}, ${sqlText(collectionItemId("tours", r.tourKey))}, ${r.valueTenths}, ${r.reviewCount}, 'draft')`,
+  );
+  return {
+    file: join(ROOT, "migrations", "0012_rates.sql"),
+    begin: "-- BEGIN GENERATED RATES SEED (scripts/content/generate-seed.mjs; do not edit by hand)",
+    end: "-- END GENERATED RATES SEED",
+    body: [
+      "insert into rates (id, subject_collection, subject_id, label, currency, amount_minor, unit, source_note, status) values",
+      rateRows.join(",\n"),
+      "on conflict (id) do nothing;",
+      "insert into ratings (id, tour_id, value_tenths, review_count, status) values",
+      ratingRows.join(",\n"),
+      "on conflict (id) do nothing;",
+    ].join("\n"),
+  };
+}
+
 export async function seedBlocks() {
-  return [await siteSettingsSeed(), await collectionsSeed(), await collectionsSeedII()].map((s) => ({ ...s, block: `${s.begin}\n${s.body}\n${s.end}` }));
+  return [await siteSettingsSeed(), await collectionsSeed(), await collectionsSeedII(), await ratesSeed()].map((s) => ({ ...s, block: `${s.begin}\n${s.body}\n${s.end}` }));
 }
 
 if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) {

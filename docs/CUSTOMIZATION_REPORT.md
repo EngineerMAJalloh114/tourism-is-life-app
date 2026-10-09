@@ -21,7 +21,7 @@ tests 324 (322 pass, 2 skipped on Windows, 0 fail), `build:dev` OK, `check:asset
 | A7 Site settings | GREEN | 522 / 2 / 0 | `0009_site_settings` (+ seed) |
 | A8 Collections I | GREEN | 562 / 2 / 0 | `0010_collections` (+ seed, 42 records) |
 | A9 Collections II | GREEN | 576 / 2 / 0 | `0011_collections_seed` (74 records) |
-| A10 Rates and ratings | PENDING | | |
+| A10 Rates and ratings | GREEN | 610 / 2 / 0 | `0012_rates` (+ seed, 14 rates, 16 ratings) |
 | A11 Announcements | PENDING | | |
 | A12 Enquiry desk | PENDING | | |
 
@@ -289,3 +289,25 @@ tests 324 (322 pass, 2 skipped on Windows, 0 fail), `build:dev` OK, `check:asset
 - **Checked in Edge:** team profile consent fields, a vehicle (no price, availability read
   only), a category's price claim, the testimonial refused then published with a source, a
   stay's locked status, a service's claim; 390 px with no overflow.
+
+### A10 notes
+
+- **Money without floating point** (`src/lib/money.ts`): amounts are typed in major units and
+  parsed on their digits ("12.50", "12.5", "0.07", "1,000" accepted; "-1", "1.234", "1e3",
+  empty, junk and anything above 999,999,999.99 refused), stored as integer minor units
+  (`bigint`), shown by string formatting. USD and SLE. The only addition refuses mixed
+  currencies, and the rates module never sums amounts (test).
+- **Rates** (`rates`: subject record, label, currency, amount, per person, day, group,
+  transfer or night, source note, source date, status) and **ratings** (`ratings`: tour, value
+  in tenths, review count, source link, source date, status). The database refuses a published
+  row without its source (CHECK), and so do the operations. Publishing archives the earlier
+  published rate for the same thing, or the tour's earlier rating; published and archived rows
+  are not edited (archive and add a new one), so the audit log is the price history.
+  `rates.manage`: ADMIN and SUPER_ADMIN.
+- **Seeded as drafts:** 6 shore excursion prices per person (source note "Cruiseship
+  Proposal 2024", no date), 8 vehicle daily rates (no source), 16 tour ratings (no source).
+- **Kept apart from the booking code:** a test greps `pricing.ts`, the booking engine,
+  booking state, payments, webhooks and the reservation and settlement services, and none
+  imports rates or money; `quoteForTour` still returns "quote" for all 22 tours.
+- **Checked in Edge:** 14 rates and 16 ratings listed, publish refused without a date, "1e3"
+  refused in the form, published with a date, a rating added, 390 px with no overflow.

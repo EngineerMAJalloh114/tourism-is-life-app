@@ -33,7 +33,7 @@ export const ADMIN_MENU: AdminMenuGroup[] = [
       { label: "Navigation", to: "/admin/navigation", capability: "navigation.edit", available: false, comingIn: "the page builder" },
       { label: "Collections", to: "/admin/collections", capability: "collections.edit", available: true },
       { label: "Media", to: "/admin/media", capability: "media.upload", available: true },
-      { label: "Rates and ratings", to: "/admin/rates", capability: "rates.manage", available: false, comingIn: "A10" },
+      { label: "Rates and ratings", to: "/admin/rates", capability: "rates.manage", available: true },
       { label: "Announcements", to: "/admin/announcements", capability: "announcements.edit", available: false, comingIn: "A11" },
     ],
   },

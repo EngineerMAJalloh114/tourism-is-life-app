@@ -10,6 +10,7 @@ import * as accounts from "@/lib/server/team/accounts";
 import * as mediaLibrary from "@/lib/server/media/library";
 import * as siteSettings from "@/lib/server/settings/site-settings";
 import * as collectionItems from "@/lib/server/collections/items";
+import * as rates from "@/lib/server/rates/rates";
 import * as signInLog from "@/lib/server/team/sign-in-log";
 import * as staff from "@/lib/server/team/staff";
 
@@ -25,6 +26,7 @@ const OPERATION_MODULES: Record<string, Record<string, unknown>> = {
   "media/library": mediaLibrary,
   "settings/site-settings": siteSettings,
   "collections/items": collectionItems,
+  "rates/rates": rates,
   "team/accounts": accounts,
   "team/sign-in-log": signInLog,
   "team/staff": staff,
