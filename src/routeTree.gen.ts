@@ -38,6 +38,7 @@ import { Route as AccountSavedRouteImport } from './routes/account/saved'
 import { Route as AccountSettingsRouteImport } from './routes/account/settings'
 import { Route as AccountVouchersRouteImport } from './routes/account/vouchers'
 import { Route as AdminIndexRouteImport } from './routes/admin/index'
+import { Route as AdminAnnouncementsRouteImport } from './routes/admin/announcements'
 import { Route as AdminAuditRouteImport } from './routes/admin/audit'
 import { Route as AdminEnquiriesRouteImport } from './routes/admin/enquiries'
 import { Route as AdminMediaRouteImport } from './routes/admin/media'
@@ -256,6 +257,11 @@ const AccountVouchersRoute = AccountVouchersRouteImport.update({
 const AdminIndexRoute = AdminIndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminAnnouncementsRoute = AdminAnnouncementsRouteImport.update({
+  id: '/announcements',
+  path: '/announcements',
   getParentRoute: () => AdminRoute,
 } as any)
 const AdminAuditRoute = AdminAuditRouteImport.update({
@@ -663,6 +669,7 @@ export interface FileRoutesByFullPath {
   '/account/saved': typeof AccountSavedRoute
   '/account/settings': typeof AccountSettingsRoute
   '/account/vouchers': typeof AccountVouchersRoute
+  '/admin/announcements': typeof AdminAnnouncementsRoute
   '/admin/audit': typeof AdminAuditRoute
   '/admin/enquiries': typeof AdminEnquiriesRoute
   '/admin/media': typeof AdminMediaRoute
@@ -764,6 +771,7 @@ export interface FileRoutesByTo {
   '/account/saved': typeof AccountSavedRoute
   '/account/settings': typeof AccountSettingsRoute
   '/account/vouchers': typeof AccountVouchersRoute
+  '/admin/announcements': typeof AdminAnnouncementsRoute
   '/admin/audit': typeof AdminAuditRoute
   '/admin/enquiries': typeof AdminEnquiriesRoute
   '/admin/media': typeof AdminMediaRoute
@@ -867,6 +875,7 @@ export interface FileRoutesById {
   '/account/saved': typeof AccountSavedRoute
   '/account/settings': typeof AccountSettingsRoute
   '/account/vouchers': typeof AccountVouchersRoute
+  '/admin/announcements': typeof AdminAnnouncementsRoute
   '/admin/audit': typeof AdminAuditRoute
   '/admin/enquiries': typeof AdminEnquiriesRoute
   '/admin/media': typeof AdminMediaRoute
@@ -974,6 +983,7 @@ export interface FileRouteTypes {
     | '/account/saved'
     | '/account/settings'
     | '/account/vouchers'
+    | '/admin/announcements'
     | '/admin/audit'
     | '/admin/enquiries'
     | '/admin/media'
@@ -1075,6 +1085,7 @@ export interface FileRouteTypes {
     | '/account/saved'
     | '/account/settings'
     | '/account/vouchers'
+    | '/admin/announcements'
     | '/admin/audit'
     | '/admin/enquiries'
     | '/admin/media'
@@ -1177,6 +1188,7 @@ export interface FileRouteTypes {
     | '/account/saved'
     | '/account/settings'
     | '/account/vouchers'
+    | '/admin/announcements'
     | '/admin/audit'
     | '/admin/enquiries'
     | '/admin/media'
@@ -1524,6 +1536,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/admin/'
       preLoaderRoute: typeof AdminIndexRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/announcements': {
+      id: '/admin/announcements'
+      path: '/announcements'
+      fullPath: '/admin/announcements'
+      preLoaderRoute: typeof AdminAnnouncementsRouteImport
       parentRoute: typeof AdminRoute
     }
     '/admin/audit': {
@@ -2087,6 +2106,7 @@ const AccountRouteWithChildren =
   AccountRoute._addFileChildren(AccountRouteChildren)
 
 interface AdminRouteChildren {
+  AdminAnnouncementsRoute: typeof AdminAnnouncementsRoute
   AdminAuditRoute: typeof AdminAuditRoute
   AdminEnquiriesRoute: typeof AdminEnquiriesRoute
   AdminMediaRoute: typeof AdminMediaRoute
@@ -2102,6 +2122,7 @@ interface AdminRouteChildren {
 }
 
 const AdminRouteChildren: AdminRouteChildren = {
+  AdminAnnouncementsRoute: AdminAnnouncementsRoute,
   AdminAuditRoute: AdminAuditRoute,
   AdminEnquiriesRoute: AdminEnquiriesRoute,
   AdminMediaRoute: AdminMediaRoute,

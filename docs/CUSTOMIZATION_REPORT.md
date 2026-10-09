@@ -22,7 +22,7 @@ tests 324 (322 pass, 2 skipped on Windows, 0 fail), `build:dev` OK, `check:asset
 | A8 Collections I | GREEN | 562 / 2 / 0 | `0010_collections` (+ seed, 42 records) |
 | A9 Collections II | GREEN | 576 / 2 / 0 | `0011_collections_seed` (74 records) |
 | A10 Rates and ratings | GREEN | 610 / 2 / 0 | `0012_rates` (+ seed, 14 rates, 16 ratings) |
-| A11 Announcements | PENDING | | |
+| A11 Announcements | GREEN | 625 / 2 / 0 | `0013_announcements` |
 | A12 Enquiry desk | PENDING | | |
 
 ### A1 notes
@@ -311,3 +311,21 @@ tests 324 (322 pass, 2 skipped on Windows, 0 fail), `build:dev` OK, `check:asset
   imports rates or money; `quoteForTour` still returns "quote" for all 22 tours.
 - **Checked in Edge:** 14 rates and 16 ratings listed, publish refused without a date, "1e3"
   refused in the form, published with a date, a rating added, 390 px with no overflow.
+
+### A11 notes
+
+- **Announcements** (`/admin/announcements`, `announcements.edit`: CONTENT_MANAGER, ADMIN,
+  SUPER_ADMIN): a plain-text message of at most 200 characters, an optional link (a site path
+  or https only, also a database CHECK) with its own text, a start and an optional end. Draft,
+  published, back to draft, archived; never deleted. Every change audited.
+- **One at a time:** `activeAnnouncement(now)` returns the published one whose window holds
+  `now`, the latest start first (end exclusive, no end means open); tested with a fixed clock.
+  The site shows it from B5 through `AnnouncementBar`, which renders the message as a text
+  node: checked in Edge with `<b>` and `<script>` in a message (both shown as text, no
+  elements created) and a `javascript:` link (no link rendered). The bar wraps long words; the
+  first run found a 200-character unbroken message overflowing at 390 px, now fixed.
+- **Test stability:** the full suite twice hit a V8 crash inside a test process on this
+  Windows machine (a WASM allocation check, under seven files each running many in-memory
+  databases at once; a different file each time, never an assertion). The TypeScript test run
+  now uses `--test-concurrency=4`; two clean runs since. CI's 4-core runner already runs at
+  most 3 files at once, so nothing changes there.
