@@ -352,3 +352,40 @@ tests 324 (322 pass, 2 skipped on Windows, 0 fail), `build:dev` OK, `check:asset
 - **Checked in Edge** with a real enquiry sent from `/contact` on local PGLite: fields, both
   reply links, status, assignment, a note, filters, the CSV (the visitor's
   `=HYPERLINK(...)` name exported as text), 390 px with no overflow.
+
+## Milestone A final report
+
+PR: https://github.com/EngineerMAJalloh114/tourism-is-life-app/pull/3 (open, not merged). The task table is at the top of this file.
+
+**Skipped:** none. **Screenshot comparison:** not part of Milestone A (the baseline and comparison tool are task B1); every task was checked in Edge at 1440 and 390 px instead.
+
+**Decisions to review**
+- Capabilities, not ranks; added `users.view` so an ADMIN can see the team list. Booking, availability, reviews and tours pages left the admin.
+- A role change needs an existing team account; creating one over an old customer sign-up deletes its password and sessions first; removal is final.
+- Supabase Storage over plain `fetch` (no SDK, no new dependency); `sharp` moved to runtime dependencies, loaded only when a photo is processed.
+- Records leave out `bookable`, ratings and prices (rates live in their own table); unsourced claims are claim fields; circuit and vehicle-category keys are fixed.
+- Test runs capped at four files at once after a V8 crash on Windows with many in-memory databases.
+
+**Where an admin action permanently deletes data, and what the audit log keeps**
+1. **Collection record purged** (in the trash for more than 30 days; it is purged when someone opens the trash): the record, its versions, its references and photo uses, and through the foreign key its rates and ratings. The audit log keeps `collection.purge` (collection and key) and every earlier row: each save's before and after, each publish's full data, and each rate and rating change.
+2. **Photo deleted** (uploads only; photos that ship with the site cannot be deleted): the row stays, marked deleted, but every stored file (copies and analysis raster) is deleted from storage unless a kept version pins it. Kept: `media.delete`, one `media.file_purged` per file id, and the original `media.upload` (alt text, provenance, size). The image itself cannot be recovered.
+3. **Photo replaced:** the old files are deleted after the change commits, unless pinned. Kept: `media.replace` (old and new file ids, sizes) and `media.file_purged`.
+4. **Upload processing:** the original upload is always deleted after processing, and the new copies too if the row cannot be written. No audit row (nothing was recorded).
+5. **Team account removed:** password and any other sign-in method, two-factor secret and recovery codes, sessions and open password links. The account and its role history stay. Kept: `staff.removed` (role and status before and after). Credentials are never kept, by design.
+6. **Team account created over an old account:** the same credentials are deleted first. Kept: `staff.create` (previous role and status, new name, email and role).
+7. **Two-factor reset:** the authenticator secret, recovery codes and sessions. Kept: `staff.reset_two_factor` (enabled before, false after).
+8. **Team account disabled:** sessions and open password links. Kept: `staff.disabled`.
+9. **Versions beyond 30** (collection records, site settings): the oldest version rows. Kept: each `collection.publish` and `settings.publish` row holds the full published data.
+10. **A redirect from an address that becomes live again** is deleted, and older redirects are repointed. Kept: each publish row lists the redirects it added; the deleted one is not listed separately.
+
+Nothing else is deleted: enquiries and their notes, announcements, rates and ratings, photo rows and the audit log itself are never deleted (archived where needed). The audit log is append-only.
+
+**Owner needs**
+- After merge: set `BOOTSTRAP_ADMIN_EMAIL` in Vercel Production, open `/team/setup`, set a password, enrol two-factor, claim SUPER_ADMIN at `/admin`. `RESEND_API_KEY` and `RESEND_FROM` are present in Production (checked with `vercel env ls`, names only); `DATABASE_URL` is Production only.
+- Supabase project on a paid plan (free projects pause, which takes uploaded photos offline), two buckets, four `SUPABASE_*` variables (`docs/DEPLOYMENT_NOTES.md`). Real uploads and `sharp` on Vercel are untested until then.
+- Provenance for 43 of 86 photos (unverified licence or unconfirmed place; 2 files have no record, 1 record has no file). Sources for the "Licensed guide(s)" claims, vehicle prices, cruise price dates, tour ratings and the testimonial. Two team bios mention "1 DCM World" and "AFAR"; worth a check before B1.
+- The concurrency rule for two simultaneous account changes is verifiable only on a real Neon branch (O4).
+
+**Checks:** typecheck 0 errors, lint 0 problems, 643 tests (641 pass, 2 skipped on Windows, 0 fail), `build:dev`, `check:assets` and `check:migrations` pass. Full per-task notes: `docs/CUSTOMIZATION_REPORT.md`.
+
+**CI:** GitHub Actions `verify` runs typecheck, lint, test, check:migrations, build and check:assets on the PR; the Vercel preview built and deployed. **git status:** clean, `feat/admin-core` pushed.
