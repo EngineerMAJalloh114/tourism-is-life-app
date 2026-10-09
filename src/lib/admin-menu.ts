@@ -40,7 +40,7 @@ export const ADMIN_MENU: AdminMenuGroup[] = [
   {
     label: "Site",
     items: [
-      { label: "Settings", to: "/admin/settings", capability: "settings.edit", available: false, comingIn: "A7" },
+      { label: "Settings", to: "/admin/settings", capability: "settings.edit", available: true },
       { label: "Theme", to: "/admin/theme", capability: "theme.edit", available: false, comingIn: "the page builder" },
     ],
   },

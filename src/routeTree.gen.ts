@@ -41,6 +41,7 @@ import { Route as AdminIndexRouteImport } from './routes/admin/index'
 import { Route as AdminAuditRouteImport } from './routes/admin/audit'
 import { Route as AdminEnquiriesRouteImport } from './routes/admin/enquiries'
 import { Route as AdminMediaRouteImport } from './routes/admin/media'
+import { Route as AdminSettingsRouteImport } from './routes/admin/settings'
 import { Route as AdminSignInsRouteImport } from './routes/admin/sign-ins'
 import { Route as AdminUsersRouteImport } from './routes/admin/users'
 import { Route as BookingSlugRouteImport } from './routes/booking/$slug'
@@ -265,6 +266,11 @@ const AdminEnquiriesRoute = AdminEnquiriesRouteImport.update({
 const AdminMediaRoute = AdminMediaRouteImport.update({
   id: '/media',
   path: '/media',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminSettingsRoute = AdminSettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
   getParentRoute: () => AdminRoute,
 } as any)
 const AdminSignInsRoute = AdminSignInsRouteImport.update({
@@ -628,6 +634,7 @@ export interface FileRoutesByFullPath {
   '/admin/audit': typeof AdminAuditRoute
   '/admin/enquiries': typeof AdminEnquiriesRoute
   '/admin/media': typeof AdminMediaRoute
+  '/admin/settings': typeof AdminSettingsRoute
   '/admin/sign-ins': typeof AdminSignInsRoute
   '/admin/users': typeof AdminUsersRoute
   '/booking/$slug': typeof BookingSlugRouteWithChildren
@@ -723,6 +730,7 @@ export interface FileRoutesByTo {
   '/admin/audit': typeof AdminAuditRoute
   '/admin/enquiries': typeof AdminEnquiriesRoute
   '/admin/media': typeof AdminMediaRoute
+  '/admin/settings': typeof AdminSettingsRoute
   '/admin/sign-ins': typeof AdminSignInsRoute
   '/admin/users': typeof AdminUsersRoute
   '/contact/emergency': typeof ContactEmergencyRoute
@@ -820,6 +828,7 @@ export interface FileRoutesById {
   '/admin/audit': typeof AdminAuditRoute
   '/admin/enquiries': typeof AdminEnquiriesRoute
   '/admin/media': typeof AdminMediaRoute
+  '/admin/settings': typeof AdminSettingsRoute
   '/admin/sign-ins': typeof AdminSignInsRoute
   '/admin/users': typeof AdminUsersRoute
   '/booking/$slug': typeof BookingSlugRouteWithChildren
@@ -921,6 +930,7 @@ export interface FileRouteTypes {
     | '/admin/audit'
     | '/admin/enquiries'
     | '/admin/media'
+    | '/admin/settings'
     | '/admin/sign-ins'
     | '/admin/users'
     | '/booking/$slug'
@@ -1016,6 +1026,7 @@ export interface FileRouteTypes {
     | '/admin/audit'
     | '/admin/enquiries'
     | '/admin/media'
+    | '/admin/settings'
     | '/admin/sign-ins'
     | '/admin/users'
     | '/contact/emergency'
@@ -1112,6 +1123,7 @@ export interface FileRouteTypes {
     | '/admin/audit'
     | '/admin/enquiries'
     | '/admin/media'
+    | '/admin/settings'
     | '/admin/sign-ins'
     | '/admin/users'
     | '/booking/$slug'
@@ -1471,6 +1483,13 @@ declare module '@tanstack/react-router' {
       path: '/media'
       fullPath: '/admin/media'
       preLoaderRoute: typeof AdminMediaRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/settings': {
+      id: '/admin/settings'
+      path: '/settings'
+      fullPath: '/admin/settings'
+      preLoaderRoute: typeof AdminSettingsRouteImport
       parentRoute: typeof AdminRoute
     }
     '/admin/sign-ins': {
@@ -1974,6 +1993,7 @@ interface AdminRouteChildren {
   AdminAuditRoute: typeof AdminAuditRoute
   AdminEnquiriesRoute: typeof AdminEnquiriesRoute
   AdminMediaRoute: typeof AdminMediaRoute
+  AdminSettingsRoute: typeof AdminSettingsRoute
   AdminSignInsRoute: typeof AdminSignInsRoute
   AdminUsersRoute: typeof AdminUsersRoute
   AdminIndexRoute: typeof AdminIndexRoute
@@ -1983,6 +2003,7 @@ const AdminRouteChildren: AdminRouteChildren = {
   AdminAuditRoute: AdminAuditRoute,
   AdminEnquiriesRoute: AdminEnquiriesRoute,
   AdminMediaRoute: AdminMediaRoute,
+  AdminSettingsRoute: AdminSettingsRoute,
   AdminSignInsRoute: AdminSignInsRoute,
   AdminUsersRoute: AdminUsersRoute,
   AdminIndexRoute: AdminIndexRoute,

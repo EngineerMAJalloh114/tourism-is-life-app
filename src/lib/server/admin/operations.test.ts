@@ -8,6 +8,7 @@ import * as dashboard from "@/lib/server/dashboard";
 import * as desk from "@/lib/server/enquiries/desk";
 import * as accounts from "@/lib/server/team/accounts";
 import * as mediaLibrary from "@/lib/server/media/library";
+import * as siteSettings from "@/lib/server/settings/site-settings";
 import * as signInLog from "@/lib/server/team/sign-in-log";
 import * as staff from "@/lib/server/team/staff";
 
@@ -21,6 +22,7 @@ const OPERATION_MODULES: Record<string, Record<string, unknown>> = {
   dashboard,
   "enquiries/desk": desk,
   "media/library": mediaLibrary,
+  "settings/site-settings": siteSettings,
   "team/accounts": accounts,
   "team/sign-in-log": signInLog,
   "team/staff": staff,

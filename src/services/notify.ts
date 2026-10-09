@@ -247,13 +247,18 @@ export function buildEnquiryTeamEmail(opts: {
   };
 }
 
-/** Notifies the Tourism Is Life desk of a new enquiry. Reply-To is the visitor's own email. */
+/**
+ * Notifies the Tourism Is Life desk of a new enquiry. Reply-To is the visitor's
+ * own email. `recipients` is the published list from the site settings (task
+ * A7); without it the code's ENQUIRY_TEAM_EMAILS are used.
+ */
 export async function notifyEnquiryTeam(opts: {
   ref: string;
   type: string;
   email: string;
   phone?: string;
   payload: Record<string, string>;
+  recipients?: readonly string[];
 }) {
   const { subject, html, text } = buildEnquiryTeamEmail({
     ref: opts.ref,
@@ -264,7 +269,7 @@ export async function notifyEnquiryTeam(opts: {
     payload: opts.payload,
   });
   const result = await sendEmail({
-    to: ENQUIRY_TEAM_EMAILS,
+    to: opts.recipients?.length ? opts.recipients : ENQUIRY_TEAM_EMAILS,
     subject,
     html,
     text,

@@ -18,7 +18,7 @@ tests 324 (322 pass, 2 skipped on Windows, 0 fail), `build:dev` OK, `check:asset
 | A4 Admin shell | GREEN | 418 / 2 / 0 | none |
 | A5 Team accounts | GREEN | 442 / 2 / 0 | none (0005 holds the columns) |
 | A6 Media library and uploads | GREEN | 500 / 2 / 0 | `0008_media` (+ seed, 86 rows) |
-| A7 Site settings | PENDING | | |
+| A7 Site settings | GREEN | 522 / 2 / 0 | `0009_site_settings` (+ seed) |
 | A8 Collections I | PENDING | | |
 | A9 Collections II | PENDING | | |
 | A10 Rates and ratings | PENDING | | |
@@ -206,3 +206,28 @@ tests 324 (322 pass, 2 skipped on Windows, 0 fail), `build:dev` OK, `check:asset
   overflow. Real Supabase was not exercised: no keys exist yet (owner item O5).
 - **Pausing:** yes, free-plan pausing takes uploaded photos offline (sources in the plan,
   section 13, and `docs/DEPLOYMENT_NOTES.md`). Recommendation: a paid plan before real uploads.
+
+### A7 notes
+
+- **Settings** (`/admin/settings`, `settings.edit`: ADMIN and SUPER_ADMIN): business, contact
+  (each number with its own WhatsApp and SMS switch), social links, default description and
+  share image, enquiry recipients, interface text (skip link, 404, error page) and documents
+  (sustainability policy link). One draft with a `rev` (a stale save or publish is refused),
+  published versions, restore publishes an older version again, 30 kept, every step audited
+  with before and after.
+- **Checks:** one Zod schema for the form and the server: emails, `+country` phone format,
+  https-only links, a shown social account needs a link, no duplicate recipients or numbers,
+  and the retired number refused anywhere in any format (`80343826` as digits).
+- **Seed generator introduced:** `npm run content:seed` (`scripts/content/generate-seed.mjs`)
+  writes the seed from `src/content/defaults/settings.ts`, which is built from the constants
+  the site renders. To make those constants real, the root description, share image path,
+  skip link, 404 and error text moved into named constants (`seo.ts`,
+  `src/content/defaults/interface.ts`); the pages render exactly the same text. A test checks
+  the migration's block equals the generator byte for byte; another runs 0009 twice. The
+  TikTok placeholder is stored as an empty link (the account stays hidden).
+- **Recipients drive the notification:** `submitEnquiry` reads the published list and passes
+  it to `notifyEnquiryTeam`; if the settings cannot be read it uses `ENQUIRY_TEAM_EMAILS` and
+  logs `enquiry.recipients_from_code`. The seeded list equals today's, so nothing changes for
+  the desk until someone publishes a new list. Tested with a mocked Resend, and in the
+  browser with a real local enquiry (saved; no fallback logged).
+- **Public pages do not read the settings yet** (task B5); only the enquiry notification does.

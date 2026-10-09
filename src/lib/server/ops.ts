@@ -13,6 +13,7 @@ import { publicId } from "@/lib/server/crypto";
 import { liveChargeAllowed, quoteForSlug } from "@/lib/server/pricing";
 import { guardPublicMutation } from "@/lib/server/public-guard";
 import { log } from "@/lib/server/logger";
+import { enquiryRecipients } from "@/lib/server/settings/site-settings";
 import {
   BOOKING_SELECT,
   createHoldTx,
@@ -68,8 +69,12 @@ export const submitEnquiry = createServerFn({ method: "POST" })
     // can silently never complete. sendEmail() has its own timeout and never
     // throws, so this can't hang the request or turn into an unhandled
     // rejection.
+    // The published recipient list (Settings › Enquiry recipients); the code's
+    // list if the settings cannot be read. Never throws.
+    const team = await enquiryRecipients(sql);
+    if (team.source === "code") log.warn("enquiry.recipients_from_code", { id });
     await Promise.allSettled([
-      notifyEnquiryTeam({ ref: id, type: data.type, email, phone: payload.phone, payload }),
+      notifyEnquiryTeam({ ref: id, type: data.type, email, phone: payload.phone, payload, recipients: team.recipients }),
       notifyEnquiryReceived({ email, name, ref: id, type: data.type }),
     ]);
     return { id, status: "open" as const };
