@@ -23,7 +23,7 @@ tests 324 (322 pass, 2 skipped on Windows, 0 fail), `build:dev` OK, `check:asset
 | A9 Collections II | GREEN | 576 / 2 / 0 | `0011_collections_seed` (74 records) |
 | A10 Rates and ratings | GREEN | 610 / 2 / 0 | `0012_rates` (+ seed, 14 rates, 16 ratings) |
 | A11 Announcements | GREEN | 625 / 2 / 0 | `0013_announcements` |
-| A12 Enquiry desk | PENDING | | |
+| A12 Enquiry desk | GREEN | 643 / 2 / 0 | `0014_enquiry_desk` |
 
 ### A1 notes
 
@@ -329,3 +329,26 @@ tests 324 (322 pass, 2 skipped on Windows, 0 fail), `build:dev` OK, `check:asset
   databases at once; a different file each time, never an assertion). The TypeScript test run
   now uses `--test-concurrency=4`; two clean runs since. CI's 4-core runner already runs at
   most 3 files at once, so nothing changes there.
+
+### A12 notes
+
+- **The desk** (`/admin/enquiries`): reference, date, type, the form's fields parsed and
+  labelled, status New (stored `open`, as the public form writes it), in progress, quoted,
+  closed; an assignee (active team members who can read enquiries); append-only internal
+  notes; reply by email (`mailto:` with "Re: {ref}") and by WhatsApp (`wa.me` prefilled with
+  the reference, only when a phone number exists); search across reference, name, email and
+  text (a `%` is searched for, not a wildcard); filters by status, type and assignee; keyset
+  pages, newest first, stable while new enquiries arrive.
+- **CSV export** (`enquiries.export`: ADMIN, SUPER_ADMIN): the filtered list, at most 5,000
+  rows, every cell quoted, and a cell starting with `=`, `+`, `-`, `@`, a tab or a carriage
+  return gets a leading apostrophe. The audit row records who, the filters and the count, not
+  the data.
+- **Access:** reading needs `enquiries.read` (BOOKING_MANAGER, ADMIN, SUPER_ADMIN); status,
+  assignee and notes need `enquiries.manage`; CONTENT_MANAGER and STAFF get 403 on every
+  endpoint (tested). Every change is audited with before and after.
+- **Migration** `0014_enquiry_desk`: nullable `assignee_id`, `status_changed_at`, `updated_at`,
+  the `enquiry_notes` table, indexes, and the status CHECK added `NOT VALID`, so live rows are
+  not re-checked. The dashboard now says "New enquiries" for status `open`.
+- **Checked in Edge** with a real enquiry sent from `/contact` on local PGLite: fields, both
+  reply links, status, assignment, a note, filters, the CSV (the visitor's
+  `=HYPERLINK(...)` name exported as text), 390 px with no overflow.
