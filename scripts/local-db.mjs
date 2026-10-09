@@ -23,10 +23,18 @@ import { dirname, join } from "node:path";
 /** The database variables the app or the migrator read. */
 export const DATABASE_ENV_KEYS = ["DATABASE_URL", "DATABASE_URL_UNPOOLED"];
 
-/** A copy of `env` with every database variable blanked. Pure, for tests. */
+/**
+ * Set only by this script. It tells the app it may seed the local test
+ * SUPER_ADMIN from LOCAL_SUPER_ADMIN_EMAIL / LOCAL_SUPER_ADMIN_PASSWORD
+ * (src/lib/auth/local-seed.ts), which still refuses if a database URL is set.
+ */
+export const LOCAL_SEED_FLAG = "TIL_LOCAL_SEED";
+
+/** A copy of `env` with every database variable blanked and the local-seed flag set. Pure, for tests. */
 export function withLocalDatabase(env) {
   const out = { ...env };
   for (const key of DATABASE_ENV_KEYS) out[key] = "";
+  out[LOCAL_SEED_FLAG] = "1";
   return out;
 }
 

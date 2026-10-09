@@ -17,18 +17,25 @@ function Page() {
     <LegalPage
       title="Cookies and browser storage"
       lede="What this website keeps in your browser, and why."
+      updated="8 October 2026"
     >
       <LegalSection heading="What we use">
         <ul className="list-disc space-y-2 pl-5">
           <li>
-            <span className="text-heading">Sign-in cookie.</span> If you sign in to an account, a
-            session cookie keeps you signed in. It is needed for the account to work, and it is not set
-            if you never sign in.
+            <span className="text-heading">Sign-in cookie.</span> Only members of the Tourism Is Life team
+            sign in. When they do, a session cookie keeps them signed in for up to 12 hours. Visitors do
+            not need an account, and the cookie is not set if you never sign in.
           </li>
           <li>
             <span className="text-heading">Display preferences.</span> Your browser&rsquo;s local
             storage holds a small record called <code>til-prefs</code> that remembers choices you make
             on the site, such as the colour theme, so they are still there next time.
+          </li>
+          <li>
+            <span className="text-heading">Saved tours and places.</span> If you save a tour, or a place on
+            the Stay &amp; Dine page, the list is kept in your browser&rsquo;s local storage
+            (<code>til-saved-tours</code>, <code>til-saved-places</code>). It stays on this device and is
+            not sent to us.
           </li>
         </ul>
         <p>

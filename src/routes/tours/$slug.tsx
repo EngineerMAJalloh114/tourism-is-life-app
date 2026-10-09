@@ -7,8 +7,8 @@ import { EnquiryForm } from "@/components/enquiry-form";
 import { Breadcrumb } from "@/components/breadcrumb";
 import { JsonLd } from "@/components/json-ld";
 import { breadcrumbJsonLd, pageHead, tourJsonLd } from "@/lib/seo";
-import { isTourSaved, listApprovedReviews, toggleSavedTour } from "@/lib/server/ops";
-import { useCurrentUserState } from "@/lib/auth/use-current-user";
+import { listApprovedReviews } from "@/lib/server/ops";
+import { useSavedTours, useSavedToursHydration } from "@/lib/saved-tours";
 
 export const Route = createFileRoute("/tours/$slug")({
   head: ({ params }) => {
@@ -20,15 +20,13 @@ export const Route = createFileRoute("/tours/$slug")({
 
 function TourDetail() {
   const { slug } = Route.useParams();
-  const { user } = useCurrentUserState();
-  const [saved, setSaved] = useState(false);
+  useSavedToursHydration();
+  const saved = useSavedTours((s) => s.slugs.includes(slug));
+  const toggleSaved = useSavedTours((s) => s.toggle);
   const [reviews, setReviews] = useState<Awaited<ReturnType<typeof listApprovedReviews>>>([]);
   const tour = getTour(slug);
 
   useEffect(() => {
-    void isTourSaved({ data: { slug } })
-      .then((r) => setSaved(r.saved))
-      .catch(() => setSaved(false));
     void listApprovedReviews({ data: { slug } })
       .then(setReviews)
       .catch(() => setReviews([]));
@@ -214,14 +212,9 @@ function TourDetail() {
               type="button"
               variant="outline"
               className="mt-2 w-full"
-              onClick={async () => {
-                if (!user) {
-                  window.location.href = "/login";
-                  return;
-                }
-                const r = await toggleSavedTour({ data: { slug: tour.slug } });
-                setSaved(r.saved);
-              }}
+              aria-pressed={saved}
+              aria-label={saved ? `${tour.title} is saved on this device` : `Save ${tour.title} on this device`}
+              onClick={() => toggleSaved(tour.slug)}
             >
               {saved ? "Saved" : "Save tour"}
             </Button>

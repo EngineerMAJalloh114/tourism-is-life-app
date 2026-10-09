@@ -7,10 +7,13 @@ export const LEGAL_UPDATED = "25 September 2026";
 export function LegalPage({
   title,
   lede,
+  updated = LEGAL_UPDATED,
   children,
 }: {
   title: string;
   lede: string;
+  /** The date this page last changed, when it differs from the shared date. */
+  updated?: string;
   children: ReactNode;
 }) {
   return (
@@ -23,7 +26,7 @@ export function LegalPage({
         imageAlt="A busy street in central Freetown, Sierra Leone"
       />
       <div className="container-page max-w-3xl py-10">
-        <p className="text-xs uppercase tracking-[0.16em] text-muted">Last updated {LEGAL_UPDATED}</p>
+        <p className="text-xs uppercase tracking-[0.16em] text-muted">Last updated {updated}</p>
         <div className="mt-6 space-y-8 text-sm leading-relaxed text-muted">{children}</div>
       </div>
     </>

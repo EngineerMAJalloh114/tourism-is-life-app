@@ -38,12 +38,14 @@ import { Route as AccountSavedRouteImport } from './routes/account/saved'
 import { Route as AccountSettingsRouteImport } from './routes/account/settings'
 import { Route as AccountVouchersRouteImport } from './routes/account/vouchers'
 import { Route as AdminIndexRouteImport } from './routes/admin/index'
+import { Route as AdminAnnouncementsRouteImport } from './routes/admin/announcements'
 import { Route as AdminAuditRouteImport } from './routes/admin/audit'
-import { Route as AdminAvailabilityRouteImport } from './routes/admin/availability'
-import { Route as AdminBookingsRouteImport } from './routes/admin/bookings'
 import { Route as AdminEnquiriesRouteImport } from './routes/admin/enquiries'
-import { Route as AdminReviewsRouteImport } from './routes/admin/reviews'
-import { Route as AdminToursRouteImport } from './routes/admin/tours'
+import { Route as AdminMediaRouteImport } from './routes/admin/media'
+import { Route as AdminProfilesRouteImport } from './routes/admin/profiles'
+import { Route as AdminRatesRouteImport } from './routes/admin/rates'
+import { Route as AdminSettingsRouteImport } from './routes/admin/settings'
+import { Route as AdminSignInsRouteImport } from './routes/admin/sign-ins'
 import { Route as AdminUsersRouteImport } from './routes/admin/users'
 import { Route as BookingSlugRouteImport } from './routes/booking/$slug'
 import { Route as CheckoutRefRouteImport } from './routes/checkout/$ref'
@@ -66,6 +68,12 @@ import { Route as JournalSlugRouteImport } from './routes/journal/$slug'
 import { Route as ServicesIndexRouteImport } from './routes/services/index'
 import { Route as ServicesSlugRouteImport } from './routes/services/$slug'
 import { Route as ServicesToursExcursionsRouteImport } from './routes/services/tours-excursions'
+import { Route as TeamEnrolRouteImport } from './routes/team/enrol'
+import { Route as TeamForgotPasswordRouteImport } from './routes/team/forgot-password'
+import { Route as TeamResetPasswordRouteImport } from './routes/team/reset-password'
+import { Route as TeamSetupRouteImport } from './routes/team/setup'
+import { Route as TeamSignInRouteImport } from './routes/team/sign-in'
+import { Route as TeamTwoFactorRouteImport } from './routes/team/two-factor'
 import { Route as ToursIndexRouteImport } from './routes/tours/index'
 import { Route as ToursSlugRouteImport } from './routes/tours/$slug'
 import { Route as ToursGuineaRouteImport } from './routes/tours/guinea'
@@ -75,6 +83,7 @@ import { Route as ToursSierraLeoneRouteImport } from './routes/tours/sierra-leon
 import { Route as ToursWestAfricaRouteImport } from './routes/tours/west-africa'
 import { Route as AccountBookingsIndexRouteImport } from './routes/account/bookings/index'
 import { Route as AccountBookingsRefRouteImport } from './routes/account/bookings/$ref'
+import { Route as AdminCollectionsIndexRouteImport } from './routes/admin/collections/index'
 import { Route as ApiAuthSplatRouteImport } from './routes/api/auth/$'
 import { Route as ApiCronExpireHoldsRouteImport } from './routes/api/cron/expire-holds'
 import { Route as ApiWebhooksMonerooRouteImport } from './routes/api/webhooks/moneroo'
@@ -98,6 +107,9 @@ import { Route as HospitalityStaysSlugRouteImport } from './routes/hospitality/s
 import { Route as JournalCategorySlugRouteImport } from './routes/journal/$category/$slug'
 import { Route as JournalCategoryCategoryRouteImport } from './routes/journal/category/$category'
 import { Route as ServicesVehicleRentalIndexRouteImport } from './routes/services/vehicle-rental/index'
+import { Route as AdminCollectionsCollectionIndexRouteImport } from './routes/admin/collections/$collection/index'
+import { Route as AdminCollectionsCollectionIdRouteImport } from './routes/admin/collections/$collection/$id'
+import { Route as ApiMediaLocalSplatRouteImport } from './routes/api/media/local/$'
 import { Route as ServicesVehicleRentalBookVehicleIdRouteImport } from './routes/services/vehicle-rental/book/$vehicleId'
 import { Route as ServicesVehicleRentalVehiclesVehicleIdRouteImport } from './routes/services/vehicle-rental/vehicles/$vehicleId'
 import { Route as ServicesVehicleRentalBookVehicleIdConfirmationRouteImport } from './routes/services/vehicle-rental/book/$vehicleId/confirmation'
@@ -247,19 +259,14 @@ const AdminIndexRoute = AdminIndexRouteImport.update({
   path: '/',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminAnnouncementsRoute = AdminAnnouncementsRouteImport.update({
+  id: '/announcements',
+  path: '/announcements',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminAuditRoute = AdminAuditRouteImport.update({
   id: '/audit',
   path: '/audit',
-  getParentRoute: () => AdminRoute,
-} as any)
-const AdminAvailabilityRoute = AdminAvailabilityRouteImport.update({
-  id: '/availability',
-  path: '/availability',
-  getParentRoute: () => AdminRoute,
-} as any)
-const AdminBookingsRoute = AdminBookingsRouteImport.update({
-  id: '/bookings',
-  path: '/bookings',
   getParentRoute: () => AdminRoute,
 } as any)
 const AdminEnquiriesRoute = AdminEnquiriesRouteImport.update({
@@ -267,14 +274,29 @@ const AdminEnquiriesRoute = AdminEnquiriesRouteImport.update({
   path: '/enquiries',
   getParentRoute: () => AdminRoute,
 } as any)
-const AdminReviewsRoute = AdminReviewsRouteImport.update({
-  id: '/reviews',
-  path: '/reviews',
+const AdminMediaRoute = AdminMediaRouteImport.update({
+  id: '/media',
+  path: '/media',
   getParentRoute: () => AdminRoute,
 } as any)
-const AdminToursRoute = AdminToursRouteImport.update({
-  id: '/tours',
-  path: '/tours',
+const AdminProfilesRoute = AdminProfilesRouteImport.update({
+  id: '/profiles',
+  path: '/profiles',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminRatesRoute = AdminRatesRouteImport.update({
+  id: '/rates',
+  path: '/rates',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminSettingsRoute = AdminSettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminSignInsRoute = AdminSignInsRouteImport.update({
+  id: '/sign-ins',
+  path: '/sign-ins',
   getParentRoute: () => AdminRoute,
 } as any)
 const AdminUsersRoute = AdminUsersRouteImport.update({
@@ -387,6 +409,36 @@ const ServicesToursExcursionsRoute = ServicesToursExcursionsRouteImport.update({
   path: '/services/tours-excursions',
   getParentRoute: () => rootRouteImport,
 } as any)
+const TeamEnrolRoute = TeamEnrolRouteImport.update({
+  id: '/team/enrol',
+  path: '/team/enrol',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TeamForgotPasswordRoute = TeamForgotPasswordRouteImport.update({
+  id: '/team/forgot-password',
+  path: '/team/forgot-password',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TeamResetPasswordRoute = TeamResetPasswordRouteImport.update({
+  id: '/team/reset-password',
+  path: '/team/reset-password',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TeamSetupRoute = TeamSetupRouteImport.update({
+  id: '/team/setup',
+  path: '/team/setup',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TeamSignInRoute = TeamSignInRouteImport.update({
+  id: '/team/sign-in',
+  path: '/team/sign-in',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TeamTwoFactorRoute = TeamTwoFactorRouteImport.update({
+  id: '/team/two-factor',
+  path: '/team/two-factor',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ToursIndexRoute = ToursIndexRouteImport.update({
   id: '/tours/',
   path: '/tours/',
@@ -431,6 +483,11 @@ const AccountBookingsRefRoute = AccountBookingsRefRouteImport.update({
   id: '/$ref',
   path: '/$ref',
   getParentRoute: () => AccountBookingsRoute,
+} as any)
+const AdminCollectionsIndexRoute = AdminCollectionsIndexRouteImport.update({
+  id: '/collections/',
+  path: '/collections/',
+  getParentRoute: () => AdminRoute,
 } as any)
 const ApiAuthSplatRoute = ApiAuthSplatRouteImport.update({
   id: '/api/auth/$',
@@ -549,6 +606,23 @@ const ServicesVehicleRentalIndexRoute =
     path: '/services/vehicle-rental/',
     getParentRoute: () => rootRouteImport,
   } as any)
+const AdminCollectionsCollectionIndexRoute =
+  AdminCollectionsCollectionIndexRouteImport.update({
+    id: '/collections/$collection/',
+    path: '/collections/$collection/',
+    getParentRoute: () => AdminRoute,
+  } as any)
+const AdminCollectionsCollectionIdRoute =
+  AdminCollectionsCollectionIdRouteImport.update({
+    id: '/collections/$collection/$id',
+    path: '/collections/$collection/$id',
+    getParentRoute: () => AdminRoute,
+  } as any)
+const ApiMediaLocalSplatRoute = ApiMediaLocalSplatRouteImport.update({
+  id: '/api/media/local/$',
+  path: '/api/media/local/$',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ServicesVehicleRentalBookVehicleIdRoute =
   ServicesVehicleRentalBookVehicleIdRouteImport.update({
     id: '/services/vehicle-rental/book/$vehicleId',
@@ -595,12 +669,14 @@ export interface FileRoutesByFullPath {
   '/account/saved': typeof AccountSavedRoute
   '/account/settings': typeof AccountSettingsRoute
   '/account/vouchers': typeof AccountVouchersRoute
+  '/admin/announcements': typeof AdminAnnouncementsRoute
   '/admin/audit': typeof AdminAuditRoute
-  '/admin/availability': typeof AdminAvailabilityRoute
-  '/admin/bookings': typeof AdminBookingsRoute
   '/admin/enquiries': typeof AdminEnquiriesRoute
-  '/admin/reviews': typeof AdminReviewsRoute
-  '/admin/tours': typeof AdminToursRoute
+  '/admin/media': typeof AdminMediaRoute
+  '/admin/profiles': typeof AdminProfilesRoute
+  '/admin/rates': typeof AdminRatesRoute
+  '/admin/settings': typeof AdminSettingsRoute
+  '/admin/sign-ins': typeof AdminSignInsRoute
   '/admin/users': typeof AdminUsersRoute
   '/booking/$slug': typeof BookingSlugRouteWithChildren
   '/checkout/$ref': typeof CheckoutRefRouteWithChildren
@@ -617,6 +693,12 @@ export interface FileRoutesByFullPath {
   '/journal/$slug': typeof JournalSlugRoute
   '/services/$slug': typeof ServicesSlugRoute
   '/services/tours-excursions': typeof ServicesToursExcursionsRoute
+  '/team/enrol': typeof TeamEnrolRoute
+  '/team/forgot-password': typeof TeamForgotPasswordRoute
+  '/team/reset-password': typeof TeamResetPasswordRoute
+  '/team/setup': typeof TeamSetupRoute
+  '/team/sign-in': typeof TeamSignInRoute
+  '/team/two-factor': typeof TeamTwoFactorRoute
   '/tours/$slug': typeof ToursSlugRoute
   '/tours/guinea': typeof ToursGuineaRoute
   '/tours/liberia': typeof ToursLiberiaRoute
@@ -654,12 +736,16 @@ export interface FileRoutesByFullPath {
   '/journal/$category/$slug': typeof JournalCategorySlugRoute
   '/journal/category/$category': typeof JournalCategoryCategoryRoute
   '/account/bookings/': typeof AccountBookingsIndexRoute
+  '/admin/collections/': typeof AdminCollectionsIndexRoute
   '/booking/$slug/': typeof BookingSlugIndexRoute
   '/checkout/$ref/': typeof CheckoutRefIndexRoute
   '/destinations/$circuit/': typeof DestinationsCircuitIndexRoute
   '/services/vehicle-rental/': typeof ServicesVehicleRentalIndexRoute
+  '/admin/collections/$collection/$id': typeof AdminCollectionsCollectionIdRoute
+  '/api/media/local/$': typeof ApiMediaLocalSplatRoute
   '/services/vehicle-rental/book/$vehicleId': typeof ServicesVehicleRentalBookVehicleIdRouteWithChildren
   '/services/vehicle-rental/vehicles/$vehicleId': typeof ServicesVehicleRentalVehiclesVehicleIdRoute
+  '/admin/collections/$collection/': typeof AdminCollectionsCollectionIndexRoute
   '/services/vehicle-rental/book/$vehicleId/confirmation': typeof ServicesVehicleRentalBookVehicleIdConfirmationRoute
 }
 export interface FileRoutesByTo {
@@ -685,12 +771,14 @@ export interface FileRoutesByTo {
   '/account/saved': typeof AccountSavedRoute
   '/account/settings': typeof AccountSettingsRoute
   '/account/vouchers': typeof AccountVouchersRoute
+  '/admin/announcements': typeof AdminAnnouncementsRoute
   '/admin/audit': typeof AdminAuditRoute
-  '/admin/availability': typeof AdminAvailabilityRoute
-  '/admin/bookings': typeof AdminBookingsRoute
   '/admin/enquiries': typeof AdminEnquiriesRoute
-  '/admin/reviews': typeof AdminReviewsRoute
-  '/admin/tours': typeof AdminToursRoute
+  '/admin/media': typeof AdminMediaRoute
+  '/admin/profiles': typeof AdminProfilesRoute
+  '/admin/rates': typeof AdminRatesRoute
+  '/admin/settings': typeof AdminSettingsRoute
+  '/admin/sign-ins': typeof AdminSignInsRoute
   '/admin/users': typeof AdminUsersRoute
   '/contact/emergency': typeof ContactEmergencyRoute
   '/contact/partner': typeof ContactPartnerRoute
@@ -704,6 +792,12 @@ export interface FileRoutesByTo {
   '/journal/$slug': typeof JournalSlugRoute
   '/services/$slug': typeof ServicesSlugRoute
   '/services/tours-excursions': typeof ServicesToursExcursionsRoute
+  '/team/enrol': typeof TeamEnrolRoute
+  '/team/forgot-password': typeof TeamForgotPasswordRoute
+  '/team/reset-password': typeof TeamResetPasswordRoute
+  '/team/setup': typeof TeamSetupRoute
+  '/team/sign-in': typeof TeamSignInRoute
+  '/team/two-factor': typeof TeamTwoFactorRoute
   '/tours/$slug': typeof ToursSlugRoute
   '/tours/guinea': typeof ToursGuineaRoute
   '/tours/liberia': typeof ToursLiberiaRoute
@@ -741,12 +835,16 @@ export interface FileRoutesByTo {
   '/journal/$category/$slug': typeof JournalCategorySlugRoute
   '/journal/category/$category': typeof JournalCategoryCategoryRoute
   '/account/bookings': typeof AccountBookingsIndexRoute
+  '/admin/collections': typeof AdminCollectionsIndexRoute
   '/booking/$slug': typeof BookingSlugIndexRoute
   '/checkout/$ref': typeof CheckoutRefIndexRoute
   '/destinations/$circuit': typeof DestinationsCircuitIndexRoute
   '/services/vehicle-rental': typeof ServicesVehicleRentalIndexRoute
+  '/admin/collections/$collection/$id': typeof AdminCollectionsCollectionIdRoute
+  '/api/media/local/$': typeof ApiMediaLocalSplatRoute
   '/services/vehicle-rental/book/$vehicleId': typeof ServicesVehicleRentalBookVehicleIdRouteWithChildren
   '/services/vehicle-rental/vehicles/$vehicleId': typeof ServicesVehicleRentalVehiclesVehicleIdRoute
+  '/admin/collections/$collection': typeof AdminCollectionsCollectionIndexRoute
   '/services/vehicle-rental/book/$vehicleId/confirmation': typeof ServicesVehicleRentalBookVehicleIdConfirmationRoute
 }
 export interface FileRoutesById {
@@ -777,12 +875,14 @@ export interface FileRoutesById {
   '/account/saved': typeof AccountSavedRoute
   '/account/settings': typeof AccountSettingsRoute
   '/account/vouchers': typeof AccountVouchersRoute
+  '/admin/announcements': typeof AdminAnnouncementsRoute
   '/admin/audit': typeof AdminAuditRoute
-  '/admin/availability': typeof AdminAvailabilityRoute
-  '/admin/bookings': typeof AdminBookingsRoute
   '/admin/enquiries': typeof AdminEnquiriesRoute
-  '/admin/reviews': typeof AdminReviewsRoute
-  '/admin/tours': typeof AdminToursRoute
+  '/admin/media': typeof AdminMediaRoute
+  '/admin/profiles': typeof AdminProfilesRoute
+  '/admin/rates': typeof AdminRatesRoute
+  '/admin/settings': typeof AdminSettingsRoute
+  '/admin/sign-ins': typeof AdminSignInsRoute
   '/admin/users': typeof AdminUsersRoute
   '/booking/$slug': typeof BookingSlugRouteWithChildren
   '/checkout/$ref': typeof CheckoutRefRouteWithChildren
@@ -799,6 +899,12 @@ export interface FileRoutesById {
   '/journal/$slug': typeof JournalSlugRoute
   '/services/$slug': typeof ServicesSlugRoute
   '/services/tours-excursions': typeof ServicesToursExcursionsRoute
+  '/team/enrol': typeof TeamEnrolRoute
+  '/team/forgot-password': typeof TeamForgotPasswordRoute
+  '/team/reset-password': typeof TeamResetPasswordRoute
+  '/team/setup': typeof TeamSetupRoute
+  '/team/sign-in': typeof TeamSignInRoute
+  '/team/two-factor': typeof TeamTwoFactorRoute
   '/tours/$slug': typeof ToursSlugRoute
   '/tours/guinea': typeof ToursGuineaRoute
   '/tours/liberia': typeof ToursLiberiaRoute
@@ -836,12 +942,16 @@ export interface FileRoutesById {
   '/journal/$category/$slug': typeof JournalCategorySlugRoute
   '/journal/category/$category': typeof JournalCategoryCategoryRoute
   '/account/bookings/': typeof AccountBookingsIndexRoute
+  '/admin/collections/': typeof AdminCollectionsIndexRoute
   '/booking/$slug/': typeof BookingSlugIndexRoute
   '/checkout/$ref/': typeof CheckoutRefIndexRoute
   '/destinations/$circuit/': typeof DestinationsCircuitIndexRoute
   '/services/vehicle-rental/': typeof ServicesVehicleRentalIndexRoute
+  '/admin/collections/$collection/$id': typeof AdminCollectionsCollectionIdRoute
+  '/api/media/local/$': typeof ApiMediaLocalSplatRoute
   '/services/vehicle-rental/book/$vehicleId': typeof ServicesVehicleRentalBookVehicleIdRouteWithChildren
   '/services/vehicle-rental/vehicles/$vehicleId': typeof ServicesVehicleRentalVehiclesVehicleIdRoute
+  '/admin/collections/$collection/': typeof AdminCollectionsCollectionIndexRoute
   '/services/vehicle-rental/book/$vehicleId/confirmation': typeof ServicesVehicleRentalBookVehicleIdConfirmationRoute
 }
 export interface FileRouteTypes {
@@ -873,12 +983,14 @@ export interface FileRouteTypes {
     | '/account/saved'
     | '/account/settings'
     | '/account/vouchers'
+    | '/admin/announcements'
     | '/admin/audit'
-    | '/admin/availability'
-    | '/admin/bookings'
     | '/admin/enquiries'
-    | '/admin/reviews'
-    | '/admin/tours'
+    | '/admin/media'
+    | '/admin/profiles'
+    | '/admin/rates'
+    | '/admin/settings'
+    | '/admin/sign-ins'
     | '/admin/users'
     | '/booking/$slug'
     | '/checkout/$ref'
@@ -895,6 +1007,12 @@ export interface FileRouteTypes {
     | '/journal/$slug'
     | '/services/$slug'
     | '/services/tours-excursions'
+    | '/team/enrol'
+    | '/team/forgot-password'
+    | '/team/reset-password'
+    | '/team/setup'
+    | '/team/sign-in'
+    | '/team/two-factor'
     | '/tours/$slug'
     | '/tours/guinea'
     | '/tours/liberia'
@@ -932,12 +1050,16 @@ export interface FileRouteTypes {
     | '/journal/$category/$slug'
     | '/journal/category/$category'
     | '/account/bookings/'
+    | '/admin/collections/'
     | '/booking/$slug/'
     | '/checkout/$ref/'
     | '/destinations/$circuit/'
     | '/services/vehicle-rental/'
+    | '/admin/collections/$collection/$id'
+    | '/api/media/local/$'
     | '/services/vehicle-rental/book/$vehicleId'
     | '/services/vehicle-rental/vehicles/$vehicleId'
+    | '/admin/collections/$collection/'
     | '/services/vehicle-rental/book/$vehicleId/confirmation'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -963,12 +1085,14 @@ export interface FileRouteTypes {
     | '/account/saved'
     | '/account/settings'
     | '/account/vouchers'
+    | '/admin/announcements'
     | '/admin/audit'
-    | '/admin/availability'
-    | '/admin/bookings'
     | '/admin/enquiries'
-    | '/admin/reviews'
-    | '/admin/tours'
+    | '/admin/media'
+    | '/admin/profiles'
+    | '/admin/rates'
+    | '/admin/settings'
+    | '/admin/sign-ins'
     | '/admin/users'
     | '/contact/emergency'
     | '/contact/partner'
@@ -982,6 +1106,12 @@ export interface FileRouteTypes {
     | '/journal/$slug'
     | '/services/$slug'
     | '/services/tours-excursions'
+    | '/team/enrol'
+    | '/team/forgot-password'
+    | '/team/reset-password'
+    | '/team/setup'
+    | '/team/sign-in'
+    | '/team/two-factor'
     | '/tours/$slug'
     | '/tours/guinea'
     | '/tours/liberia'
@@ -1019,12 +1149,16 @@ export interface FileRouteTypes {
     | '/journal/$category/$slug'
     | '/journal/category/$category'
     | '/account/bookings'
+    | '/admin/collections'
     | '/booking/$slug'
     | '/checkout/$ref'
     | '/destinations/$circuit'
     | '/services/vehicle-rental'
+    | '/admin/collections/$collection/$id'
+    | '/api/media/local/$'
     | '/services/vehicle-rental/book/$vehicleId'
     | '/services/vehicle-rental/vehicles/$vehicleId'
+    | '/admin/collections/$collection'
     | '/services/vehicle-rental/book/$vehicleId/confirmation'
   id:
     | '__root__'
@@ -1054,12 +1188,14 @@ export interface FileRouteTypes {
     | '/account/saved'
     | '/account/settings'
     | '/account/vouchers'
+    | '/admin/announcements'
     | '/admin/audit'
-    | '/admin/availability'
-    | '/admin/bookings'
     | '/admin/enquiries'
-    | '/admin/reviews'
-    | '/admin/tours'
+    | '/admin/media'
+    | '/admin/profiles'
+    | '/admin/rates'
+    | '/admin/settings'
+    | '/admin/sign-ins'
     | '/admin/users'
     | '/booking/$slug'
     | '/checkout/$ref'
@@ -1076,6 +1212,12 @@ export interface FileRouteTypes {
     | '/journal/$slug'
     | '/services/$slug'
     | '/services/tours-excursions'
+    | '/team/enrol'
+    | '/team/forgot-password'
+    | '/team/reset-password'
+    | '/team/setup'
+    | '/team/sign-in'
+    | '/team/two-factor'
     | '/tours/$slug'
     | '/tours/guinea'
     | '/tours/liberia'
@@ -1113,12 +1255,16 @@ export interface FileRouteTypes {
     | '/journal/$category/$slug'
     | '/journal/category/$category'
     | '/account/bookings/'
+    | '/admin/collections/'
     | '/booking/$slug/'
     | '/checkout/$ref/'
     | '/destinations/$circuit/'
     | '/services/vehicle-rental/'
+    | '/admin/collections/$collection/$id'
+    | '/api/media/local/$'
     | '/services/vehicle-rental/book/$vehicleId'
     | '/services/vehicle-rental/vehicles/$vehicleId'
+    | '/admin/collections/$collection/'
     | '/services/vehicle-rental/book/$vehicleId/confirmation'
   fileRoutesById: FileRoutesById
 }
@@ -1154,6 +1300,12 @@ export interface RootRouteChildren {
   JournalSlugRoute: typeof JournalSlugRoute
   ServicesSlugRoute: typeof ServicesSlugRoute
   ServicesToursExcursionsRoute: typeof ServicesToursExcursionsRoute
+  TeamEnrolRoute: typeof TeamEnrolRoute
+  TeamForgotPasswordRoute: typeof TeamForgotPasswordRoute
+  TeamResetPasswordRoute: typeof TeamResetPasswordRoute
+  TeamSetupRoute: typeof TeamSetupRoute
+  TeamSignInRoute: typeof TeamSignInRoute
+  TeamTwoFactorRoute: typeof TeamTwoFactorRoute
   ToursSlugRoute: typeof ToursSlugRoute
   ToursGuineaRoute: typeof ToursGuineaRoute
   ToursLiberiaRoute: typeof ToursLiberiaRoute
@@ -1176,6 +1328,7 @@ export interface RootRouteChildren {
   JournalCategorySlugRoute: typeof JournalCategorySlugRoute
   JournalCategoryCategoryRoute: typeof JournalCategoryCategoryRoute
   ServicesVehicleRentalIndexRoute: typeof ServicesVehicleRentalIndexRoute
+  ApiMediaLocalSplatRoute: typeof ApiMediaLocalSplatRoute
   ServicesVehicleRentalBookVehicleIdRoute: typeof ServicesVehicleRentalBookVehicleIdRouteWithChildren
   ServicesVehicleRentalVehiclesVehicleIdRoute: typeof ServicesVehicleRentalVehiclesVehicleIdRoute
 }
@@ -1385,25 +1538,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminIndexRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/announcements': {
+      id: '/admin/announcements'
+      path: '/announcements'
+      fullPath: '/admin/announcements'
+      preLoaderRoute: typeof AdminAnnouncementsRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/audit': {
       id: '/admin/audit'
       path: '/audit'
       fullPath: '/admin/audit'
       preLoaderRoute: typeof AdminAuditRouteImport
-      parentRoute: typeof AdminRoute
-    }
-    '/admin/availability': {
-      id: '/admin/availability'
-      path: '/availability'
-      fullPath: '/admin/availability'
-      preLoaderRoute: typeof AdminAvailabilityRouteImport
-      parentRoute: typeof AdminRoute
-    }
-    '/admin/bookings': {
-      id: '/admin/bookings'
-      path: '/bookings'
-      fullPath: '/admin/bookings'
-      preLoaderRoute: typeof AdminBookingsRouteImport
       parentRoute: typeof AdminRoute
     }
     '/admin/enquiries': {
@@ -1413,18 +1559,39 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminEnquiriesRouteImport
       parentRoute: typeof AdminRoute
     }
-    '/admin/reviews': {
-      id: '/admin/reviews'
-      path: '/reviews'
-      fullPath: '/admin/reviews'
-      preLoaderRoute: typeof AdminReviewsRouteImport
+    '/admin/media': {
+      id: '/admin/media'
+      path: '/media'
+      fullPath: '/admin/media'
+      preLoaderRoute: typeof AdminMediaRouteImport
       parentRoute: typeof AdminRoute
     }
-    '/admin/tours': {
-      id: '/admin/tours'
-      path: '/tours'
-      fullPath: '/admin/tours'
-      preLoaderRoute: typeof AdminToursRouteImport
+    '/admin/profiles': {
+      id: '/admin/profiles'
+      path: '/profiles'
+      fullPath: '/admin/profiles'
+      preLoaderRoute: typeof AdminProfilesRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/rates': {
+      id: '/admin/rates'
+      path: '/rates'
+      fullPath: '/admin/rates'
+      preLoaderRoute: typeof AdminRatesRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/settings': {
+      id: '/admin/settings'
+      path: '/settings'
+      fullPath: '/admin/settings'
+      preLoaderRoute: typeof AdminSettingsRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/sign-ins': {
+      id: '/admin/sign-ins'
+      path: '/sign-ins'
+      fullPath: '/admin/sign-ins'
+      preLoaderRoute: typeof AdminSignInsRouteImport
       parentRoute: typeof AdminRoute
     }
     '/admin/users': {
@@ -1581,6 +1748,48 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ServicesToursExcursionsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/team/enrol': {
+      id: '/team/enrol'
+      path: '/team/enrol'
+      fullPath: '/team/enrol'
+      preLoaderRoute: typeof TeamEnrolRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/team/forgot-password': {
+      id: '/team/forgot-password'
+      path: '/team/forgot-password'
+      fullPath: '/team/forgot-password'
+      preLoaderRoute: typeof TeamForgotPasswordRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/team/reset-password': {
+      id: '/team/reset-password'
+      path: '/team/reset-password'
+      fullPath: '/team/reset-password'
+      preLoaderRoute: typeof TeamResetPasswordRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/team/setup': {
+      id: '/team/setup'
+      path: '/team/setup'
+      fullPath: '/team/setup'
+      preLoaderRoute: typeof TeamSetupRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/team/sign-in': {
+      id: '/team/sign-in'
+      path: '/team/sign-in'
+      fullPath: '/team/sign-in'
+      preLoaderRoute: typeof TeamSignInRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/team/two-factor': {
+      id: '/team/two-factor'
+      path: '/team/two-factor'
+      fullPath: '/team/two-factor'
+      preLoaderRoute: typeof TeamTwoFactorRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/tours/': {
       id: '/tours/'
       path: '/tours'
@@ -1643,6 +1852,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/account/bookings/$ref'
       preLoaderRoute: typeof AccountBookingsRefRouteImport
       parentRoute: typeof AccountBookingsRoute
+    }
+    '/admin/collections/': {
+      id: '/admin/collections/'
+      path: '/collections'
+      fullPath: '/admin/collections/'
+      preLoaderRoute: typeof AdminCollectionsIndexRouteImport
+      parentRoute: typeof AdminRoute
     }
     '/api/auth/$': {
       id: '/api/auth/$'
@@ -1805,6 +2021,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ServicesVehicleRentalIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin/collections/$collection/': {
+      id: '/admin/collections/$collection/'
+      path: '/collections/$collection'
+      fullPath: '/admin/collections/$collection/'
+      preLoaderRoute: typeof AdminCollectionsCollectionIndexRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/collections/$collection/$id': {
+      id: '/admin/collections/$collection/$id'
+      path: '/collections/$collection/$id'
+      fullPath: '/admin/collections/$collection/$id'
+      preLoaderRoute: typeof AdminCollectionsCollectionIdRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/api/media/local/$': {
+      id: '/api/media/local/$'
+      path: '/api/media/local/$'
+      fullPath: '/api/media/local/$'
+      preLoaderRoute: typeof ApiMediaLocalSplatRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/services/vehicle-rental/book/$vehicleId': {
       id: '/services/vehicle-rental/book/$vehicleId'
       path: '/services/vehicle-rental/book/$vehicleId'
@@ -1869,25 +2106,35 @@ const AccountRouteWithChildren =
   AccountRoute._addFileChildren(AccountRouteChildren)
 
 interface AdminRouteChildren {
+  AdminAnnouncementsRoute: typeof AdminAnnouncementsRoute
   AdminAuditRoute: typeof AdminAuditRoute
-  AdminAvailabilityRoute: typeof AdminAvailabilityRoute
-  AdminBookingsRoute: typeof AdminBookingsRoute
   AdminEnquiriesRoute: typeof AdminEnquiriesRoute
-  AdminReviewsRoute: typeof AdminReviewsRoute
-  AdminToursRoute: typeof AdminToursRoute
+  AdminMediaRoute: typeof AdminMediaRoute
+  AdminProfilesRoute: typeof AdminProfilesRoute
+  AdminRatesRoute: typeof AdminRatesRoute
+  AdminSettingsRoute: typeof AdminSettingsRoute
+  AdminSignInsRoute: typeof AdminSignInsRoute
   AdminUsersRoute: typeof AdminUsersRoute
   AdminIndexRoute: typeof AdminIndexRoute
+  AdminCollectionsIndexRoute: typeof AdminCollectionsIndexRoute
+  AdminCollectionsCollectionIdRoute: typeof AdminCollectionsCollectionIdRoute
+  AdminCollectionsCollectionIndexRoute: typeof AdminCollectionsCollectionIndexRoute
 }
 
 const AdminRouteChildren: AdminRouteChildren = {
+  AdminAnnouncementsRoute: AdminAnnouncementsRoute,
   AdminAuditRoute: AdminAuditRoute,
-  AdminAvailabilityRoute: AdminAvailabilityRoute,
-  AdminBookingsRoute: AdminBookingsRoute,
   AdminEnquiriesRoute: AdminEnquiriesRoute,
-  AdminReviewsRoute: AdminReviewsRoute,
-  AdminToursRoute: AdminToursRoute,
+  AdminMediaRoute: AdminMediaRoute,
+  AdminProfilesRoute: AdminProfilesRoute,
+  AdminRatesRoute: AdminRatesRoute,
+  AdminSettingsRoute: AdminSettingsRoute,
+  AdminSignInsRoute: AdminSignInsRoute,
   AdminUsersRoute: AdminUsersRoute,
   AdminIndexRoute: AdminIndexRoute,
+  AdminCollectionsIndexRoute: AdminCollectionsIndexRoute,
+  AdminCollectionsCollectionIdRoute: AdminCollectionsCollectionIdRoute,
+  AdminCollectionsCollectionIndexRoute: AdminCollectionsCollectionIndexRoute,
 }
 
 const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
@@ -2013,6 +2260,12 @@ const rootRouteChildren: RootRouteChildren = {
   JournalSlugRoute: JournalSlugRoute,
   ServicesSlugRoute: ServicesSlugRoute,
   ServicesToursExcursionsRoute: ServicesToursExcursionsRoute,
+  TeamEnrolRoute: TeamEnrolRoute,
+  TeamForgotPasswordRoute: TeamForgotPasswordRoute,
+  TeamResetPasswordRoute: TeamResetPasswordRoute,
+  TeamSetupRoute: TeamSetupRoute,
+  TeamSignInRoute: TeamSignInRoute,
+  TeamTwoFactorRoute: TeamTwoFactorRoute,
   ToursSlugRoute: ToursSlugRoute,
   ToursGuineaRoute: ToursGuineaRoute,
   ToursLiberiaRoute: ToursLiberiaRoute,
@@ -2035,6 +2288,7 @@ const rootRouteChildren: RootRouteChildren = {
   JournalCategorySlugRoute: JournalCategorySlugRoute,
   JournalCategoryCategoryRoute: JournalCategoryCategoryRoute,
   ServicesVehicleRentalIndexRoute: ServicesVehicleRentalIndexRoute,
+  ApiMediaLocalSplatRoute: ApiMediaLocalSplatRoute,
   ServicesVehicleRentalBookVehicleIdRoute:
     ServicesVehicleRentalBookVehicleIdRouteWithChildren,
   ServicesVehicleRentalVehiclesVehicleIdRoute:

@@ -57,3 +57,6 @@ candidates6.json
 {}
 .vercel
 .env*
+
+# Local media library files (npm run dev:local)
+.local-media/

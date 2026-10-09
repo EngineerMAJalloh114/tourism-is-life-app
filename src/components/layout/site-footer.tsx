@@ -154,6 +154,9 @@ export function SiteFooter() {
               <Link to="/cookies" className="hover:text-gold">
                 Cookies
               </Link>
+              <Link to="/team/sign-in" className="hover:text-gold">
+                Team access
+              </Link>
             </nav>
             <SocialLinks variant="footer" />
           </div>

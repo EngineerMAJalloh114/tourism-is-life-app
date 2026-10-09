@@ -1,6 +1,13 @@
 import { SITE, SOCIAL_LINKS } from "@/lib/site";
 
-const OG_IMAGE = `${SITE.website}/images/misc/og-image.jpg`;
+/** The share image every page uses, as a site path. */
+export const DEFAULT_SHARE_IMAGE = "/images/misc/og-image.jpg";
+
+/** The description in the root `<head>`, before a page sets its own. */
+export const DEFAULT_DESCRIPTION =
+  "Tourism Is Life is a Sierra Leone destination management company for tours, cruise handling, and West Africa travel.";
+
+const OG_IMAGE = `${SITE.website}${DEFAULT_SHARE_IMAGE}`;
 
 export function pageHead(title: string, description: string, path = "/", robots = "index,follow") {
   const full = title.includes("Tourism Is Life") ? title : `${title} · ${SITE.name}`;

@@ -3,6 +3,9 @@ import { AuthProvider } from "@/lib/auth/provider";
 import { PreviewHostBridge } from "@/components/preview-host-bridge";
 import { SiteShell } from "@/components/layout/site-shell";
 import { AppErrorComponent } from "@/lib/error-component";
+import { INTERFACE_TEXT } from "@/content/defaults/interface";
+import { DEFAULT_DESCRIPTION, DEFAULT_SHARE_IMAGE } from "@/lib/seo";
+import { SITE } from "@/lib/site";
 import { DEFAULT_THEME, INITIAL_THEME, THEME_BOOTSTRAP } from "@/lib/theme";
 import appCss from "../styles.css?url";
 
@@ -17,12 +20,11 @@ export const Route = createRootRoute({
       { name: "theme-color", content: "#1B2E28" },
       {
         name: "description",
-        content:
-          "Tourism Is Life is a Sierra Leone destination management company for tours, cruise handling, and West Africa travel.",
+        content: DEFAULT_DESCRIPTION,
       },
       { property: "og:type", content: "website" },
       { property: "og:site_name", content: APP_NAME },
-      { property: "og:image", content: "https://tourismislife.com/images/misc/og-image.jpg" },
+      { property: "og:image", content: `${SITE.website}${DEFAULT_SHARE_IMAGE}` },
       { name: "twitter:card", content: "summary_large_image" },
     ],
     links: [
@@ -40,9 +42,9 @@ export const Route = createRootRoute({
   errorComponent: AppErrorComponent,
   notFoundComponent: () => (
     <div className="container-page py-14">
-      <p className="text-xs uppercase tracking-[0.2em] text-gold-ink">404</p>
-      <h1 className="mt-2 font-display text-4xl text-heading">This page is not on the map</h1>
-      <p className="mt-3 text-muted">Try Destinations, Tours, or the home page.</p>
+      <p className="text-xs uppercase tracking-[0.2em] text-gold-ink">{INTERFACE_TEXT.notFoundKicker}</p>
+      <h1 className="mt-2 font-display text-4xl text-heading">{INTERFACE_TEXT.notFoundTitle}</h1>
+      <p className="mt-3 text-muted">{INTERFACE_TEXT.notFoundBody}</p>
     </div>
   ),
   component: () => (
