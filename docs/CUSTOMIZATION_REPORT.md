@@ -19,7 +19,7 @@ tests 324 (322 pass, 2 skipped on Windows, 0 fail), `build:dev` OK, `check:asset
 | A5 Team accounts | GREEN | 442 / 2 / 0 | none (0005 holds the columns) |
 | A6 Media library and uploads | GREEN | 500 / 2 / 0 | `0008_media` (+ seed, 86 rows) |
 | A7 Site settings | GREEN | 522 / 2 / 0 | `0009_site_settings` (+ seed) |
-| A8 Collections I | PENDING | | |
+| A8 Collections I | GREEN | 562 / 2 / 0 | `0010_collections` (+ seed, 42 records) |
 | A9 Collections II | PENDING | | |
 | A10 Rates and ratings | PENDING | | |
 | A11 Announcements | PENDING | | |
@@ -231,3 +231,31 @@ tests 324 (322 pass, 2 skipped on Windows, 0 fail), `build:dev` OK, `check:asset
   the desk until someone publishes a new list. Tested with a mocked Resend, and in the
   browser with a real local enquiry (saved; no fallback logged).
 - **Public pages do not read the settings yet** (task B5); only the enquiry notification does.
+
+### A8 notes
+
+- **One engine for every collection** (`src/lib/collections/registry.ts`: a Zod schema, the
+  form's fields and the public path per collection; `src/lib/server/collections/items.ts`:
+  the operations). Draft with `rev`, publish as a version (30 kept), hide, reorder, trash and
+  restore (30 days, then purged when the trash is opened), audit on every step. The admin form
+  is built from the field list (`record-form.tsx`), with a photo picker that offers only
+  published photos.
+- **Seed equals `catalog.ts`:** 4 circuits, 15 destinations, 22 tours and one FAQ group,
+  published as version 1 with their references (records in `content_refs`, photos in
+  `media_usage`), UUID v5 ids. A test rebuilds every catalogue object from the database and
+  compares deeply, claim fields by their text. Deliberately not in records: `bookable`,
+  `rating`, `reviewCount`, `priceCents`, `currency` (booking stays out of the admin; ratings
+  and rates are A10). The four questions every tour shows became the FAQ group `tour-shared`;
+  "Licensed guide" on the Freetown tour is a claim with no source (inventory M8).
+- **Rules:** a published key change writes a 301 redirect (older redirects repointed, no
+  loops); a record other records point at by key cannot change key; delete is refused while
+  pointed at, and for a tour while dormant booking, availability, saved-tour or review rows
+  name it; a newly placed photo must be published (complete provenance), photos already on a
+  record stay allowed; records pointed at must exist, and be published before this one is;
+  recording a claim's source needs `claims.source`; circuit ids are fixed and no circuit can
+  be added (the layout uses the four ids). CONTENT_MANAGER edits and publishes; delete and
+  restore need ADMIN or SUPER_ADMIN (`collections.delete`).
+- **Checked in Edge:** edit, save, publish, slug change with redirect, hide and show, circuit
+  reorder, a new destination with a photo from the picker (43 published photos offered),
+  trash and restore, a used destination refused with the list of tours using it, 390 px with
+  no overflow. The public pages still read `catalog.ts` (they read the database from B5).

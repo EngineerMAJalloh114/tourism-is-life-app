@@ -80,6 +80,7 @@ import { Route as ToursSierraLeoneRouteImport } from './routes/tours/sierra-leon
 import { Route as ToursWestAfricaRouteImport } from './routes/tours/west-africa'
 import { Route as AccountBookingsIndexRouteImport } from './routes/account/bookings/index'
 import { Route as AccountBookingsRefRouteImport } from './routes/account/bookings/$ref'
+import { Route as AdminCollectionsIndexRouteImport } from './routes/admin/collections/index'
 import { Route as ApiAuthSplatRouteImport } from './routes/api/auth/$'
 import { Route as ApiCronExpireHoldsRouteImport } from './routes/api/cron/expire-holds'
 import { Route as ApiWebhooksMonerooRouteImport } from './routes/api/webhooks/moneroo'
@@ -103,6 +104,8 @@ import { Route as HospitalityStaysSlugRouteImport } from './routes/hospitality/s
 import { Route as JournalCategorySlugRouteImport } from './routes/journal/$category/$slug'
 import { Route as JournalCategoryCategoryRouteImport } from './routes/journal/category/$category'
 import { Route as ServicesVehicleRentalIndexRouteImport } from './routes/services/vehicle-rental/index'
+import { Route as AdminCollectionsCollectionIndexRouteImport } from './routes/admin/collections/$collection/index'
+import { Route as AdminCollectionsCollectionIdRouteImport } from './routes/admin/collections/$collection/$id'
 import { Route as ApiMediaLocalSplatRouteImport } from './routes/api/media/local/$'
 import { Route as ServicesVehicleRentalBookVehicleIdRouteImport } from './routes/services/vehicle-rental/book/$vehicleId'
 import { Route as ServicesVehicleRentalVehiclesVehicleIdRouteImport } from './routes/services/vehicle-rental/vehicles/$vehicleId'
@@ -463,6 +466,11 @@ const AccountBookingsRefRoute = AccountBookingsRefRouteImport.update({
   path: '/$ref',
   getParentRoute: () => AccountBookingsRoute,
 } as any)
+const AdminCollectionsIndexRoute = AdminCollectionsIndexRouteImport.update({
+  id: '/collections/',
+  path: '/collections/',
+  getParentRoute: () => AdminRoute,
+} as any)
 const ApiAuthSplatRoute = ApiAuthSplatRouteImport.update({
   id: '/api/auth/$',
   path: '/api/auth/$',
@@ -580,6 +588,18 @@ const ServicesVehicleRentalIndexRoute =
     path: '/services/vehicle-rental/',
     getParentRoute: () => rootRouteImport,
   } as any)
+const AdminCollectionsCollectionIndexRoute =
+  AdminCollectionsCollectionIndexRouteImport.update({
+    id: '/collections/$collection/',
+    path: '/collections/$collection/',
+    getParentRoute: () => AdminRoute,
+  } as any)
+const AdminCollectionsCollectionIdRoute =
+  AdminCollectionsCollectionIdRouteImport.update({
+    id: '/collections/$collection/$id',
+    path: '/collections/$collection/$id',
+    getParentRoute: () => AdminRoute,
+  } as any)
 const ApiMediaLocalSplatRoute = ApiMediaLocalSplatRouteImport.update({
   id: '/api/media/local/$',
   path: '/api/media/local/$',
@@ -695,13 +715,16 @@ export interface FileRoutesByFullPath {
   '/journal/$category/$slug': typeof JournalCategorySlugRoute
   '/journal/category/$category': typeof JournalCategoryCategoryRoute
   '/account/bookings/': typeof AccountBookingsIndexRoute
+  '/admin/collections/': typeof AdminCollectionsIndexRoute
   '/booking/$slug/': typeof BookingSlugIndexRoute
   '/checkout/$ref/': typeof CheckoutRefIndexRoute
   '/destinations/$circuit/': typeof DestinationsCircuitIndexRoute
   '/services/vehicle-rental/': typeof ServicesVehicleRentalIndexRoute
+  '/admin/collections/$collection/$id': typeof AdminCollectionsCollectionIdRoute
   '/api/media/local/$': typeof ApiMediaLocalSplatRoute
   '/services/vehicle-rental/book/$vehicleId': typeof ServicesVehicleRentalBookVehicleIdRouteWithChildren
   '/services/vehicle-rental/vehicles/$vehicleId': typeof ServicesVehicleRentalVehiclesVehicleIdRoute
+  '/admin/collections/$collection/': typeof AdminCollectionsCollectionIndexRoute
   '/services/vehicle-rental/book/$vehicleId/confirmation': typeof ServicesVehicleRentalBookVehicleIdConfirmationRoute
 }
 export interface FileRoutesByTo {
@@ -788,13 +811,16 @@ export interface FileRoutesByTo {
   '/journal/$category/$slug': typeof JournalCategorySlugRoute
   '/journal/category/$category': typeof JournalCategoryCategoryRoute
   '/account/bookings': typeof AccountBookingsIndexRoute
+  '/admin/collections': typeof AdminCollectionsIndexRoute
   '/booking/$slug': typeof BookingSlugIndexRoute
   '/checkout/$ref': typeof CheckoutRefIndexRoute
   '/destinations/$circuit': typeof DestinationsCircuitIndexRoute
   '/services/vehicle-rental': typeof ServicesVehicleRentalIndexRoute
+  '/admin/collections/$collection/$id': typeof AdminCollectionsCollectionIdRoute
   '/api/media/local/$': typeof ApiMediaLocalSplatRoute
   '/services/vehicle-rental/book/$vehicleId': typeof ServicesVehicleRentalBookVehicleIdRouteWithChildren
   '/services/vehicle-rental/vehicles/$vehicleId': typeof ServicesVehicleRentalVehiclesVehicleIdRoute
+  '/admin/collections/$collection': typeof AdminCollectionsCollectionIndexRoute
   '/services/vehicle-rental/book/$vehicleId/confirmation': typeof ServicesVehicleRentalBookVehicleIdConfirmationRoute
 }
 export interface FileRoutesById {
@@ -889,13 +915,16 @@ export interface FileRoutesById {
   '/journal/$category/$slug': typeof JournalCategorySlugRoute
   '/journal/category/$category': typeof JournalCategoryCategoryRoute
   '/account/bookings/': typeof AccountBookingsIndexRoute
+  '/admin/collections/': typeof AdminCollectionsIndexRoute
   '/booking/$slug/': typeof BookingSlugIndexRoute
   '/checkout/$ref/': typeof CheckoutRefIndexRoute
   '/destinations/$circuit/': typeof DestinationsCircuitIndexRoute
   '/services/vehicle-rental/': typeof ServicesVehicleRentalIndexRoute
+  '/admin/collections/$collection/$id': typeof AdminCollectionsCollectionIdRoute
   '/api/media/local/$': typeof ApiMediaLocalSplatRoute
   '/services/vehicle-rental/book/$vehicleId': typeof ServicesVehicleRentalBookVehicleIdRouteWithChildren
   '/services/vehicle-rental/vehicles/$vehicleId': typeof ServicesVehicleRentalVehiclesVehicleIdRoute
+  '/admin/collections/$collection/': typeof AdminCollectionsCollectionIndexRoute
   '/services/vehicle-rental/book/$vehicleId/confirmation': typeof ServicesVehicleRentalBookVehicleIdConfirmationRoute
 }
 export interface FileRouteTypes {
@@ -991,13 +1020,16 @@ export interface FileRouteTypes {
     | '/journal/$category/$slug'
     | '/journal/category/$category'
     | '/account/bookings/'
+    | '/admin/collections/'
     | '/booking/$slug/'
     | '/checkout/$ref/'
     | '/destinations/$circuit/'
     | '/services/vehicle-rental/'
+    | '/admin/collections/$collection/$id'
     | '/api/media/local/$'
     | '/services/vehicle-rental/book/$vehicleId'
     | '/services/vehicle-rental/vehicles/$vehicleId'
+    | '/admin/collections/$collection/'
     | '/services/vehicle-rental/book/$vehicleId/confirmation'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -1084,13 +1116,16 @@ export interface FileRouteTypes {
     | '/journal/$category/$slug'
     | '/journal/category/$category'
     | '/account/bookings'
+    | '/admin/collections'
     | '/booking/$slug'
     | '/checkout/$ref'
     | '/destinations/$circuit'
     | '/services/vehicle-rental'
+    | '/admin/collections/$collection/$id'
     | '/api/media/local/$'
     | '/services/vehicle-rental/book/$vehicleId'
     | '/services/vehicle-rental/vehicles/$vehicleId'
+    | '/admin/collections/$collection'
     | '/services/vehicle-rental/book/$vehicleId/confirmation'
   id:
     | '__root__'
@@ -1184,13 +1219,16 @@ export interface FileRouteTypes {
     | '/journal/$category/$slug'
     | '/journal/category/$category'
     | '/account/bookings/'
+    | '/admin/collections/'
     | '/booking/$slug/'
     | '/checkout/$ref/'
     | '/destinations/$circuit/'
     | '/services/vehicle-rental/'
+    | '/admin/collections/$collection/$id'
     | '/api/media/local/$'
     | '/services/vehicle-rental/book/$vehicleId'
     | '/services/vehicle-rental/vehicles/$vehicleId'
+    | '/admin/collections/$collection/'
     | '/services/vehicle-rental/book/$vehicleId/confirmation'
   fileRoutesById: FileRoutesById
 }
@@ -1758,6 +1796,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AccountBookingsRefRouteImport
       parentRoute: typeof AccountBookingsRoute
     }
+    '/admin/collections/': {
+      id: '/admin/collections/'
+      path: '/collections'
+      fullPath: '/admin/collections/'
+      preLoaderRoute: typeof AdminCollectionsIndexRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/api/auth/$': {
       id: '/api/auth/$'
       path: '/api/auth/$'
@@ -1919,6 +1964,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ServicesVehicleRentalIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin/collections/$collection/': {
+      id: '/admin/collections/$collection/'
+      path: '/collections/$collection'
+      fullPath: '/admin/collections/$collection/'
+      preLoaderRoute: typeof AdminCollectionsCollectionIndexRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/collections/$collection/$id': {
+      id: '/admin/collections/$collection/$id'
+      path: '/collections/$collection/$id'
+      fullPath: '/admin/collections/$collection/$id'
+      preLoaderRoute: typeof AdminCollectionsCollectionIdRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/api/media/local/$': {
       id: '/api/media/local/$'
       path: '/api/media/local/$'
@@ -1997,6 +2056,9 @@ interface AdminRouteChildren {
   AdminSignInsRoute: typeof AdminSignInsRoute
   AdminUsersRoute: typeof AdminUsersRoute
   AdminIndexRoute: typeof AdminIndexRoute
+  AdminCollectionsIndexRoute: typeof AdminCollectionsIndexRoute
+  AdminCollectionsCollectionIdRoute: typeof AdminCollectionsCollectionIdRoute
+  AdminCollectionsCollectionIndexRoute: typeof AdminCollectionsCollectionIndexRoute
 }
 
 const AdminRouteChildren: AdminRouteChildren = {
@@ -2007,6 +2069,9 @@ const AdminRouteChildren: AdminRouteChildren = {
   AdminSignInsRoute: AdminSignInsRoute,
   AdminUsersRoute: AdminUsersRoute,
   AdminIndexRoute: AdminIndexRoute,
+  AdminCollectionsIndexRoute: AdminCollectionsIndexRoute,
+  AdminCollectionsCollectionIdRoute: AdminCollectionsCollectionIdRoute,
+  AdminCollectionsCollectionIndexRoute: AdminCollectionsCollectionIndexRoute,
 }
 
 const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)

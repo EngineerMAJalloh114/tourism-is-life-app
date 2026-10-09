@@ -41,8 +41,62 @@ export async function siteSettingsSeed() {
   };
 }
 
+/**
+ * The collections seed (task A8): every record published as version 1, with
+ * its references (record to record in content_refs, record to photo in
+ * media_usage) for both the draft and the published copy. Ids are UUID v5.
+ */
+export async function collectionsSeed() {
+  const { collectionDefaults } = await import("../../src/content/defaults/collections.ts");
+  const { COLLECTIONS, referencesOf } = await import("../../src/lib/collections/registry.ts");
+  const { collectionItemId, uuidV5 } = await import("../../src/lib/server/content-ids.ts");
+  const records = collectionDefaults();
+  const items = [];
+  const versions = [];
+  const refs = [];
+  const usage = [];
+  for (const r of records) {
+    const parsed = COLLECTIONS[r.collection].schema.safeParse(r.data);
+    if (!parsed.success) throw new Error(`${r.collection}/${r.key}: ${parsed.error.issues[0].message}`);
+    const id = collectionItemId(r.collection, r.key);
+    const versionId = uuidV5(`collection-version:${id}:1`);
+    const json = sqlText(JSON.stringify(r.data));
+    items.push(`  (${sqlText(id)}, ${sqlText(r.collection)}, ${sqlText(r.key)}, ${r.position}, 'published', ${json}::jsonb, 1, ${sqlText(versionId)})`);
+    versions.push(`  (${sqlText(versionId)}, ${sqlText(id)}, 1, ${json}::jsonb)`);
+    const out = referencesOf(r.collection, r.data);
+    for (const state of ["draft", "published"]) {
+      for (const ref of out.items) {
+        const to = collectionItemId(ref.collection, ref.key);
+        refs.push(`  (${sqlText(uuidV5(`ref:${id}:${state}:${ref.field}`))}, 'collection_item', ${sqlText(id)}, '${state}', 'collection_item', ${sqlText(to)}, ${sqlText(ref.field)})`);
+      }
+      for (const m of out.media) {
+        usage.push(`  (${sqlText(uuidV5(`media-usage:${id}:${state}:${m.field}`))}, ${sqlText(m.id)}, 'collection_item', ${sqlText(id)}, '${state}', ${sqlText(m.field)})`);
+      }
+    }
+  }
+  return {
+    file: join(ROOT, "migrations", "0010_collections.sql"),
+    begin: "-- BEGIN GENERATED COLLECTIONS SEED (scripts/content/generate-seed.mjs; do not edit by hand)",
+    end: "-- END GENERATED COLLECTIONS SEED",
+    body: [
+      "insert into collection_items (id, collection, key, position, status, draft, rev, published_version_id) values",
+      items.join(",\n"),
+      "on conflict (id) do nothing;",
+      "insert into collection_item_versions (id, item_id, version, data) values",
+      versions.join(",\n"),
+      "on conflict (id) do nothing;",
+      "insert into content_refs (id, from_kind, from_id, from_state, to_kind, to_id, field) values",
+      refs.join(",\n"),
+      "on conflict (id) do nothing;",
+      "insert into media_usage (id, media_id, owner_kind, owner_id, owner_state, field) values",
+      usage.join(",\n"),
+      "on conflict (id) do nothing;",
+    ].join("\n"),
+  };
+}
+
 export async function seedBlocks() {
-  return [await siteSettingsSeed()].map((s) => ({ ...s, block: `${s.begin}\n${s.body}\n${s.end}` }));
+  return [await siteSettingsSeed(), await collectionsSeed()].map((s) => ({ ...s, block: `${s.begin}\n${s.body}\n${s.end}` }));
 }
 
 if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) {

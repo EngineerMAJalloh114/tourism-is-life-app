@@ -494,7 +494,7 @@ export type MediaListItem = {
   createdAt: string;
 };
 
-export type MediaFilter = "all" | "uploads" | "repository" | "incomplete";
+export type MediaFilter = "all" | "uploads" | "repository" | "incomplete" | "published";
 
 function previewFor(storage: MediaStorage | null, row: { origin: string; repo_path: string | null; variants: unknown }): string | null {
   if (row.origin === "repository") return row.repo_path;
@@ -533,7 +533,8 @@ export const listMedia = adminOperation(
         and (${filter}::text = 'all'
           or (${filter}::text = 'uploads' and m.origin = 'upload')
           or (${filter}::text = 'repository' and m.origin = 'repository')
-          or (${filter}::text = 'incomplete' and m.provenance_status = 'incomplete'))
+          or (${filter}::text = 'incomplete' and m.provenance_status = 'incomplete')
+          or (${filter}::text = 'published' and m.published))
         and (${pattern}::text is null or lower(m.alt) like ${pattern} or lower(coalesce(m.repo_path, '')) like ${pattern}
           or lower(coalesce(m.original_filename, '')) like ${pattern})
       order by (m.origin = 'upload') desc, m.created_at desc, m.repo_path asc, m.id asc
@@ -562,6 +563,24 @@ export const listMedia = adminOperation(
       nextOffset: rows.length > limit ? offset + limit : null,
       uploads: { enabled: Boolean(storage), reason: storage ? null : deps?.offReason || UPLOADS_OFF_MESSAGE },
     };
+  },
+);
+
+/** Small previews for photos a record already uses (the collection editor). */
+export const mediaPreviews = adminOperation(
+  "media.upload",
+  async (sql, _actor, input: { ids: string[] }, deps: MediaDeps | undefined) => {
+    const ids = [...new Set(input.ids)].slice(0, 100);
+    const out: Record<string, { url: string | null; alt: string; published: boolean }> = {};
+    for (const id of ids) {
+      const rows = await sql<{ origin: string; repo_path: string | null; alt: string; published: boolean; variants: unknown }>`
+        select m.origin, m.repo_path, m.alt, m.published, f.variants
+        from media m left join media_files f on f.id = m.current_file_id
+        where m.id = ${id} and m.deleted_at is null
+      `;
+      if (rows[0]) out[id] = { url: previewFor(deps?.storage ?? null, rows[0]), alt: rows[0].alt, published: rows[0].published };
+    }
+    return out;
   },
 );
 

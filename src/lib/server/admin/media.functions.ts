@@ -8,6 +8,7 @@ import {
   finishUpload,
   getMedia,
   listMedia,
+  mediaPreviews,
   replaceFile,
   setMediaPublished,
   updateMedia,
@@ -35,7 +36,7 @@ export const adminListMedia = createServerFn({ method: "GET" })
     z
       .object({
         q: z.string().max(100).optional(),
-        filter: z.enum(["all", "uploads", "repository", "incomplete"]).optional(),
+        filter: z.enum(["all", "uploads", "repository", "incomplete", "published"]).optional(),
         offset: z.number().int().min(0).max(100_000).optional(),
         limit: z.number().int().min(1).max(100).optional(),
       })
@@ -43,6 +44,11 @@ export const adminListMedia = createServerFn({ method: "GET" })
       .parse(d),
   )
   .handler(async ({ data, context }) => listMedia(await getSql(), context.actor, data, mediaDeps()));
+
+export const adminMediaPreviews = createServerFn({ method: "GET" })
+  .middleware([staffMiddleware])
+  .validator((d) => z.object({ ids: z.array(mediaId).max(100) }).parse(d))
+  .handler(async ({ data, context }) => mediaPreviews(await getSql(), context.actor, data, mediaDeps()));
 
 export const adminGetMedia = createServerFn({ method: "GET" })
   .middleware([staffMiddleware])

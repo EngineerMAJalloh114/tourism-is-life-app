@@ -9,7 +9,9 @@ import { CAPABILITIES, capabilitiesOf, STAFF_ROLES } from "@/lib/capabilities";
 const ROUTES = join(dirname(fileURLToPath(import.meta.url)), "..", "routes");
 
 function routeFile(to: string): string {
-  return to === "/admin" ? join(ROUTES, "admin", "index.tsx") : join(ROUTES, `${to.slice(1)}.tsx`);
+  if (to === "/admin") return join(ROUTES, "admin", "index.tsx");
+  const flat = join(ROUTES, `${to.slice(1)}.tsx`);
+  return existsSync(flat) ? flat : join(ROUTES, to.slice(1), "index.tsx");
 }
 
 function labels(role: (typeof STAFF_ROLES)[number] | "CUSTOMER"): string[] {
