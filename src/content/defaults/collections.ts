@@ -17,7 +17,10 @@
  *
  * Server only (it computes media ids with node:crypto).
  */
-import { circuits, destinations, tours, type Tour } from "@/data/catalog";
+import { articleCategories, articles, circuits, destinations, services, team, testimonial, tours, type Tour } from "@/data/catalog";
+import { cruiseDestinations, cruiseOverview, excursions } from "@/data/cruise";
+import { SAMPLE_DINING, SAMPLE_STAYS } from "@/data/hospitality";
+import { vehicleCategories, vehicles } from "@/data/vehicle-rental";
 import type { Claim, CollectionId } from "@/lib/collections/registry";
 import { repositoryMediaId } from "@/lib/server/content-ids";
 
@@ -98,3 +101,118 @@ export function collectionDefaults(): SeedRecord[] {
 
 /** Fields of a catalogue tour that are deliberately not part of the record. */
 export const TOUR_FIELDS_NOT_IN_RECORDS = ["bookable", "rating", "reviewCount", "priceCents", "currency"] as const;
+
+// ---------------------------------------------------------------- task A9
+
+/** Service benefit lines that are claims needing a source (inventory M8). */
+export const CLAIMED_BENEFITS = ["Licensed guides"];
+
+/** Shown instead of an unsourced vehicle-category starting price. */
+export const PRICE_FALLBACK = "Rate on request";
+
+/** Fields of a vehicle or shore excursion that are rates (task A10), not part of the record. */
+export const VEHICLE_FIELDS_NOT_IN_RECORDS = ["pricing"] as const;
+export const EXCURSION_FIELDS_NOT_IN_RECORDS = ["priceUsdPerPerson"] as const;
+
+const claimIf = (text: string, claimed: string[]): string | Claim =>
+  claimed.includes(text) ? { claim: text, sourceUrl: "", sourceDate: "", fallback: "" } : text;
+
+const photo = (p: { src: string; alt: string; position?: string }) =>
+  p.position === undefined ? image(p.src, p.alt) : { ...image(p.src, p.alt), position: p.position };
+
+/** Records whose seed is a draft, not published (the testimonial has no source, rule 2). */
+export type SeedRecordII = SeedRecord & { status?: "draft" };
+
+/**
+ * Services, journal, cruise, vehicles, the testimonial, team profiles and the
+ * Stay & Dine samples as records (task A9), from their data files. What
+ * changes shape: photos become media references (keeping `position`); prices
+ * leave the records for the rates table (A10); "Licensed guides" and each
+ * vehicle category's starting price are claims with no source; a team photo
+ * is kept with its consent empty; the testimonial is seeded unpublished.
+ */
+export function collectionDefaultsII(): SeedRecordII[] {
+  const out: SeedRecordII[] = [];
+  const push = (collection: CollectionId, key: string, position: number, data: Record<string, unknown>, status?: "draft") =>
+    out.push({ collection, key, position, data, ...(status ? { status } : {}) });
+
+  services.forEach((s, i) =>
+    push("services", s.slug, i, {
+      slug: s.slug,
+      name: s.name,
+      summary: s.summary,
+      benefits: s.benefits.map((b) => claimIf(b, CLAIMED_BENEFITS)),
+      process: [...s.process],
+      image: s.image ? image(s.image, s.imageAlt ?? "") : null,
+    }),
+  );
+  articleCategories.forEach((c, i) => push("journal-categories", c.slug, i, { slug: c.slug, label: c.label }));
+  articles.forEach((a, i) =>
+    push("journal-posts", a.slug, i, {
+      slug: a.slug,
+      category: a.category,
+      title: a.title,
+      date: a.date,
+      excerpt: a.excerpt,
+      body: a.body,
+      image: image(a.image, a.imageAlt),
+    }),
+  );
+  cruiseOverview.forEach((c, i) => push("cruise-overview", c.id, i, { id: c.id, title: c.title, body: c.body, image: image(c.image, c.imageAlt) }));
+  excursions.forEach((e, i) => {
+    const { priceUsdPerPerson: _price, image: src, imageAlt, ...rest } = e;
+    push("cruise-excursions", e.id, i, {
+      ...rest,
+      activities: [...e.activities],
+      experienceTags: [...e.experienceTags],
+      inclusions: [...e.inclusions],
+      image: image(src, imageAlt),
+    });
+  });
+  cruiseDestinations.forEach((d, i) => push("cruise-destinations", d.id, i, { id: d.id, name: d.name, summary: d.summary, image: image(d.image, d.imageAlt) }));
+  vehicleCategories.forEach((c, i) =>
+    push("vehicle-categories", c.slug, i, {
+      slug: c.slug,
+      label: c.label,
+      description: c.description,
+      image: image(c.image, c.imageAlt),
+      seats: c.seats,
+      luggage: c.luggage,
+      transmission: c.transmission,
+      startingPrice: { claim: c.startingPrice, sourceUrl: "", sourceDate: "", fallback: PRICE_FALLBACK },
+    }),
+  );
+  vehicles.forEach((v, i) => {
+    const { pricing: _pricing, image: src, imageAlt, gallery, ...rest } = v;
+    push("vehicles", v.id, i, {
+      ...rest,
+      destinations: [...v.destinations],
+      features: [...v.features],
+      rentalConditions: [...v.rentalConditions],
+      image: image(src, imageAlt),
+      gallery: gallery.map((g) => image(g.src, g.alt)),
+    });
+  });
+  push(
+    "testimonials",
+    "jorg-ehrlich",
+    0,
+    { key: "jorg-ehrlich", name: testimonial.name, handle: testimonial.handle, quote: testimonial.quote, sourceUrl: "", sourceDate: "", consentNote: "" },
+    "draft",
+  );
+  team.forEach((m, i) =>
+    push("team-profiles", m.slug, i, {
+      slug: m.slug,
+      name: m.name,
+      role: m.role,
+      bio: m.bio,
+      photo: m.image ? image(m.image, m.imageAlt ?? "") : null,
+      photoConsent: { recordedBy: "", recordedAt: "", note: "" },
+    }),
+  );
+  SAMPLE_STAYS.forEach((s, i) => push("stays", s.slug, i, { ...s, amenities: [...s.amenities], images: s.images.map(photo) }));
+  SAMPLE_DINING.forEach((d, i) =>
+    push("dining", d.slug, i, { ...d, cuisines: [...d.cuisines], features: [...d.features], images: d.images.map(photo) }),
+  );
+  return out;
+}

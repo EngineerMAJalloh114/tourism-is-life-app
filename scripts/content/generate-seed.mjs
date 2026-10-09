@@ -42,15 +42,15 @@ export async function siteSettingsSeed() {
 }
 
 /**
- * The collections seed (task A8): every record published as version 1, with
- * its references (record to record in content_refs, record to photo in
- * media_usage) for both the draft and the published copy. Ids are UUID v5.
+ * Collection seed rows: each record published as version 1 (or left a draft
+ * when the record says so), with its references (record to record in
+ * content_refs, record to photo in media_usage) for each state it has. Ids are
+ * UUID v5.
  */
-export async function collectionsSeed() {
-  const { collectionDefaults } = await import("../../src/content/defaults/collections.ts");
+/** @param {import("../../src/content/defaults/collections.ts").SeedRecordII[]} records */
+async function collectionRows(records) {
   const { COLLECTIONS, referencesOf } = await import("../../src/lib/collections/registry.ts");
   const { collectionItemId, uuidV5 } = await import("../../src/lib/server/content-ids.ts");
-  const records = collectionDefaults();
   const items = [];
   const versions = [];
   const refs = [];
@@ -58,13 +58,16 @@ export async function collectionsSeed() {
   for (const r of records) {
     const parsed = COLLECTIONS[r.collection].schema.safeParse(r.data);
     if (!parsed.success) throw new Error(`${r.collection}/${r.key}: ${parsed.error.issues[0].message}`);
+    const draftOnly = r.status === "draft";
     const id = collectionItemId(r.collection, r.key);
     const versionId = uuidV5(`collection-version:${id}:1`);
     const json = sqlText(JSON.stringify(r.data));
-    items.push(`  (${sqlText(id)}, ${sqlText(r.collection)}, ${sqlText(r.key)}, ${r.position}, 'published', ${json}::jsonb, 1, ${sqlText(versionId)})`);
-    versions.push(`  (${sqlText(versionId)}, ${sqlText(id)}, 1, ${json}::jsonb)`);
+    items.push(
+      `  (${sqlText(id)}, ${sqlText(r.collection)}, ${sqlText(r.key)}, ${r.position}, ${draftOnly ? "'draft'" : "'published'"}, ${json}::jsonb, 1, ${draftOnly ? "null" : sqlText(versionId)})`,
+    );
+    if (!draftOnly) versions.push(`  (${sqlText(versionId)}, ${sqlText(id)}, 1, ${json}::jsonb)`);
     const out = referencesOf(r.collection, r.data);
-    for (const state of ["draft", "published"]) {
+    for (const state of draftOnly ? ["draft"] : ["draft", "published"]) {
       for (const ref of out.items) {
         const to = collectionItemId(ref.collection, ref.key);
         refs.push(`  (${sqlText(uuidV5(`ref:${id}:${state}:${ref.field}`))}, 'collection_item', ${sqlText(id)}, '${state}', 'collection_item', ${sqlText(to)}, ${sqlText(ref.field)})`);
@@ -74,29 +77,39 @@ export async function collectionsSeed() {
       }
     }
   }
+  const insert = (/** @type {string} */ head, /** @type {string[]} */ rows) => (rows.length ? [head, rows.join(",\n"), "on conflict (id) do nothing;"] : []);
+  return [
+    ...insert("insert into collection_items (id, collection, key, position, status, draft, rev, published_version_id) values", items),
+    ...insert("insert into collection_item_versions (id, item_id, version, data) values", versions),
+    ...insert("insert into content_refs (id, from_kind, from_id, from_state, to_kind, to_id, field) values", refs),
+    ...insert("insert into media_usage (id, media_id, owner_kind, owner_id, owner_state, field) values", usage),
+  ].join("\n");
+}
+
+/** Circuits, destinations, tours and the shared tour questions (task A8). */
+export async function collectionsSeed() {
+  const { collectionDefaults } = await import("../../src/content/defaults/collections.ts");
   return {
     file: join(ROOT, "migrations", "0010_collections.sql"),
     begin: "-- BEGIN GENERATED COLLECTIONS SEED (scripts/content/generate-seed.mjs; do not edit by hand)",
     end: "-- END GENERATED COLLECTIONS SEED",
-    body: [
-      "insert into collection_items (id, collection, key, position, status, draft, rev, published_version_id) values",
-      items.join(",\n"),
-      "on conflict (id) do nothing;",
-      "insert into collection_item_versions (id, item_id, version, data) values",
-      versions.join(",\n"),
-      "on conflict (id) do nothing;",
-      "insert into content_refs (id, from_kind, from_id, from_state, to_kind, to_id, field) values",
-      refs.join(",\n"),
-      "on conflict (id) do nothing;",
-      "insert into media_usage (id, media_id, owner_kind, owner_id, owner_state, field) values",
-      usage.join(",\n"),
-      "on conflict (id) do nothing;",
-    ].join("\n"),
+    body: await collectionRows(collectionDefaults()),
+  };
+}
+
+/** Services, journal, cruise, vehicles, the testimonial, team profiles and the Stay & Dine samples (task A9). */
+export async function collectionsSeedII() {
+  const { collectionDefaultsII } = await import("../../src/content/defaults/collections.ts");
+  return {
+    file: join(ROOT, "migrations", "0011_collections_seed.sql"),
+    begin: "-- BEGIN GENERATED COLLECTIONS II SEED (scripts/content/generate-seed.mjs; do not edit by hand)",
+    end: "-- END GENERATED COLLECTIONS II SEED",
+    body: await collectionRows(collectionDefaultsII()),
   };
 }
 
 export async function seedBlocks() {
-  return [await siteSettingsSeed(), await collectionsSeed()].map((s) => ({ ...s, block: `${s.begin}\n${s.body}\n${s.end}` }));
+  return [await siteSettingsSeed(), await collectionsSeed(), await collectionsSeedII()].map((s) => ({ ...s, block: `${s.begin}\n${s.body}\n${s.end}` }));
 }
 
 if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) {

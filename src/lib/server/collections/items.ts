@@ -55,6 +55,20 @@ function defOf(collection: string): CollectionDef {
   return COLLECTIONS[collection];
 }
 
+/** Some collections need a capability on top of the operation's own (team profiles: `team.profiles`). */
+function requireEdit(actor: Actor, def: CollectionDef) {
+  if (def.editCapability && !can(actor.role, def.editCapability)) throw new ForbiddenError();
+}
+
+/** Fields only `claims.source` may change, such as a testimonial's source. */
+function assertSourceFields(actor: Actor, def: CollectionDef, before: Data | null, after: Data) {
+  if (!def.sourceFields || can(actor.role, "claims.source")) return;
+  for (const field of def.sourceFields) {
+    const old = before?.[field] ?? "";
+    if ((after[field] ?? "") !== old) throw new ForbiddenError("Recording a source needs an ADMIN or SUPER_ADMIN.", "CLAIM_SOURCE");
+  }
+}
+
 function validate(def: CollectionDef, data: unknown): Data {
   const parsed = def.schema.safeParse(data);
   if (!parsed.success) {
@@ -72,6 +86,12 @@ async function lockItem(tx: TxSql, id: string): Promise<ItemRow & { def: Collect
   const row = rows[0];
   if (!row) throw new NotFoundError("That record does not exist.");
   return { ...row, draft: parseJson<Data>(row.draft), def: defOf(row.collection) };
+}
+
+async function lockEditable(tx: TxSql, actor: Actor, id: string) {
+  const row = await lockItem(tx, id);
+  requireEdit(actor, row.def);
+  return row;
 }
 
 async function publishedData(sql: Sql, versionId: string | null): Promise<Data | null> {
@@ -227,6 +247,7 @@ export const listItems = adminOperation(
   "collections.edit",
   async (sql, actor, input: { collection: string; q?: string; trash?: boolean }): Promise<ItemSummary[]> => {
     const def = defOf(input.collection);
+    requireEdit(actor, def);
     if (input.trash) await purgeTrash(sql, actor, def.id);
     const rows = await sql<ItemRow & { live: unknown; updated: string }>`
       select i.id, i.key, i.position, i.status, i.draft, i.deleted_at::text as deleted_at, v.data as live
@@ -252,7 +273,7 @@ export const listItems = adminOperation(
   },
 );
 
-export const getItem = adminOperation("collections.edit", async (sql, _actor, input: { id: string }) => {
+export const getItem = adminOperation("collections.edit", async (sql, actor, input: { id: string }) => {
   const rows = await sql<ItemRow>`
     select id, collection, key, position, status, draft, rev, published_version_id, deleted_at::text as deleted_at
     from collection_items where id = ${input.id}
@@ -260,6 +281,7 @@ export const getItem = adminOperation("collections.edit", async (sql, _actor, in
   const row = rows[0];
   if (!row) throw new NotFoundError("That record does not exist.");
   const def = defOf(row.collection);
+  requireEdit(actor, def);
   const draft = parseJson<Data>(row.draft);
   const live = await publishedData(sql, row.published_version_id);
   const versions = await sql<{ id: string; version: number; published_at: string; published_by: string | null }>`
@@ -280,8 +302,8 @@ export const getItem = adminOperation("collections.edit", async (sql, _actor, in
     draft: draft as JsonRecord,
     published: live as JsonRecord | null,
     draftDiffers: JSON.stringify(draft) !== JSON.stringify(live),
-    livePath: live ? def.path(live) : null,
-    draftPath: def.path(draft),
+    livePath: live ? (def.paths(live)[0] ?? null) : null,
+    draftPath: def.paths(draft)[0] ?? null,
     versions: versions.map((v) => ({ id: v.id, version: v.version, publishedAt: v.published_at, current: v.id === row.published_version_id })),
     usedBy: usedBy.map((u) => ({ id: u.from_id, collection: u.collection, key: u.key, state: u.from_state, field: u.field })),
     redirects: redirects.map((r) => ({ from: r.from_path, to: r.to_path })),
@@ -304,9 +326,11 @@ export const createItem = adminOperation(
   "collections.edit",
   async (sql, actor, input: { collection: string; data: unknown }) => {
     const def = defOf(input.collection);
+    requireEdit(actor, def);
     if (!def.canCreate) throw new ConflictError(`New ${def.label.toLowerCase()} cannot be added here.`, "NO_CREATE");
     const data = validate(def, input.data);
     assertClaimSources(actor, null, data);
+    assertSourceFields(actor, def, null, data);
     const key = String(data[def.keyField]);
     return inTransaction(sql, async (tx) => {
       if (await keyToId(tx, def.id, key)) throw new ConflictError(`"${key}" is already used (it may be in the trash).`, "KEY_TAKEN");
@@ -328,7 +352,7 @@ export const saveItemDraft = adminOperation(
   "collections.edit",
   async (sql, actor, input: { id: string; rev: number; data: unknown }) => {
     return inTransaction(sql, async (tx) => {
-      const row = await lockItem(tx, input.id);
+      const row = await lockEditable(tx, actor, input.id);
       if (row.deleted_at) throw new ConflictError("This record is in the trash. Restore it first.", "IN_TRASH");
       if (row.rev !== input.rev) throw new ConflictError(STALE_MESSAGE, "STALE");
       const data = validate(row.def, input.data);
@@ -340,6 +364,7 @@ export const saveItemDraft = adminOperation(
         if (other && other.id !== row.id) throw new ConflictError(`"${newKey}" is already used.`, "KEY_TAKEN");
       }
       assertClaimSources(actor, draft, data);
+      assertSourceFields(actor, row.def, draft, data);
       const live = await publishedData(tx, row.published_version_id);
       await checkTargets(tx, row.def, data, new Set([...mediaIds(row.def, draft), ...mediaIds(row.def, live)]), false);
       // A record never published has no public address yet, so its key follows the draft.
@@ -358,10 +383,12 @@ export const saveItemDraft = adminOperation(
 
 export const publishItem = adminOperation("collections.edit", async (sql, actor, input: { id: string; rev: number }) => {
   return inTransaction(sql, async (tx) => {
-    const row = await lockItem(tx, input.id);
+    const row = await lockEditable(tx, actor, input.id);
     if (row.deleted_at) throw new ConflictError("This record is in the trash. Restore it first.", "IN_TRASH");
     if (row.rev !== input.rev) throw new ConflictError(STALE_MESSAGE, "STALE");
     const data = validate(row.def, row.draft);
+    const notReady = row.def.publishCheck?.(data);
+    if (notReady) throw new ConflictError(notReady, "NOT_READY");
     const live = await publishedData(tx, row.published_version_id);
     await checkTargets(tx, row.def, data, mediaIds(row.def, live), true);
     const newKey = String(data[row.def.keyField]);
@@ -376,9 +403,10 @@ export const publishItem = adminOperation("collections.edit", async (sql, actor,
         );
       }
     }
-    const oldPath = live ? row.def.path(live) : null;
-    const newPath = row.def.path(data);
-    if (oldPath && newPath && oldPath !== newPath) await addRedirect(tx, actor, oldPath, newPath, row.id);
+    const oldPaths = live ? row.def.paths(live) : [];
+    const newPaths = row.def.paths(data);
+    const redirects = oldPaths.flatMap((from, i) => (newPaths[i] && newPaths[i] !== from ? [{ from, to: newPaths[i] }] : []));
+    for (const r of redirects) await addRedirect(tx, actor, r.from, r.to, row.id);
     const last = await tx<{ v: number }>`select coalesce(max(version), 0)::int as v from collection_item_versions where item_id = ${row.id}`;
     const version = last[0].v + 1;
     const versionId = publicId(12);
@@ -400,16 +428,16 @@ export const publishItem = adminOperation("collections.edit", async (sql, actor,
       entity: "collection_items",
       entityId: row.id,
       before: live ? { version: version - 1, key: row.key, data: live } : null,
-      after: { version, key: newKey, data, redirect: oldPath && newPath && oldPath !== newPath ? { from: oldPath, to: newPath } : null },
+      after: { version, key: newKey, data, redirects },
     });
-    return { rev: row.rev + 1, version, redirect: oldPath && newPath && oldPath !== newPath ? { from: oldPath, to: newPath } : null };
+    return { rev: row.rev + 1, version, redirect: redirects[0] ?? null, redirects };
   });
 });
 
 /** Hide a published record from the site, or show it again. */
 export const setItemHidden = adminOperation("collections.edit", async (sql, actor, input: { id: string; hidden: boolean }) => {
   return inTransaction(sql, async (tx) => {
-    const row = await lockItem(tx, input.id);
+    const row = await lockEditable(tx, actor, input.id);
     if (row.deleted_at) throw new ConflictError("This record is in the trash.", "IN_TRASH");
     if (!row.published_version_id) throw new ConflictError("Publish this record before hiding or showing it.", "NOT_PUBLISHED");
     if (input.hidden) {
@@ -426,6 +454,7 @@ export const setItemHidden = adminOperation("collections.edit", async (sql, acto
 /** Set the order of every record in a collection (not in the trash). */
 export const reorderItems = adminOperation("collections.edit", async (sql, actor, input: { collection: string; ids: string[] }) => {
   const def = defOf(input.collection);
+  requireEdit(actor, def);
   return inTransaction(sql, async (tx) => {
     const rows = await tx<{ id: string; key: string }>`
       select id, key from collection_items where collection = ${def.id} and deleted_at is null order by position, key for update
@@ -450,7 +479,7 @@ export const reorderItems = adminOperation("collections.edit", async (sql, actor
 
 export const trashItem = adminOperation("collections.delete", async (sql, actor, input: { id: string }) => {
   return inTransaction(sql, async (tx) => {
-    const row = await lockItem(tx, input.id);
+    const row = await lockEditable(tx, actor, input.id);
     if (row.deleted_at) return { id: row.id, alreadyInTrash: true };
     const used = await incomingRefs(tx, row.id);
     if (used.length) throw new ConflictError(`Other records point at this one: ${describeRefs(used)}.`, "IN_USE");
@@ -468,7 +497,7 @@ export const trashItem = adminOperation("collections.delete", async (sql, actor,
 
 export const restoreItem = adminOperation("collections.delete", async (sql, actor, input: { id: string }) => {
   return inTransaction(sql, async (tx) => {
-    const row = await lockItem(tx, input.id);
+    const row = await lockEditable(tx, actor, input.id);
     if (!row.deleted_at) return { id: row.id };
     const draft = row.draft as Data;
     // Records it points at may have gone to the trash since.

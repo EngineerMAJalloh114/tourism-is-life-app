@@ -48,7 +48,7 @@ export const ADMIN_MENU: AdminMenuGroup[] = [
     label: "Team",
     items: [
       { label: "Team accounts", to: "/admin/users", capability: "users.view", available: true },
-      { label: "Public profiles", to: "/admin/profiles", capability: "team.profiles", available: false, comingIn: "A9" },
+      { label: "Public profiles", to: "/admin/profiles", capability: "team.profiles", available: true },
     ],
   },
   {

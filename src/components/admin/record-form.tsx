@@ -149,7 +149,78 @@ function FieldInput({ field, value, onChange, ctx, prefix }: { field: FieldDef; 
       return (
         <div className="sm:col-span-2">
           <p className="mb-1.5 text-xs font-medium uppercase tracking-[0.14em] text-muted">{field.label}</p>
-          <ImageEditor id={id} value={(value as { media: string; alt: string }) ?? { media: "", alt: "" }} onChange={onChange} ctx={ctx} />
+          {field.optional && value === null ? (
+            <Button type="button" size="sm" variant="outline" onClick={() => onChange({ media: "", alt: "" })}>
+              Add a photo
+            </Button>
+          ) : (
+            <>
+              <ImageEditor id={id} value={(value as { media: string; alt: string }) ?? { media: "", alt: "" }} onChange={onChange} ctx={ctx} />
+              {field.optional ? (
+                <Button type="button" size="sm" variant="outline" className="mt-2" onClick={() => onChange(null)}>
+                  Remove the photo
+                </Button>
+              ) : null}
+            </>
+          )}
+        </div>
+      );
+    case "boolean":
+      return (
+        <label htmlFor={id} className="inline-flex min-h-11 items-center gap-2 text-sm">
+          <input id={id} type="checkbox" className="size-4" checked={value === true} onChange={(e) => onChange(e.target.checked)} />
+          {field.label}
+        </label>
+      );
+    case "checkboxes": {
+      const chosen = (value as string[]) ?? [];
+      return (
+        <fieldset className="sm:col-span-2">
+          <legend className="mb-1.5 text-xs font-medium uppercase tracking-[0.14em] text-muted">{field.label}</legend>
+          <div className="flex flex-wrap gap-x-4 gap-y-1">
+            {field.options.map((o) => (
+              <label key={o} className="inline-flex min-h-9 items-center gap-2 text-sm">
+                <input
+                  type="checkbox"
+                  className="size-4"
+                  checked={chosen.includes(o)}
+                  onChange={(e) => onChange(e.target.checked ? field.options.filter((x) => x === o || chosen.includes(x)) : chosen.filter((x) => x !== o))}
+                />
+                {o}
+              </label>
+            ))}
+          </div>
+        </fieldset>
+      );
+    }
+    case "claim":
+      return (
+        <div className="sm:col-span-2">
+          <p className="mb-1.5 text-xs font-medium uppercase tracking-[0.14em] text-muted">{field.label}</p>
+          {field.help ? <p className="mb-2 text-xs text-muted">{field.help}</p> : null}
+          <ClaimEditor id={id} value={value as Claim} canSource={ctx.canSourceClaims} onChange={onChange} />
+        </div>
+      );
+    case "group": {
+      const obj = (value as Data) ?? {};
+      return (
+        <fieldset className="rounded border border-line bg-page p-3 sm:col-span-2">
+          <legend className="px-1 text-xs font-medium uppercase tracking-[0.14em] text-muted">{field.label}</legend>
+          {field.help ? <p className="mb-2 text-xs text-muted">{field.help}</p> : null}
+          <div className="grid gap-3 sm:grid-cols-2">
+            {field.fields.map((sub) => (
+              <FieldInput key={sub.name} field={sub} prefix={id} value={obj[sub.name]} ctx={ctx} onChange={(v) => onChange({ ...obj, [sub.name]: v })} />
+            ))}
+          </div>
+        </fieldset>
+      );
+    }
+    case "readonly":
+      return (
+        <div>
+          <p className="mb-1.5 text-xs font-medium uppercase tracking-[0.14em] text-muted">{field.label}</p>
+          <p className="text-sm text-ink">{String(value ?? "")}</p>
+          {field.help ? <p className="mt-1 text-xs text-muted">{field.help}</p> : null}
         </div>
       );
     case "gallery": {

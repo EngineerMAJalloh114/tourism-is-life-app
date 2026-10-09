@@ -20,7 +20,7 @@ tests 324 (322 pass, 2 skipped on Windows, 0 fail), `build:dev` OK, `check:asset
 | A6 Media library and uploads | GREEN | 500 / 2 / 0 | `0008_media` (+ seed, 86 rows) |
 | A7 Site settings | GREEN | 522 / 2 / 0 | `0009_site_settings` (+ seed) |
 | A8 Collections I | GREEN | 562 / 2 / 0 | `0010_collections` (+ seed, 42 records) |
-| A9 Collections II | PENDING | | |
+| A9 Collections II | GREEN | 576 / 2 / 0 | `0011_collections_seed` (74 records) |
 | A10 Rates and ratings | PENDING | | |
 | A11 Announcements | PENDING | | |
 | A12 Enquiry desk | PENDING | | |
@@ -259,3 +259,33 @@ tests 324 (322 pass, 2 skipped on Windows, 0 fail), `build:dev` OK, `check:asset
   reorder, a new destination with a photo from the picker (43 published photos offered),
   trash and restore, a used destination refused with the list of tours using it, 390 px with
   no overflow. The public pages still read `catalog.ts` (they read the database from B5).
+
+### A9 notes
+
+- **Twelve more collections** on the A8 engine: services (7), journal categories (8) and
+  posts (4), cruise services (6), shore excursions (6), cruise destinations (6), vehicle
+  categories (8), vehicles (8), testimonials (1), team profiles (3), sample stays (9) and
+  sample dining places (8). Seeded in `0011_collections_seed`; a test rebuilds each data file's
+  objects from the database and compares deeply. 0009 and 0010 regenerate byte for byte.
+- **What the seed does with sourced-only values:** shore excursion prices and vehicle
+  `pricing` leave the records (rates, A10); "Licensed guides" (a service benefit) and each
+  vehicle category's "From $N/day" are claims with no source, the latter falling back to
+  "Rate on request"; the testimonial is an unpublished draft and cannot be published without a
+  source link and date, which only `claims.source` records; team photos are kept with consent
+  empty, and `teamPhoto()` returns no photo until who recorded consent and when are filled.
+- **Locked:** Stay & Dine samples keep `status: "sample"`, and their price, rating, hours,
+  menu link and map pin stay empty, while `HOSPITALITY_PREVIEW` is on (the schema refuses any
+  other value). Vehicle `availability` is kept but neither shown nor editable. Vehicle category
+  keys are fixed and none can be added.
+- **Capabilities:** team profiles need `team.profiles` (ADMIN, SUPER_ADMIN) on every
+  operation; the "Public profiles" menu item opens that collection. Everything else follows A8.
+- **Paths:** journal posts and vehicles each have two public pages, so a key change writes a
+  redirect for each.
+- **Render rules ready for B5** (`src/lib/collections/render.ts`): claims, team photos and
+  testimonials, unit-tested.
+- **Observation, not changed:** two team bios mention "member partner of 1 DCM World" and
+  "Featured in AFAR Magazine"; the inventory's claim list (M8) does not include the bios, so
+  they are stored as plain text. Worth an owner check before B1.
+- **Checked in Edge:** team profile consent fields, a vehicle (no price, availability read
+  only), a category's price claim, the testimonial refused then published with a source, a
+  stay's locked status, a service's claim; 390 px with no overflow.

@@ -41,6 +41,7 @@ import { Route as AdminIndexRouteImport } from './routes/admin/index'
 import { Route as AdminAuditRouteImport } from './routes/admin/audit'
 import { Route as AdminEnquiriesRouteImport } from './routes/admin/enquiries'
 import { Route as AdminMediaRouteImport } from './routes/admin/media'
+import { Route as AdminProfilesRouteImport } from './routes/admin/profiles'
 import { Route as AdminSettingsRouteImport } from './routes/admin/settings'
 import { Route as AdminSignInsRouteImport } from './routes/admin/sign-ins'
 import { Route as AdminUsersRouteImport } from './routes/admin/users'
@@ -269,6 +270,11 @@ const AdminEnquiriesRoute = AdminEnquiriesRouteImport.update({
 const AdminMediaRoute = AdminMediaRouteImport.update({
   id: '/media',
   path: '/media',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminProfilesRoute = AdminProfilesRouteImport.update({
+  id: '/profiles',
+  path: '/profiles',
   getParentRoute: () => AdminRoute,
 } as any)
 const AdminSettingsRoute = AdminSettingsRouteImport.update({
@@ -654,6 +660,7 @@ export interface FileRoutesByFullPath {
   '/admin/audit': typeof AdminAuditRoute
   '/admin/enquiries': typeof AdminEnquiriesRoute
   '/admin/media': typeof AdminMediaRoute
+  '/admin/profiles': typeof AdminProfilesRoute
   '/admin/settings': typeof AdminSettingsRoute
   '/admin/sign-ins': typeof AdminSignInsRoute
   '/admin/users': typeof AdminUsersRoute
@@ -753,6 +760,7 @@ export interface FileRoutesByTo {
   '/admin/audit': typeof AdminAuditRoute
   '/admin/enquiries': typeof AdminEnquiriesRoute
   '/admin/media': typeof AdminMediaRoute
+  '/admin/profiles': typeof AdminProfilesRoute
   '/admin/settings': typeof AdminSettingsRoute
   '/admin/sign-ins': typeof AdminSignInsRoute
   '/admin/users': typeof AdminUsersRoute
@@ -854,6 +862,7 @@ export interface FileRoutesById {
   '/admin/audit': typeof AdminAuditRoute
   '/admin/enquiries': typeof AdminEnquiriesRoute
   '/admin/media': typeof AdminMediaRoute
+  '/admin/profiles': typeof AdminProfilesRoute
   '/admin/settings': typeof AdminSettingsRoute
   '/admin/sign-ins': typeof AdminSignInsRoute
   '/admin/users': typeof AdminUsersRoute
@@ -959,6 +968,7 @@ export interface FileRouteTypes {
     | '/admin/audit'
     | '/admin/enquiries'
     | '/admin/media'
+    | '/admin/profiles'
     | '/admin/settings'
     | '/admin/sign-ins'
     | '/admin/users'
@@ -1058,6 +1068,7 @@ export interface FileRouteTypes {
     | '/admin/audit'
     | '/admin/enquiries'
     | '/admin/media'
+    | '/admin/profiles'
     | '/admin/settings'
     | '/admin/sign-ins'
     | '/admin/users'
@@ -1158,6 +1169,7 @@ export interface FileRouteTypes {
     | '/admin/audit'
     | '/admin/enquiries'
     | '/admin/media'
+    | '/admin/profiles'
     | '/admin/settings'
     | '/admin/sign-ins'
     | '/admin/users'
@@ -1521,6 +1533,13 @@ declare module '@tanstack/react-router' {
       path: '/media'
       fullPath: '/admin/media'
       preLoaderRoute: typeof AdminMediaRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/profiles': {
+      id: '/admin/profiles'
+      path: '/profiles'
+      fullPath: '/admin/profiles'
+      preLoaderRoute: typeof AdminProfilesRouteImport
       parentRoute: typeof AdminRoute
     }
     '/admin/settings': {
@@ -2052,6 +2071,7 @@ interface AdminRouteChildren {
   AdminAuditRoute: typeof AdminAuditRoute
   AdminEnquiriesRoute: typeof AdminEnquiriesRoute
   AdminMediaRoute: typeof AdminMediaRoute
+  AdminProfilesRoute: typeof AdminProfilesRoute
   AdminSettingsRoute: typeof AdminSettingsRoute
   AdminSignInsRoute: typeof AdminSignInsRoute
   AdminUsersRoute: typeof AdminUsersRoute
@@ -2065,6 +2085,7 @@ const AdminRouteChildren: AdminRouteChildren = {
   AdminAuditRoute: AdminAuditRoute,
   AdminEnquiriesRoute: AdminEnquiriesRoute,
   AdminMediaRoute: AdminMediaRoute,
+  AdminProfilesRoute: AdminProfilesRoute,
   AdminSettingsRoute: AdminSettingsRoute,
   AdminSignInsRoute: AdminSignInsRoute,
   AdminUsersRoute: AdminUsersRoute,
