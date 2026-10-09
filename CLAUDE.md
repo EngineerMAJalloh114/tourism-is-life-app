@@ -17,7 +17,7 @@ This repo is its public website, live at **https://www.tourismislife.com**.
 | Styling | Tailwind CSS v4, tokens in `src/styles.css` |
 | Data layer | Kysely + raw SQL, **no Prisma, no Redis** |
 | Database | Neon Postgres (project `old-cake-73648467`, branch `production`) |
-| Auth | Better Auth, email/password only (`SOCIAL_LOGIN_ENABLED = false`) |
+| Auth | Better Auth, email/password for **team accounts only** (public sign-up closed), TOTP two-factor required; see "Team admin" below |
 | Build | Vite 8 + Nitro 3 (`preset: vercel`) |
 | Hosting | Vercel project `tourism-is-life-app-bdza` |
 
@@ -1132,6 +1132,76 @@ the whole experience works, but on **sample** listings.
 - Unused by design: the reference's mist wipe between hero states (a plain crossfade
   is used) and its star rating and host avatars (no real data exists for either).
 
+## Team admin (Milestone A, October 2026)
+
+The secure team desk at `/admin`, built in tasks A1 to A12 (`docs/CUSTOMIZATION_PLAN.md`,
+progress and per-task notes in `docs/CUSTOMIZATION_REPORT.md`). **The public site does not
+read any of the new tables yet**: pages still render from `src/data/*` and the code. Only the
+enquiry notification reads the published settings (recipients, with a fallback). Task B5
+switches the pages over, with the render rules in `src/lib/collections/render.ts`.
+
+### Access: capabilities, never ranks
+
+- `src/lib/capabilities.ts` is the one role-to-capability map (STAFF, BOOKING_MANAGER,
+  CONTENT_MANAGER, ADMIN, SUPER_ADMIN). Only SUPER_ADMIN holds `users.manage`,
+  `roles.manage` and `users.reset_two_factor`.
+- Every admin operation is `adminOperation(capability, fn)` (`src/lib/server/access.ts`), which
+  checks before any query; an optional fourth argument carries services such as storage or the
+  password-link mailer, so tests pass fakes. Server functions live only in
+  `src/lib/server/admin/*.functions.ts`, each `staffMiddleware` plus one operation call;
+  `structure.test.ts` enforces the shape and `operations.test.ts` checks 401 signed out and
+  403 for every role without the capability, for every operation in its registry. **Add a new
+  operations module to that registry.**
+- Pages guard with `requirePageCapability` in `beforeLoad`; the menu (`src/lib/admin-menu.ts`)
+  hides what a role cannot open. Hiding is convenience; the server check is what protects data.
+- Every admin write records an `audit_logs` row with before and after, inside the same
+  transaction (`audit(tx, …)`); the table is append-only (trigger refuses update, delete,
+  truncate).
+
+### Team sign-in
+
+`/team/sign-in`, `/team/two-factor`, `/team/enrol` (forced before any admin page), reset
+pages and `/team/setup` (first-time only). Rules in `src/lib/auth/team-auth.ts`: sign-up
+closed, only active team accounts hold sessions, recovery codes stored as HMAC hashes,
+Postgres rate limits, every attempt in `sign_in_attempts`, 12-hour sessions. Password links
+from the team page are built by `src/lib/auth/team-links.ts` from `BETTER_AUTH_URL` (a
+relative link once came out on a dynamic base URL; keep the explicit base). Local test
+SUPER_ADMIN: `LOCAL_SUPER_ADMIN_EMAIL`/`PASSWORD` in `.env.local`, seeded only by `dev:local`.
+
+### Content records
+
+- **Seeds are generated, never hand-written:** `npm run content:seed` (writes with `-- --write`)
+  rebuilds the blocks in `0009` to `0012` from code constants; tests compare byte for byte and
+  rebuild the constants from the database. `0008`'s photo seed has its own generator
+  (`scripts/content/generate-media-seed.mjs`). **Editing `public/images`, `image-sources.json`,
+  `catalog.ts` or the other data files makes those tests fail**: record the change in the admin
+  or add a follow-up seed migration; never edit an applied migration.
+- **Collections** (`src/lib/collections/registry.ts`: schema, form fields, public paths per
+  collection; engine in `src/lib/server/collections/items.ts`): draft with `rev`, versions
+  (30), hide, reorder, trash (30 days, then purged), 301 redirects on a published key change,
+  delete refused while referenced (`content_refs`, `media_usage`, and for tours the dormant
+  booking tables). Ratings, prices and `bookable` are not record fields. Claims (inventory M8)
+  are claim fields shown only with a source link and date.
+- **Media** (`src/lib/server/media/`): Supabase Storage over plain fetch (request shapes pinned
+  in `storage.test.ts`), local files for `dev:local`, uploads off without the four
+  `SUPABASE_*` variables. `sharp` is a runtime dependency loaded only by a dynamic import;
+  keep it that way so public pages never load it. A photo is placed only once published, which
+  needs complete provenance (also a CHECK).
+- **Rates and ratings** (`src/lib/money.ts`, `src/lib/server/rates/`): integer minor units,
+  no floating point, never added across currencies, published only with a source (CHECK).
+  The booking code must never import them (a test greps).
+- **Settings, announcements, enquiry desk**: `site_settings` with versions; announcements
+  shown as text, one at a time; the desk with notes, assignee and a formula-safe audited CSV.
+
+### Testing notes
+
+- The TypeScript test run uses `--test-concurrency=4`: with seven files at once, each starting
+  many in-memory PGLite databases, Node 24 on Windows hit a V8 WASM crash (a different file
+  each time, never an assertion).
+- Browser checks: Playwright with Edge in the scratch directory, signing in as the local
+  SUPER_ADMIN (TOTP computed from the enrolment key). Restart `dev:local` for a fresh
+  in-memory database between runs.
+
 ## Product rules (these are firm)
 
 1. **No online booking or payments.** Visitor journey is discover → explore → learn → get in
@@ -1164,7 +1234,11 @@ the whole experience works, but on **sample** listings.
 - `npm test` runs the `scripts/*.test.mjs` glob plus an explicit list of `src/**/*.test.ts`
   files — new `.test.ts` files must be added to that list in `package.json` or they silently
   never run. Server tests import via the `@/` alias, resolved by `scripts/register-alias.mjs`.
-- CI (`.github/workflows/ci.yml`) runs typecheck, lint, test, build and `check:assets` on every push to main and every PR, with a read-only token (`permissions: contents: read`).
+- CI (`.github/workflows/ci.yml`) runs typecheck, lint, test, `check:migrations`, build and `check:assets` on every push to main and every PR, with a read-only token (`permissions: contents: read`).
+- **Migrations run on production at merge** (`npm run build` ends with `db:migrate`), so every
+  migration is additive and idempotent (`if not exists`, constraints added `NOT VALID` on
+  existing tables, seeds `on conflict do nothing`). `npm run check:migrations` applies them
+  fresh, over main's schema with data, and a second time.
 - `/api/cron/expire-holds` releases lapsed booking holds (Bearer `CRON_SECRET`); no scheduler is
   configured yet, so expiry still happens lazily on the next booking request.
 
@@ -1194,7 +1268,8 @@ npm run typecheck     # expect 0 errors
 npm run lint          # expect 0 errors
 npm test              # expect 0 failures (2 skip on Windows where symlinks need elevation)
 npm run build:dev     # safe production build, skips db:migrate
-npm run check:assets  # every /assets/* URL in the server bundle was emitted (PERF-1)
+npm run check:assets  # every /assets/* URL in the server bundle was emitted (PERF-1); no server secret in browser files
+npm run check:migrations  # migrations fresh, over main's schema with data, and rerun (in-memory only)
 ```
 
 `check:assets` exists because a Tailwind source-detection difference once made the server
@@ -1213,9 +1288,14 @@ Then check the page in a browser: console clean, images load, responsive at phon
 
 ## Known open items (Sep 2026)
 
-- **SUPER_ADMIN is unclaimed** — `bootstrap_lock` and `staff_profiles` are empty, so `/admin`
-  is unreachable. The owner must register with the `BOOTSTRAP_ADMIN_EMAIL` address and click
-  "Claim SUPER_ADMIN" at `/admin`. Single-use and permanent.
+- **SUPER_ADMIN is unclaimed** — `bootstrap_lock` and `staff_profiles` are empty. After the
+  Milestone A merge the owner sets `BOOTSTRAP_ADMIN_EMAIL` in Vercel, asks for a link at
+  `/team/setup`, sets a password, enrols two-factor, and clicks "Claim SUPER_ADMIN" at
+  `/admin`. Single-use and permanent.
+- **Photo uploads need a Supabase project on a paid plan** (free projects pause and uploaded
+  photos go offline), two buckets and four `SUPABASE_*` variables; see
+  `docs/DEPLOYMENT_NOTES.md`. Until then uploads are off and the library lists the site's own
+  photos.
 - **No legal pages** — no privacy policy, terms, cookie or refund routes exist.
 - **The Cotton Tree fell (2023).** Some site copy still implies it stands. The official 11-day
   itinerary calls it "the site of the (recently fallen) Cotton Tree". Needs a content pass.
